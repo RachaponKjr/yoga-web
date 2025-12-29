@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  frontend:
+    container_name: yoga-frontend
+    build:
+      context: ./yoka-web
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3001:3000"
+    env_file: .env
+    networks:
+      - yoga-network
+    depends_on:
+      - backend
+
+  backend:
+    container_name: yoga-backend
+    build:
+      context: ./yoka-api
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "4001:3001"
+    env_file: .env
+    networks:
+      - yoga-network
+    depends_on:
+      - db
+    volumes:
+      - backend-uploads:/app/uploads
+  db:
+    container_name: yoga-db
+    image: postgres:15-alpine
+    restart: always
+    env_file: .env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - yoga-network
+
+networks:
+yoga-network:
+  driver: bridge
+
+volumes:
+  db-data:
+  backend-uploads:

@@ -1,0 +1,53 @@
+# Dependencies (เราจะ install ใหม่ใน container เสมอ)
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log*
+yarn.lock
+package-lock.json
+# (หมายเหตุ: ปกติเรา copy package*.json แยกบรรทัดใน Dockerfile อยู่แล้ว แต่ใส่ ignore ไว้กันพลาด copy ทั้งโฟลเดอร์)
+
+# Testing & Coverage
+coverage
+__tests__
+test
+cypress
+
+# Build outputs (Next.js / React / Vue builds)
+.next
+out
+dist
+build
+
+# Version Control & IDE Settings
+.git
+.gitignore
+.github
+.gitlab-ci.yml
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Environment Variables (สำคัญมากเรื่องความปลอดภัย!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# (ยกเว้น .env.example ถ้ามี)
+
+# Docker files (ไม่จำเป็นต้องใส่เข้าไปใน image ตัวเอง)
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# Documentation
+README.md
+LICENSE
+docs

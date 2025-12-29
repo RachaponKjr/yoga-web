@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(Student)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userInfo    UserInfo?
+  courseYogas CourseYoga[] @relation("TeacherCourses")
+  bookings    Booking[]    @relation("StudentBookings")
+}
+
+model UserInfo {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  avatar       String?
+  sex          Sex?     @default(NotSpecify)
+  firstName    String?
+  lastName     String?
+  phone_number String?
+  country      String?
+  experience   String?
+  facebook     String?
+  instagram    String?
+  twitter      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CourseYoga {
+  id             String   @id @default(cuid())
+  title          String // ชื่อคอร์ส (name_course)
+  description    String?  @db.Text
+  price          Float
+  discount_price Float?
+  cover_image    String? // รูปปก (course_poster)
+  images         String[] @default([]) // รูปเพิ่มเติม (รวมจาก CourseYogaDetail)
+  status         Status   @default(Draft)
+  teacherId      String
+  teacher        User     @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation ไปหารอบการสอน
+  rounds CourseRound[]
+}
+
+// 2. CourseRound (รอบการสอน): เก็บแค่วันที่ เวลา และโควต้า
+model CourseRound {
+  id String @id @default(cuid())
+
+  // เชื่อมกลับไปหา Course หลัก
+  courseId String
+  course   CourseYoga @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  // วันเวลาสำหรับรอบนี้เท่านั้น
+  startDateTime DateTime // วันและเวลาเริ่ม (รวมกันเป็น DateTime เดียวสะดวกกว่า)
+  endDateTime   DateTime // วันและเวลาจบ
+
+  // โควต้าของรอบนี้
+  max_online  Int @default(0)
+  max_walk_in Int @default(0)
+
+  // นับจำนวนคนจอง (Prisma ใช้นับจาก relation ได้ หรือจะเก็บแยกก็ได้)
+  // ในที่นี้ผมแนะนำให้ใช้วิธีนับจาก Booking จะแม่นยำกว่า แต่ถ้าอยากเก็บ field ก็ได้
+  current_online  Int @default(0)
+  current_walk_in Int @default(0)
+
+  status Status @default(Open) // Open, Full, Cancelled, Completed
+
+  // คนที่จองรอบนี้
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 3. Booking (การจอง): นักเรียนจอง "รอบ" ไหน
+model Booking {
+  id String @id @default(cuid())
+
+  studentId String
+  student   User        @relation("StudentBookings", fields: [studentId], references: [id])
+  price     Float
+  roundId   String
+  round     CourseRound @relation(fields: [roundId], references: [id], onDelete: SetNull)
+
+  type      BookingType // ONLINE, WALK_IN
+  status    PaymentStatus @default(PENDING)
+  paidAt    DateTime?
+  paymentId String?
+
+  createdAt DateTime @default(now())
+}
+
+// Enum ช่วยจัดการสถานะ
+enum Status {
+  Draft
+  Open
+  Full
+  Closed
+}
+
+enum BookingType {
+  ONLINE
+  WALK_IN
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum Role {
+  Instructor
+  Admin
+  Student
+}
+
+enum Sex {
+  NotSpecify
+  Other
+  Male
+  Female
+}
