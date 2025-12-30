@@ -28,10 +28,6 @@ COPY . .
 # ป้องกัน Next.js ส่ง Telemetry data
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# *** หมายเหตุ: ถ้า Frontend ไม่ได้ใช้ Prisma ให้ลบบรรทัดนี้ทิ้งได้เลย ***
-# แต่ถ้าใช้ ก็ปล่อยไว้ครับ (ถ้า error ค่อยมาลบ)
-RUN npx prisma generate
-
 # Build Next.js
 RUN npm run build
 
