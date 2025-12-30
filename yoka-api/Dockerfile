@@ -6,12 +6,12 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
-# Copy เฉพาะไฟล์ package เพื่อ install dependencies (ใช้ cache layer)
-COPY package.json package-lock.json ./
+# --- แก้ไขจุดที่ 1: Copy แค่ package.json พอ (ตัด package-lock.json ออก) ---
+COPY package.json ./
 COPY prisma ./prisma/
 
-# Install dependencies ทั้งหมด (รวม devDependencies เพื่อใช้ Build)
-RUN npm ci
+# --- แก้ไขจุดที่ 2: เปลี่ยนเป็น install ธรรมดา (เพราะไม่มี lockfile) ---
+RUN npm install
 
 # ---------------------------------------
 # Stage 2: Build Application
@@ -24,10 +24,11 @@ COPY . .
 # 1. Generate Prisma Client
 RUN npx prisma generate
 
-# 2. Build code (เช่น tsc หรือ nest build) -> Output ไปที่ folder /dist
+# 2. Build code
 RUN npm run build
 
-# 3. Prune ให้เหลือแค่ Production Dependencies (เพื่อลดขนาด Image)
+# 3. Prune ให้เหลือแค่ Production Dependencies
+# หมายเหตุ: ถ้าไม่มี lockfile คำสั่ง prune บางทีอาจทำงานไม่สมบูรณ์แต่ไม่ error
 RUN npm prune --production
 
 # ---------------------------------------
@@ -38,17 +39,14 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-# สร้าง Group และ User เพื่อความปลอดภัย (ไม่รันเป็น Root)
+# สร้าง Group และ User เพื่อความปลอดภัย
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
 # Copy ไฟล์ที่จำเป็นจาก Builder
-# Copy folder ที่ build เสร็จแล้ว
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-# Copy node_modules ที่เหลือเฉพาะของ production
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
-# Copy prisma schema เผื่อจำเป็นต้องใช้ runtime (บางกรณี)
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 
 # เปลี่ยนไปใช้ User ธรรมดา
@@ -56,5 +54,5 @@ USER nodejs
 
 EXPOSE 3000
 
-# คำสั่งรัน (แก้ path ตามจริง เช่น dist/main.js หรือ dist/index.js)
+# คำสั่งรัน
 CMD ["node", "dist/main.js"]
