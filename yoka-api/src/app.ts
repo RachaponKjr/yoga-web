@@ -26,10 +26,13 @@ app.use(
 ); // Security Headers
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://119.59.99.141:3001", // IP จริงของ Frontend
+      "http://localhost:3001", // เผื่อเทส Local
+    ],
     credentials: true,
   })
-); // Allow Cross-Origin
+);
 app.use(express.json()); // Body Parser
 app.use(morgan("dev")); // HTTP Request Logger
 app.use(cookieParser()); // Cookie Parser
