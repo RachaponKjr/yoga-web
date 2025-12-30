@@ -33,7 +33,9 @@ const SignInPage = () => {
         });
         return;
       }
-      setAuthToken(response.data.token);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
       setUser(response.data.user);
       toast.success("Login success", {
         duration: 5000,
