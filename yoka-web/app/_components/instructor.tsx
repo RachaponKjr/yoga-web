@@ -76,22 +76,30 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
             }}
             className="w-full pb-14" // เพิ่ม padding ด้านล่างเพื่อให้จุด Pagination ไม่ทับการ์ด
           >
-            {data.map((item) => (
-              <SwiperSlide key={item.id} className="h-auto">
-                {/* ใช้ h-full เพื่อให้การ์ดสูงเท่ากันในแต่ละ slide ถ้า content ไม่เท่ากัน */}
-                <div className="h-full flex">
-                  <UserCardGlass
-                    fullName={
-                      item.userInfo.firstName + " " + item.userInfo.lastName
-                    }
-                    avatar={item.userInfo.avatar || ""}
-                    facebook={item.userInfo.facebook || ""}
-                    instagram={item.userInfo.instagram || ""}
-                    twitter={item.userInfo.twitter || ""}
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
+            {data.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-secondary/80 font-medium text-sm md:text-base">
+                  No instructors found.
+                </p>
+              </div>
+            ) : (
+              data.map((item) => (
+                <SwiperSlide key={item.id} className="h-auto">
+                  {/* ใช้ h-full เพื่อให้การ์ดสูงเท่ากันในแต่ละ slide ถ้า content ไม่เท่ากัน */}
+                  <div className="h-full flex">
+                    <UserCardGlass
+                      fullName={
+                        item.userInfo.firstName + " " + item.userInfo.lastName
+                      }
+                      avatar={item.userInfo.avatar || ""}
+                      facebook={item.userInfo.facebook || ""}
+                      instagram={item.userInfo.instagram || ""}
+                      twitter={item.userInfo.twitter || ""}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))
+            )}
           </Swiper>
         </div>
 
