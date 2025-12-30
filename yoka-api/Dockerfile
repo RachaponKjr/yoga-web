@@ -1,52 +1,53 @@
 # ---------------------------------------
-# Stage 1: Base
+# Stage 1: Install Dependencies
 # ---------------------------------------
-FROM node:20-alpine AS base
-
-# ---------------------------------------
-# Stage 2: Dependencies
-# ---------------------------------------
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+FROM node:20-alpine AS deps
+# Backend จำเป็นต้องลง openssl เพิ่มสำหรับ Prisma
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
+# Copy เฉพาะไฟล์ package (ไม่มี lockfile ตามที่คุณทำไว้)
 COPY package.json ./
+# *** Backend ต้อง Copy โฟลเดอร์ prisma ด้วย ***
+COPY prisma ./prisma/
+
 RUN npm install
 
 # ---------------------------------------
-# Stage 3: Builder
+# Stage 2: Build Application
 # ---------------------------------------
-FROM base AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NEXT_TELEMETRY_DISABLED 1
+# *** จุดสำคัญที่แก้ Error: ต้อง Generate Prisma Client ก่อน Build ***
+RUN npx prisma generate
 
-# --- ตัด npx prisma generate ออกแล้ว ---
-
-# Build Next.js
+# Build code
 RUN npm run build
 
+# Prune dependencies
+RUN npm prune --production
+
 # ---------------------------------------
-# Stage 4: Runner
+# Stage 3: Production Runner
 # ---------------------------------------
-FROM base AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 nodejs
 
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 
-USER nextjs
+USER nodejs
 
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 3001
 
-CMD ["node", "server.js"]
+CMD ["node", "dist/main.js"]
