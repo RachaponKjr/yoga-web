@@ -86,15 +86,11 @@ const Navbar = () => {
 
   return (
     <header
-      // --- จุดที่ปรับปรุง ---
-      // 1. ใช้ backdrop-blur-md เพื่อให้เบลอ
-      // 2. ปรับ bg-secondary/80 (80%) เพื่อให้โปร่งแสงจนเห็นเบลอ
-      // 3. เพิ่ม transition เพื่อความนุ่มนวล
       className={`fixed top-0 left-0 right-0 z-999 transition-all duration-300 ease-in-out border-b border-transparent
       ${
         isScrolled
           ? "bg-secondary/80 backdrop-blur-md shadow-sm py-3 border-gray-200/20"
-          : "bg-secondary py-5" // ตอนอยู่บนสุดอาจจะให้ทึบ หรือถ้าอยากให้โปร่งตลอดก็แก้ตรงนี้ได้
+          : "bg-secondary py-5"
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">

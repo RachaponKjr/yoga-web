@@ -28,7 +28,7 @@ const UserCardGlass = ({
 
       {/* 2. Image Container */}
       <div className="relative z-10 mb-5">
-        <div className="w-28 h-28 p-[3px] rounded-full bg-gradient-to-br from-[#132b28]/20 to-transparent">
+        <div className="w-28 h-28 p-[3px] rounded-full bg-linear-to-br from-[#132b28]/20 to-transparent">
           <div className="w-full h-full rounded-full p-[3px] bg-white">
             <div className="relative w-full h-full rounded-full overflow-hidden">
               <Image

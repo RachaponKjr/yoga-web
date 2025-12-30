@@ -85,11 +85,12 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
             ) : (
               data.map((item) => (
                 <SwiperSlide key={item.id} className="h-auto">
-                  {/* ใช้ h-full เพื่อให้การ์ดสูงเท่ากันในแต่ละ slide ถ้า content ไม่เท่ากัน */}
                   <div className="h-full flex">
                     <UserCardGlass
                       fullName={
-                        item.userInfo.firstName + " " + item.userInfo.lastName
+                        item.userInfo.firstName
+                          ? `${item.userInfo.firstName} ${item.userInfo.lastName || ""}`.trim()
+                          : item.email
                       }
                       avatar={item.userInfo.avatar || ""}
                       facebook={item.userInfo.facebook || ""}
