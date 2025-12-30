@@ -1,13 +1,12 @@
 import React from "react";
 import LayoutSection from "@/components/layout/layout-section";
 import Image from "next/image";
-import BannerItem from "../_components/banner-item";
 
 import restaurant1 from "@/assets/images/banner/calender_banner.png";
 
 const Page = () => {
   return (
-    <LayoutSection title="Restaurant" description="">
+    <LayoutSection image="" title="Restaurant" description="">
       {/* เพิ่ม gap ให้ห่างขึ้นเพื่อให้ดูโปร่งแม้ภาพจะใหญ่ */}
       <div className="flex flex-col gap-12 md:gap-48 px-4 md:px-6 my-12 md:my-24 overflow-hidden">
         {/* --- Section 1: Our Story (Big Overlap) --- */}

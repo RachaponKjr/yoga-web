@@ -235,10 +235,10 @@ const ProfilePage = () => {
                       <MapPin className="w-3 h-3" /> Country
                     </label>
                     {/* ส่งค่า value เข้าไปเพื่อให้แสดงค่าเดิม */}
-                    <CountrySelect
+                    {/* <CountrySelect
                       value={userInfo?.country}
                       onChange={(val: any) => handleInputChange("country", val)} // ปรับตาม Type ของ CountrySelect ของคุณ ถ้ามัน return event ให้ใช้ e.target.value
-                    />
+                    /> */}
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
