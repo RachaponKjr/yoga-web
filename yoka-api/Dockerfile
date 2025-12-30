@@ -6,9 +6,8 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
-# Copy เฉพาะไฟล์ package (ไม่มี lockfile ตามที่คุณทำไว้)
+# Copy เฉพาะไฟล์ package
 COPY package.json ./
-# *** Backend ต้อง Copy โฟลเดอร์ prisma ด้วย ***
 COPY prisma ./prisma/
 
 RUN npm install
@@ -21,7 +20,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# *** จุดสำคัญที่แก้ Error: ต้อง Generate Prisma Client ก่อน Build ***
+# Generate Prisma Client
 RUN npx prisma generate
 
 # Build code
@@ -38,15 +37,18 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nodejs
+# --- จุดที่แก้ไข: ปิดการสร้าง User (เพื่อให้รันเป็น Root) ---
+# RUN addgroup --system --gid 1001 nodejs
+# RUN adduser --system --uid 1001 nodejs
 
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
+# --- จุดที่แก้ไข: เอา --chown ออก (เพื่อให้ไฟล์เป็นของ root) ---
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
 
-USER nodejs
+# --- จุดที่แก้ไข: ปิดคำสั่งสลับ User ---
+# USER nodejs
 
 EXPOSE 3001
 
