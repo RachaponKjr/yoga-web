@@ -9,7 +9,7 @@ import {
 import type { UserInfoType } from "@/types/auth.type";
 import instructorBanner from "@/assets/images/banner/lnstructors_banner.png";
 import Image from "next/image";
-import { Mail, Award } from "lucide-react";
+import { Mail, Award, Facebook, Instagram, Twitter } from "lucide-react";
 
 type Instructor = {
   id: string;
@@ -58,61 +58,125 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
                 </div>
               </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-4xl! w-full">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-semibold">
-                  ข้อมูลอาจารย์ผู้สอน
-                </DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col md:flex-row gap-8 mt-4">
-                <div className="w-full md:w-80 shrink-0">
-                  <div className="relative aspect-3/4 overflow-hidden bg-linear-to-br from-primary/20 to-primary/5 rounded-2xl shadow-xl">
+            <DialogContent className="sm:max-w-5xl max-h-max p-0 z-1000 overflow-hidden border-0 shadow-2xl bg-white rounded-2xl md:rounded-3xl gap-0">
+              <div className="flex flex-col md:grid md:grid-cols-5 h-[90vh] md:h-auto md:max-h-[65vh]">
+                {/* --- ส่วนรูปภาพ (Left / Top) --- */}
+                <div className="relative aspect-3/3 md:h-full md:col-span-2 bg-gray-100">
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent z-10 md:hidden" />{" "}
+                  {/* Gradient สำหรับมือถือเพื่อให้ text อ่านง่าย */}
+                  {instructor.userInfo.avatar ? (
                     <Image
                       src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${instructor.userInfo.avatar}`}
                       alt={`${instructor.userInfo.firstName} ${instructor.userInfo.lastName}`}
                       fill
                       className="object-cover"
+                      priority
                     />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">
+                      <Award className="w-20 h-20 opacity-20" />
+                    </div>
+                  )}
+                  {/* Social Media Overlay (แสดงบนรูปสำหรับ Desktop หรือซ่อนก็ได้ตามดีไซน์) */}
+                  <div className="hidden md:flex absolute bottom-6 left-0 right-0 justify-center gap-4 z-20">
+                    {/* ถ้าอยากเอา social มาไว้ตรงนี้ก็ทำได้ */}
                   </div>
                 </div>
-                <div className="flex-1 flex flex-col gap-6">
-                  <div>
-                    <h5 className="text-3xl font-bold text-foreground mb-2">
-                      {instructor.userInfo.firstName}{" "}
-                      {instructor.userInfo.lastName}
-                    </h5>
-                    <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-                      <Award className="w-4 h-4" />
-                      {instructor.role}
-                    </div>
-                  </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Mail className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+                {/* --- ส่วนเนื้อหา (Right / Bottom) --- */}
+                <div className="flex-1 md:col-span-3 flex flex-col bg-white overflow-hidden">
+                  {/* Header Section */}
+                  <DialogHeader className="p-6 pb-2 md:p-8 md:pb-4 shrink-0 text-left">
+                    <div className="flex flex-col gap-3">
+                      <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wide uppercase">
+                        <Award className="w-3.5 h-3.5" />
+                        {instructor.role}
+                      </div>
+
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground mb-1">
-                          อีเมล
+                        <DialogTitle className="text-2xl md:text-3xl font-bold text-gray-900">
+                          {instructor.userInfo.firstName}{" "}
+                          {instructor.userInfo.lastName}
+                        </DialogTitle>
+                        <p className="text-gray-500 font-medium mt-1">
+                          Yoga Instructor
                         </p>
-                        <a
-                          href={`mailto:${instructor.email}`}
-                          className="text-foreground hover:text-primary transition-colors"
-                        >
-                          {instructor.email}
-                        </a>
+                      </div>
+                    </div>
+                  </DialogHeader>
+
+                  {/* Scrollable Content Area */}
+                  <div className="flex-1 overflow-y-auto p-6 pt-2 md:p-8 md:pt-0 space-y-8 custom-scrollbar">
+                    {/* About / Experience Section */}
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                        <span className="w-8 h-[2px] bg-primary rounded-full"></span>
+                        About & Experience
+                      </h4>
+
+                      {/* *** จุดสำคัญ: whitespace-pre-line ทำให้เว้นบรรทัดตามที่พิมพ์มา *** */}
+                      <div className="text-gray-600 leading-loose whitespace-pre-line text-base/7 font-light">
+                        {instructor.userInfo.experience ? (
+                          instructor.userInfo.experience
+                        ) : (
+                          <span className="text-gray-400 italic">
+                            ไม่มีข้อมูลประสบการณ์
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3">
-                      <Award className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground mb-1">
-                          ประสบการณ์
-                        </p>
-                        <p className="text-foreground leading-relaxed">
-                          {instructor.userInfo.experience ||
-                            "ไม่มีข้อมูลประสบการณ์"}
-                        </p>
+                    {/* Contact & Social Info */}
+                    <div className="border-t border-gray-100 pt-6 space-y-4">
+                      <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                        Contact
+                      </h4>
+
+                      <div className="flex flex-wrap gap-4">
+                        {/* Email */}
+                        <a
+                          href={`mailto:${instructor.email}`}
+                          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 hover:bg-primary/5 hover:text-primary border border-gray-100 transition-all group"
+                        >
+                          <div className="p-2 bg-white rounded-full shadow-sm group-hover:shadow-md transition-all">
+                            <Mail className="w-4 h-4 text-gray-400 group-hover:text-primary" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {instructor.email}
+                          </span>
+                        </a>
+
+                        {/* Social Links (ถ้ามี) */}
+                        {instructor.userInfo.facebook && (
+                          <a
+                            href={instructor.userInfo.facebook}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-3 rounded-xl bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border border-gray-100 transition-all"
+                          >
+                            <Facebook className="w-5 h-5" />
+                          </a>
+                        )}
+                        {instructor.userInfo.instagram && (
+                          <a
+                            href={instructor.userInfo.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-3 rounded-xl bg-gray-50 hover:bg-pink-50 hover:text-pink-600 border border-gray-100 transition-all"
+                          >
+                            <Instagram className="w-5 h-5" />
+                          </a>
+                        )}
+                        {instructor.userInfo.twitter && (
+                          <a
+                            href={instructor.userInfo.twitter}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-3 rounded-xl bg-gray-50 hover:bg-sky-50 hover:text-sky-500 border border-gray-100 transition-all"
+                          >
+                            <Twitter className="w-5 h-5" />
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>

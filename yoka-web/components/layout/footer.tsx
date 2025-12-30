@@ -31,9 +31,9 @@ const Footer = () => {
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent opacity-50"></div>
 
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
           {/* Column 1: Brand & Description (4 columns wide) */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
+          <div className="col-span-2 lg:col-span-4 flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-900/20">
                 {/* Logo Placeholder */}
@@ -106,7 +106,7 @@ const Footer = () => {
           </div>
 
           {/* Column 4: Newsletter (4 columns wide) */}
-          <div className="lg:col-span-4">
+          <div className="col-span-2 lg:col-span-4">
             <h6 className="text-white font-semibold text-lg mb-4">
               Stay up to date
             </h6>
