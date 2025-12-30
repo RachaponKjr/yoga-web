@@ -30,6 +30,7 @@ app.use(
       "http://119.59.99.141:3001", // IP จริงของ Frontend
       "http://localhost:3001", // เผื่อเทส Local
     ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   })
 );
