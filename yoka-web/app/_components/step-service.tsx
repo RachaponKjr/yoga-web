@@ -40,7 +40,7 @@ const StepService = () => {
             {/* 1. Main Image Container (Arch Shape) */}
             <div className="relative aspect-[3.5/4.5] w-full max-w-md mx-auto">
               {/* กรอบรูปทรง Arch (โค้งบน) */}
-              <div className="relative w-full h-full rounded-t-[10rem] rounded-b-[2rem] overflow-hidden shadow-2xl shadow-[#132B28]/20 z-10 border-[6px] border-white">
+              <div className="relative w-full h-full rounded-t-[10rem] rounded-b-4xl overflow-hidden shadow-2xl shadow-[#132B28]/20 z-10 border-[6px] border-white">
                 <Image
                   src={yoga}
                   alt="Yoga Practice"
@@ -48,7 +48,7 @@ const StepService = () => {
                   className="object-cover object-center hover:scale-110 transition-transform duration-1000 ease-out"
                 />
                 {/* Gradient Overlay บางๆ ด้านล่างเพื่อให้ภาพดูมีมิติ */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
               </div>
 
               {/* 2. Floating Card (สถิติ/ประสบการณ์) - ลอยอยู่ด้านซ้ายล่าง */}

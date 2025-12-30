@@ -9,8 +9,8 @@ const Hero = () => {
   return (
     // bg-linear-to-b from-[#dfddc6]  to-[#18281E]
     <div className="relative mt-24">
-      <div className="h-max md:h-[calc(100vh-6rem)] container mx-auto mb-24 md:mb-0 px-4 md:px-6 flex flex-col md:flex-row items-center gap-12 2xl:relative">
-        <div className="max-w-2xl flex flex-col gap-8 z-50">
+      <div className="h-max md:h-[calc(100vh-6rem)] container mx-auto mb-12 md:mb-0 px-4 md:px-6 flex flex-col md:flex-row items-center gap-12 2xl:relative">
+        <div className="max-w-2xl 2xl:max-w-4xl flex flex-col gap-8 z-50">
           <h1 className="text-[clamp(4rem,12vw,6rem)] leading-none font-bold bg-linear-to-r from-tertiary via-primary to-secondary bg-clip-text text-transparent">
             Yoga Studio & Restaurant
           </h1>
@@ -18,7 +18,7 @@ const Hero = () => {
             <span className="text-[clamp(1rem,4vw,2rem)] text-[#132B28]">
               Lorem ipsum dolor sit amet consectetur.
             </span>
-            <p className="text-[#666666] text-[clamp(1rem,4vw,2rem)]">
+            <p className="text-[#666666] text-[clamp(0.5rem,4vw,2rem)]">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus
               maxime quibusdam praesentium recusandae tempora sunt, ipsa
               delectus facere modi nisi!
@@ -42,8 +42,8 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="relative w-full">
-          <div className="w-full md:w-[40vw] rounded-2xl aspect-square bg-primary/20 shadow-xl relative overflow-hidden">
+        <div className="relative w-full md:w-max">
+          <div className="w-full md:w-[30vw] rounded-2xl aspect-square bg-primary/20 shadow-xl relative overflow-hidden">
             <Image
               src={yogaBanner}
               alt=""
@@ -63,7 +63,7 @@ const Hero = () => {
           </div> */}
         </div>
       </div>
-      <div className="absolute md:w-[45vw] w-[80vw] aspect-square right-0 bottom-0 pointer-events-none">
+      <div className="absolute hidden md:block md:w-[40vw] w-[60vw] aspect-square right-0 bottom-0 pointer-events-none">
         <Image
           src={leafRight}
           alt=""
