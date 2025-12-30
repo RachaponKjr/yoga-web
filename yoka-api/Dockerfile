@@ -2,8 +2,8 @@
 # Stage 1: Install Dependencies
 # ---------------------------------------
 FROM node:20-alpine AS deps
-# เพิ่ม compat-openssl11 เพื่อรองรับ Prisma
-RUN apk add --no-cache libc6-compat openssl compat-openssl11
+# ลบ compat-openssl11 ออก เพราะมันไม่มีให้โหลด
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 COPY package.json ./
@@ -15,27 +15,27 @@ RUN npm install
 # Stage 2: Build Application
 # ---------------------------------------
 FROM node:20-alpine AS builder
-# ต้องลงใน Stage นี้ด้วยเพื่อให้ prisma generate ผ่าน
-RUN apk add --no-cache libc6-compat openssl compat-openssl11
+# ลบ compat-openssl11 ออก
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma & Build
+# Generate & Build
 RUN npx prisma generate
 RUN npm run build
 RUN npm prune --production
 
 # ---------------------------------------
-# Stage 3: Production Runner (Run as Root)
+# Stage 3: Production Runner (Root)
 # ---------------------------------------
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 
-# *** สำคัญที่สุด: ต้องลง compat-openssl11 ในตัวรันจริงด้วย ***
-RUN apk add --no-cache libc6-compat openssl compat-openssl11
+# ลบ compat-openssl11 ออก
+RUN apk add --no-cache libc6-compat openssl
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
