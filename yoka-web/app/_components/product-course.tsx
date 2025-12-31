@@ -22,7 +22,7 @@ const ProductCourse = () => {
         </div>
         <div className="flex flex-col items-center justify-center gap-8 w-full">
           <div className="flex flex-col items-center gap-2 max-w-4xl w-full">
-            <span className="text-4xl font-semibold text-secondary! text-center">
+            <span className="text-4xl font-serif font-semibold text-secondary! text-center">
               Yoga Memberships & Class Passes
             </span>
             <p className="text-secondary/80! text-center">

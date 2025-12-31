@@ -29,7 +29,7 @@ const StepService = () => {
   ];
 
   return (
-    <section className="pb-12 pt-24 overflow-hidden relative">
+    <section className="py-12 md:pt-24 overflow-hidden relative">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tertiary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 -z-10" />
 
@@ -110,7 +110,7 @@ const StepService = () => {
                 </span>
               </div>
 
-              <h2 className="text-4xl lg:text-5xl font-bold text-[#132B28] leading-[1.15]">
+              <h2 className="text-4xl lg:text-5xl font-serif font-bold text-[#132B28] leading-[1.15]">
                 Bring Balance to your <br />
                 <span className="relative inline-block">
                   <span className="relative z-10">Mind & Body.</span>
@@ -125,7 +125,7 @@ const StepService = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 md:py-4">
               {features.map((item, index) => (
                 <div key={index} className="flex gap-4 group">
                   <div className="shrink-0 relative">
@@ -146,7 +146,7 @@ const StepService = () => {
               ))}
             </div>
 
-            <div className="pt-4">
+            <div className="md:pt-4">
               <Button
                 asChild
                 size={"lg"}

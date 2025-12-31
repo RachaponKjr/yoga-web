@@ -6,7 +6,7 @@ import SlideFood from "./slide-food";
 
 const DetailRestaurant = () => {
   return (
-    <section className="py-12 md:py-20 px-4 md:px-0 relative overflow-hidden">
+    <section className="py-0 md:py-20 px-4 md:px-0 relative overflow-hidden">
       {/* Decorative Background Blob */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
 
@@ -15,7 +15,7 @@ const DetailRestaurant = () => {
         {/* flex-col: มือถือเรียงลงแนวตั้ง */}
         {/* lg:flex-row: จอใหญ่เรียงแนวนอนซ้ายขวา */}
         {/* gap-12 lg:gap-16: ระยะห่างระหว่างส่วน */}
-        <div className="flex flex-col lg:flex-row  items-center">
+        <div className="flex flex-col lg:flex-row gap-8 md:gap-0 items-center">
           {/* Left Content: Text */}
           {/* flex-1: ให้ขยายเต็มพื้นที่เท่าๆ กับอีกฝั่ง (50%) */}
           {/* w-full: ให้กว้างเต็ม container ในมือถือ */}
@@ -27,7 +27,7 @@ const DetailRestaurant = () => {
                   Healthy & Fresh
                 </span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-[#132B28] leading-tight">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#132B28] leading-tight">
                 Experience the taste of{" "}
                 <span className="text-primary">Nature.</span>
               </h2>
@@ -43,7 +43,7 @@ const DetailRestaurant = () => {
               unde nam illum perspiciatis.
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div className="flex flex-wrap gap-4 md:pt-4">
               <Button
                 asChild
                 variant={"outline"}
@@ -66,12 +66,12 @@ const DetailRestaurant = () => {
             </div>
 
             {/* Features / Icons */}
-            <div className="flex gap-6 mt-6 border-t border-[#333333]/80 pt-6">
-              <div className="flex items-center gap-2 text-sm font-medium text-[#132B28]/70">
+            <div className="flex gap-6 md:mt-6 border-t border-[#333333]/80 pt-6">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[#132B28]/70">
                 <Icon icon="mdi:leaf" className="text-primary w-5 h-5" />
                 <span>Organic Ingredients</span>
               </div>
-              <div className="flex items-center gap-2 text-sm font-medium text-[#132B28]/70">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[#132B28]/70">
                 <Icon icon="mdi:pot-steam" className="text-primary w-5 h-5" />
                 <span>Freshly Cooked</span>
               </div>

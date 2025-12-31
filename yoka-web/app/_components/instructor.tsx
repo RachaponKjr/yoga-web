@@ -25,7 +25,7 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
         {/* --- ส่วน Header (เหมือนเดิม) --- */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-12 w-full">
           <div className="flex flex-col gap-2 max-w-2xl w-full lg:w-max">
-            <h4 className="text-3xl md:text-4xl font-semibold text-secondary">
+            <h4 className="text-3xl md:text-4xl font-serif font-semibold text-secondary">
               Yoga Instructors
             </h4>
             <p className="text-secondary/80 font-medium text-sm md:text-base">

@@ -17,7 +17,7 @@ const Story = () => {
               {/* ใส่รูปจริงตรงนี้แทน div สีเทา */}
               <div className="w-full h-full bg-neutral-200 relative">
                 <Image
-                  src="https://images.unsplash.com/photo-1544367563-12123d8966cd?q=80&w=2070&auto=format&fit=crop" // รูป Placeholder (Yoga/Instructor vibe)
+                  src="https://images.unsplash.com/photo-1544367563-12123d8966cd?q=80&w=2070&auto=format&fit=crop"
                   alt="Alison"
                   fill
                   className="object-cover"
@@ -40,7 +40,7 @@ const Story = () => {
               <span className="text-primary font-semibold tracking-wider uppercase text-sm">
                 About Instructor
               </span>
-              <h5 className="text-4xl lg:text-5xl font-bold text-[#132B28] flex flex-wrap items-baseline gap-x-3">
+              <h5 className="text-4xl lg:text-5xl font-serif font-bold text-[#132B28] flex flex-wrap items-baseline gap-x-3">
                 <span>Alison’s</span>
                 <Highlighter action="highlight" color="#87CEFA">
                   Story
@@ -75,17 +75,6 @@ const Story = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Background Decoration (Leaf) */}
-      <div className="absolute -bottom-20 -right-20 lg:-bottom-40 lg:-right-20 w-64 lg:w-[500px] opacity-80 pointer-events-none z-0">
-        <Image
-          src={leafbottom}
-          alt="leaf decoration"
-          width={600}
-          height={600}
-          className="w-full h-auto"
-        />
       </div>
     </section>
   );

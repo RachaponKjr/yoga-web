@@ -1,6 +1,7 @@
 import LayoutSection from "@/components/layout/layout-section";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -9,7 +10,7 @@ import {
 import type { UserInfoType } from "@/types/auth.type";
 import instructorBanner from "@/assets/images/banner/lnstructors_banner.png";
 import Image from "next/image";
-import { Mail, Award, Facebook, Instagram, Twitter } from "lucide-react";
+import { Mail, Award, Facebook, Instagram, Twitter, X } from "lucide-react";
 
 type Instructor = {
   id: string;
@@ -58,7 +59,16 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
                 </div>
               </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-5xl max-h-max p-0 z-1000 overflow-hidden border-0 shadow-2xl bg-white rounded-2xl md:rounded-3xl gap-0">
+            <DialogContent
+              showCloseButton={false}
+              className="sm:max-w-5xl max-h-max p-0 z-1000 overflow-hidden border-0 shadow-2xl bg-white rounded-2xl md:rounded-3xl gap-0"
+            >
+              <DialogClose
+                asChild
+                className="absolute top-4 right-4 cursor-pointer z-20"
+              >
+                <X className="w-6 h-6" />
+              </DialogClose>
               <div className="flex flex-col md:grid md:grid-cols-5 h-[90vh] md:h-auto md:max-h-[65vh]">
                 {/* --- ส่วนรูปภาพ (Left / Top) --- */}
                 <div className="relative aspect-3/3 md:h-full md:col-span-2 bg-gray-100">
@@ -86,27 +96,26 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
                 {/* --- ส่วนเนื้อหา (Right / Bottom) --- */}
                 <div className="flex-1 md:col-span-3 flex flex-col bg-white overflow-hidden">
                   {/* Header Section */}
-                  <DialogHeader className="p-6 pb-2 md:p-8 md:pb-4 shrink-0 text-left">
-                    <div className="flex flex-col gap-3">
-                      <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wide uppercase">
-                        <Award className="w-3.5 h-3.5" />
-                        {instructor.role}
-                      </div>
-
+                  <DialogHeader className="p-4 md:p-8 shrink-0 text-lef border-b shadow-2xs">
+                    <div className="flex flex-row items-center justify-between gap-3">
                       <div>
                         <DialogTitle className="text-2xl md:text-3xl font-bold text-gray-900">
                           {instructor.userInfo.firstName}{" "}
                           {instructor.userInfo.lastName}
                         </DialogTitle>
-                        <p className="text-gray-500 font-medium mt-1">
+                        {/* <p className="text-gray-500 font-medium mt-1">
                           Yoga Instructor
-                        </p>
+                        </p> */}
+                      </div>
+                      <div className="inline-flex self-start h-full items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wide uppercase">
+                        <Award className="w-4 h-4" />
+                        {instructor.role}
                       </div>
                     </div>
                   </DialogHeader>
 
                   {/* Scrollable Content Area */}
-                  <div className="flex-1 overflow-y-auto p-6 pt-2 md:p-8 md:pt-0 space-y-8 custom-scrollbar">
+                  <div className="flex-1 overflow-y-auto p-4 pt-2 md:p-8 md:pt-0 space-y-8 custom-scrollbar">
                     {/* About / Experience Section */}
                     <div className="space-y-3">
                       <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider flex items-center gap-2">

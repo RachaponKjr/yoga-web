@@ -23,10 +23,10 @@ const LayoutSection = ({
           className="object-cover object-center z-0"
         />
         <div className="z-50 text-center">
-          <h1 className="text-[clamp(3rem,6vw,4rem)] font-semibold shadow-lg">
+          <h1 className="text-[60px] lg:text-[120px] font-semibold text-[#2A2A2A] text-shadow-2xs font-serif">
             {title}
           </h1>
-          <p className="text-[#333333] font-medium shadow-lg max-w-2xl text-center text-[clamp(0.5rem,6vw,1rem)]">
+          <p className="text-[#2A2A2A] font-medium max-w-4xl text-center text-shadow-2xs font-serif text-[1rem] lg:text-[2rem]">
             {description}
           </p>
         </div>
