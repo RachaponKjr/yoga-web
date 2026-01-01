@@ -17,7 +17,7 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             # 1. เข้าไปที่โฟลเดอร์โปรเจกต์ (แก้ path ให้ตรงกับเครื่องจริง)
-            cd ~/my-app
+            cd ~/yoga-web
 
             # 2. ดึง Code ล่าสุด
             git pull origin main
