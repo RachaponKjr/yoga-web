@@ -1,7 +1,8 @@
 import React from "react";
+import TimeTableList from "./_components/timetable-list";
 
 const page = () => {
-  return <div>page</div>;
+  return <TimeTableList />;
 };
 
 export default page;

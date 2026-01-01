@@ -3,6 +3,8 @@
 import React, { useCallback, useState } from "react";
 import { useDropzone, FileRejection } from "react-dropzone";
 import { X, UploadCloud, Image as ImageIcon } from "lucide-react";
+// 1. Import uuid เข้ามา
+import { v4 as uuidv4 } from "uuid";
 
 export interface UploadableFile extends File {
   preview: string;
@@ -49,7 +51,8 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-          id: crypto.randomUUID(),
+          // 2. แก้ไขตรงนี้: ใช้ uuidv4() แทน crypto.randomUUID()
+          id: uuidv4(),
         })
       );
 
@@ -83,8 +86,6 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
     onFilesChange([]);
     setErrorMessage(null);
   };
-
-  // *** ลบ useEffect ที่ทำหน้าที่ Cleanup ออกแล้ว เพื่อแก้ปัญหารูปดำใน Strict Mode ***
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -161,7 +162,7 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
                 key={file.id}
                 className="relative group rounded-lg overflow-hidden border aspect-square bg-gray-100"
               >
-                {/* Image Preview - ใช้ img ธรรมดา และ w-full h-full */}
+                {/* Image Preview */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={file.preview}
