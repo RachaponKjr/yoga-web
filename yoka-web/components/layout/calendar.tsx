@@ -40,8 +40,6 @@ const Calendar = () => {
     []
   );
 
-  console.log(roundCourseMonth, "roundCourseMonth");
-
   const [loading, setLoading] = useState(false);
 
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -69,7 +67,6 @@ const Calendar = () => {
     // setRoundCourseMonth([]); // อาจจะไม่ต้อง clear ทิ้งเพื่อให้ UI ไม่กระพริบหายไป
     try {
       const response = await courseService.getRoundToDay({ month });
-      console.log(response, "response");
       if (response && Array.isArray(response.data)) {
         // เช็ค response ตามโครงสร้าง API จริงของคุณ (สมมติว่า return array มาเลย หรือ response.data)
         // ถ้า service return array โดยตรง:
@@ -137,7 +134,6 @@ const Calendar = () => {
             const dailyCourses = roundCourseMonth.filter((course) =>
               isSameDay(new Date(course.startDateTime), day)
             );
-            console.log(dailyCourses, "dailyCourses");
             const hasEvents = dailyCourses.length > 0;
 
             return (

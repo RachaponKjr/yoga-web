@@ -13,6 +13,7 @@ const page = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const courseId = (await searchParams).courseId;
+  const date = (await searchParams).date;
   const { data } = (await courseService.getCourseById(courseId as string)) as {
     data: CourseProps;
   };
@@ -20,7 +21,7 @@ const page = async ({
     return notFound();
   }
 
-  return <CoursePage course={data} />;
+  return <CoursePage course={data} date={date} />;
 };
 
 export default page;

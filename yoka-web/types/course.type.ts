@@ -27,6 +27,7 @@ export const RoundCourseSchema = z.object({
   course: CourseSchema,
   courseId: z.string(),
   current_online: z.number(),
+  current_walk_in: z.number(),
   max_online: z.number(),
   endDateTime: z.string(),
   startDateTime: z.string(),

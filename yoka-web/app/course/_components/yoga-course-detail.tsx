@@ -8,9 +8,25 @@ import { formatRoundEnglish, formatRoundTime } from "@/utils/format";
 import CourseCalendar from "@/components/CourseCalendar";
 import { useBooking } from "@/store/useBooking";
 import { useOmise } from "@/hooks/useOmise";
+import { isSameDay } from "date-fns";
 
-const CourseDetailPage = ({ course }: { course: CourseProps }) => {
-  const [selectRound, setSelectRound] = useState(course.rounds[0]);
+const CourseDetailPage = ({
+  course,
+  date,
+}: {
+  course: CourseProps;
+  date: Date;
+}) => {
+  const [selectRound, setSelectRound] = useState(() => {
+    if (date) {
+      const targetDate = new Date(date);
+      const foundRound = course.rounds.find((r) =>
+        isSameDay(new Date(r.startDateTime), targetDate)
+      );
+      if (foundRound) return foundRound;
+    }
+    return course.rounds[0];
+  });
   const { setBooking } = useBooking();
 
   const { dateLabel, timeLabel } = formatRoundEnglish(
@@ -229,7 +245,14 @@ const CourseDetailPage = ({ course }: { course: CourseProps }) => {
           </div>
           <CourseCalendar
             rounds={course.rounds}
-            onDateSelect={(date, rounds) => setSelectRound(rounds[0])}
+            // 🔥 ส่ง prop selectedDate ไปยัง Calendar
+            selectedDate={new Date(selectRound.startDateTime)}
+            onDateSelect={(date, rounds) => {
+              // เมื่อเลือกวันที่ในปฏิทิน ให้เลือก Round แรกของวันนั้น
+              if (rounds && rounds.length > 0) {
+                setSelectRound(rounds[0]);
+              }
+            }}
           />
         </div>
       </div>

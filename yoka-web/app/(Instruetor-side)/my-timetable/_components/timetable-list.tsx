@@ -7,7 +7,7 @@ const TimeTableList = () => {
     <div className="min-h-max pt-32 pb-20">
       <div className="container mx-auto  max-w-6xl">
         {/* --- Header Section --- */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
           <div className="space-y-3">
             {/* Tagline */}
             <div className="inline-flex items-center gap-2 text-primary font-medium text-xs uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full w-fit">
@@ -35,7 +35,6 @@ const TimeTableList = () => {
         </div>
 
         {/* --- Main Content --- */}
-        {/* ใช้ Card สีขาวสะอาด มุมโค้งมน พร้อมเงาฟุ้งๆ (Soft Shadow) */}
         <CalendarAddTime />
       </div>
     </div>

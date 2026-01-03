@@ -4,15 +4,20 @@ import React, { useState, useMemo, useEffect } from "react";
 
 interface CourseCalendarProps {
   rounds: RoundCourseType[];
+  // รับค่าวันที่ที่เลือกจาก Parent Component
+  selectedDate?: Date;
   onDateSelect?: (date: Date, roundsOnDate: RoundCourseType[]) => void;
 }
 
 const CourseCalendar: React.FC<CourseCalendarProps> = ({
   rounds,
+  selectedDate: externalSelectedDate, // ตั้งชื่อใหม่เพื่อไม่ให้สับสนกับ state ภายใน
   onDateSelect,
 }) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [currentDate, setCurrentDate] = useState(new Date()); // เดือนที่กำลังดูอยู่
+  const [internalSelectedDate, setInternalSelectedDate] = useState<Date | null>(
+    null
+  ); // วันที่ถูกเลือก (State ภายใน)
 
   // Helper: วันนี้ (00:00:00)
   const today = useMemo(() => {
@@ -29,8 +34,20 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
     );
   };
 
-  // 1. Initial Load: หา "รอบแรกสุด" ในอนาคต แล้วเลือกให้อัตโนมัติ
+  // --- 1. Effect: Sync กับ Prop จากภายนอก (สำคัญมาก) ---
   useEffect(() => {
+    if (externalSelectedDate) {
+      setInternalSelectedDate(externalSelectedDate);
+      // เปลี่ยนหน้าปฏิทินไปเดือนของวันที่เลือกด้วย เพื่อให้ User ไม่หลง
+      setCurrentDate(new Date(externalSelectedDate));
+    }
+  }, [externalSelectedDate]);
+
+  // --- 2. Effect: Initial Load (Fallback กรณีไม่มี Prop ส่งมา) ---
+  useEffect(() => {
+    // ถ้ามี Prop ส่งมาแล้ว ไม่ต้องทำ Auto-select เอง
+    if (externalSelectedDate) return;
+
     if (rounds.length > 0) {
       const sortedRounds = [...rounds].sort(
         (a, b) =>
@@ -47,7 +64,7 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
       if (firstRound) {
         const targetDate = new Date(firstRound.startDateTime);
         setCurrentDate(new Date(targetDate));
-        setSelectedDate(targetDate);
+        setInternalSelectedDate(targetDate);
 
         if (onDateSelect) {
           const roundsOnThisDate = rounds.filter((r) =>
@@ -58,9 +75,9 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rounds]);
+  }, [rounds]); // ตัด dependency externalSelectedDate ออกเพื่อป้องกัน loop
 
-  // 2. Map วันที่มีกิจกรรม
+  // 3. Map วันที่มีกิจกรรม
   const eventDates = useMemo(() => {
     const dates = new Set<string>();
     rounds.forEach((round) => {
@@ -73,14 +90,13 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
 
   // ฟังก์ชันกดเลือกวัน
   const handleDayClick = (date: Date, hasEvent: boolean) => {
-    // 1. ห้ามกดวันอดีต
     if (date < today) return;
-
-    // 2. ห้ามกดถ้าไม่มี Event (แม้จะมี Hover ก็ตาม)
     if (!hasEvent) return;
 
-    setSelectedDate(date);
+    // อัปเดต state ภายในทันทีเพื่อให้ UI ลื่นไหล
+    setInternalSelectedDate(date);
 
+    // ส่งค่ากลับไปหา Parent
     if (onDateSelect) {
       const roundsOnThisDate = rounds.filter((r) =>
         isSameDay(new Date(r.startDateTime), date)
@@ -133,7 +149,7 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
         <div className="flex gap-1">
           <button
             onClick={() => changeMonth(-1)}
-            className="p-1 hover:bg-slate-100 rounded-full text-slate-500"
+            className="p-1 hover:bg-slate-100 rounded-full text-slate-500 cursor-pointer"
           >
             <svg
               className="w-5 h-5"
@@ -151,7 +167,7 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
           </button>
           <button
             onClick={() => changeMonth(1)}
-            className="p-1 hover:bg-slate-100 rounded-full text-slate-500"
+            className="p-1 hover:bg-slate-100 rounded-full text-slate-500 cursor-pointer"
           >
             <svg
               className="w-5 h-5"
@@ -198,8 +214,10 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
 
           const isPast = loopDate < today;
           const isCurrentDay = isSameDay(loopDate, today);
-          const isSelected = selectedDate
-            ? isSameDay(loopDate, selectedDate)
+
+          // ใช้ internalSelectedDate ในการเช็คว่าวันไหนถูกเลือก
+          const isSelected = internalSelectedDate
+            ? isSameDay(loopDate, internalSelectedDate)
             : false;
 
           return (
@@ -210,23 +228,21 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
                 h-10 flex flex-col items-center justify-center rounded-lg relative transition-all border border-transparent
                 ${
                   isPast
-                    ? "text-slate-300 cursor-not-allowed" // อดีต: จาง ไม่ Hover
-                    : "hover:bg-emerald-100 hover:text-emerald-600 " // อนาคต/วันนี้: มี Hover Effect ทุกตัว (ตามโจทย์)
+                    ? "text-slate-300 cursor-not-allowed"
+                    : "hover:bg-emerald-100 hover:text-emerald-600 "
                 }
                 ${
-                  // Style เพิ่มเติม แยกตามเงื่อนไข
                   isPast
                     ? ""
                     : isSelected
-                    ? "bg-emerald-600 text-white shadow-md cursor-pointer scale-105" // ถูกเลือก
-                    : hasEvent
-                    ? "cursor-pointer text-slate-700" // มีกิจกรรม: กดได้ (Pointer)
-                    : "cursor-default text-slate-400" // ไม่มีกิจกรรม: กดไม่ได้ (Default Cursor) แต่มี Hover จากข้างบน
+                      ? "bg-emerald-600 text-white shadow-md cursor-pointer scale-105"
+                      : hasEvent
+                        ? "cursor-pointer text-slate-700 font-medium bg-emerald-50" // เพิ่มสีพื้นจางๆ ให้วันที่เรียน
+                        : "cursor-default text-slate-400"
                 }
                 ${
-                  // วันนี้ (ถ้าไม่ได้ถูกเลือก) ให้ใส่กรอบหรือสีพื้นจางๆ หน่อย
                   !isSelected && isCurrentDay && !isPast
-                    ? "bg-emerald-100 text-emerald-600 font-bold"
+                    ? "border-emerald-200 text-emerald-600 font-bold border"
                     : ""
                 }
               `}
@@ -236,12 +252,12 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
               {/* --- จุด (Dot) --- */}
               {hasEvent && (
                 <span
-                  className={`absolute bottom-1 animate-pulse w-1.5 h-1.5 rounded-full ${
+                  className={`absolute bottom-1 w-1.5 h-1.5 rounded-full ${
                     isSelected
                       ? "bg-white"
                       : isPast
-                      ? "bg-emerald-200"
-                      : "bg-emerald-500"
+                        ? "bg-emerald-200"
+                        : "bg-emerald-500 animate-pulse"
                   }`}
                 ></span>
               )}

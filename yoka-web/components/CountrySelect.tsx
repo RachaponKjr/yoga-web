@@ -25,7 +25,6 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
       try {
         // ใช้ API ที่คุณระบุ
         const response = await fetch("https://www.apicountries.com/countries");
-        console.log(response);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

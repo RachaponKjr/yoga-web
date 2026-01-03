@@ -1,4 +1,5 @@
 import http from "@/lib/http";
+import { Round } from "@/types/round.type";
 
 export const courseService = {
   // รับ config เพิ่มเติม (เผื่อส่ง Cookie จาก Server)
@@ -41,6 +42,7 @@ export const courseService = {
         limit: 10,
       },
     });
+
     return response.data;
   },
 
@@ -50,6 +52,16 @@ export const courseService = {
         "Content-Type": "multipart/form-data",
       },
     });
+    return response.data;
+  },
+
+  createRound: async (round: Round) => {
+    const response = await http.post("/course/set-round", round);
+    return response.data;
+  },
+
+  getMyRound: async () => {
+    const response = await http.get(`/course/round-my-round`);
     return response.data;
   },
 
