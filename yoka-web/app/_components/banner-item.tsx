@@ -6,7 +6,7 @@ import Image from "next/image";
 const BannerItem = ({ className }: { className?: string }) => {
   return (
     // ปรับ my-12 เป็น my-8 บนมือถือเพื่อให้กระชับขึ้น
-    <section className={`w-full p-4 md:p-6 my-0 md:my-24`}>
+    <section className={`w-full p-4 md:p-6 my-0 md:mt-24`}>
       <div
         // 1. aspect-auto บนมือถือ (เพื่อให้สูงตามเนื้อหา) แล้วค่อยเป็น aspect-16/4 บนจอใหญ่
         // 2. ลด padding จาก p-14 เป็น p-6 บนมือถือ
