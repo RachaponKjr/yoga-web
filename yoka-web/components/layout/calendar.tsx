@@ -265,7 +265,7 @@ const Calendar = () => {
                   {/* --- Image Section --- */}
                   <div className="relative shrink-0 w-full sm:w-[120px] aspect-video sm:aspect-square rounded-lg border border-gray-200 overflow-hidden bg-white">
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${event.course.cover_image}`}
+                      src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${event.course.cover_image}`}
                       alt="course cover"
                       fill
                       className="object-cover object-center hover:scale-105 transition-transform duration-500"

@@ -52,7 +52,7 @@ const CourseItem = ({
       <div className="relative w-full aspect-video bg-gray-100 overflow-hidden">
         {course.cover_image ? (
           <Image
-            src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${course.cover_image}`}
+            src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.cover_image}`}
             alt={course.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"

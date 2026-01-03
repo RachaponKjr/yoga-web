@@ -115,7 +115,7 @@ const CourseDetailPage = ({
                 className={`col-span-4 md:col-span-3 row-span-2 relative group cursor-pointer overflow-hidden bg-slate-200`}
               >
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${course.cover_image}`}
+                  src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.cover_image}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   alt="Main Course Image"
                   fill
@@ -133,7 +133,7 @@ const CourseDetailPage = ({
                       className="flex-1 relative overflow-hidden group bg-slate-200"
                     >
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${image}`}
+                        src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${image}`}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         alt={`Gallery Image ${index + 1}`}
                         fill
@@ -190,7 +190,7 @@ const CourseDetailPage = ({
               <Avatar className="size-24 border-4 border-white shadow-md z-10">
                 {course.teacher?.userInfo?.avatar ? (
                   <AvatarImage
-                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${course.teacher?.userInfo?.avatar}`}
+                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.teacher?.userInfo?.avatar}`}
                     className="object-cover"
                   />
                 ) : (

@@ -17,7 +17,7 @@ const UserCardGlass = ({
 }) => {
   // สร้าง URL รูปภาพ หรือใช้ Placeholder ถ้าไม่มีรูป
   const imageSrc = avatar
-    ? `${process.env.NEXT_PUBLIC_HOST_IMAGE}${avatar}`
+    ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${avatar}`
     : "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?q=80&w=2069&auto=format&fit=crop"; // รูป Default แนวโยคะ
 
   return (

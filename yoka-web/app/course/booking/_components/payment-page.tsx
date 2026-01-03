@@ -340,7 +340,7 @@ const PaymentPage = () => {
               <div
                 className="w-16 h-16 bg-slate-200 rounded-lg shrink-0 bg-cover bg-center"
                 style={{
-                  backgroundImage: `url("${process.env.NEXT_PUBLIC_HOST_IMAGE}${
+                  backgroundImage: `url("${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${
                     booking?.cover_image || "https://placehold.co/100"
                   }")`,
                 }}
