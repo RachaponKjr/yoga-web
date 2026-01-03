@@ -337,6 +337,15 @@ const getMyRoundService = async ({ userId }: { userId: string }) => {
           teacherId: userId, // Filter ว่าเอา Round ที่มาจาก Course ของ Teacher คนนี้
         },
       },
+      include: {
+        course: {
+          select: {
+            title: true,
+            cover_image: true,
+            description: true,
+          },
+        },
+      },
       orderBy: {
         startDateTime: "asc", // (Optional) เรียงตามเวลาเริ่ม
       },
