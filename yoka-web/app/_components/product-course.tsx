@@ -11,7 +11,7 @@ const ProductCourse = () => {
         height={500}
         src={leftLeft}
         alt="leftLeft"
-        className="absolute top-0 left-0 z-100 hidden md:block"
+        className="absolute top-0 left-0 z-0 hidden opacity-80 md:block"
       />
       <div className="container mx-auto flex flex-col justify-between gap-6 items-center w-full">
         <div className="flex flex-col justify-center items-center gap-2 w-full">

@@ -19,6 +19,16 @@ export const courseService = {
     return response.data;
   },
 
+  getCourseAll: async () => {
+    const response = await http.get(`/course/all`, {
+      params: {
+        page: 1,
+        limit: 10,
+      },
+    });
+    return response.data;
+  },
+
   getRoundToDay: async ({
     today,
     month,

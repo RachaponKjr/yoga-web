@@ -140,7 +140,7 @@ const CourseCalendar: React.FC<CourseCalendarProps> = ({
   ];
 
   return (
-    <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+    <div className="w-full  md:max-w-md bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
       {/* --- Header --- */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-slate-800">

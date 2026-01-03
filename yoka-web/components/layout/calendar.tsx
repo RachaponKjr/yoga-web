@@ -261,7 +261,7 @@ const Calendar = () => {
                 >
                   <div className="bg-white p-2 relative rounded-lg border border-gray-200 aspect-square overflow-hidden shadow-sm text-center h-full min-w-[80px]">
                     <Image
-                      src={`http://localhost:3001/${event.course.cover_image}`}
+                      src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${event.course.cover_image}`}
                       alt="teacher"
                       fill
                       className="object-cover object-center"
@@ -304,7 +304,9 @@ const Calendar = () => {
                         </span>
                         <Button
                           onClick={() =>
-                            router.push(`/course?courseId=${event.courseId}`)
+                            router.push(
+                              `/course?courseId=${event.courseId}&date=${event.startDateTime}`
+                            )
                           }
                           size={"sm"}
                           variant="default"

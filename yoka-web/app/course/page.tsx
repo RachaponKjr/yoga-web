@@ -2,9 +2,22 @@ import { notFound } from "next/navigation";
 import CoursePage from "./_components/course-page";
 import { courseService } from "@/service/course.service";
 import { CourseType, RoundCourseType } from "@/types/course.type";
+import { UserInfoType } from "@/types/auth.type";
+
+interface TeacherType extends UserInfoType {
+  userInfo: {
+    avatar: string | null;
+    experience: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    phone: string | null;
+    sex: string | null;
+  };
+}
 
 export interface CourseProps extends CourseType {
   rounds: RoundCourseType[];
+  teacher: TeacherType;
 }
 
 const page = async ({
@@ -17,6 +30,8 @@ const page = async ({
   const { data } = (await courseService.getCourseById(courseId as string)) as {
     data: CourseProps;
   };
+  console.log(data, "DATA");
+
   if (!data) {
     return notFound();
   }

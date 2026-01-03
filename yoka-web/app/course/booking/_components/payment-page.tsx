@@ -149,7 +149,7 @@ const PaymentPage = () => {
   );
 
   return (
-    <div className="flex justify-center items-center py-10">
+    <div className="flex justify-center items-center py-24">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row bg-white rounded-2xl p-6 lg:p-8 max-w-7xl w-full shadow-lg gap-8 mx-auto">
           {/* --- ฝั่งซ้าย: Credit Card Form --- */}
@@ -340,7 +340,7 @@ const PaymentPage = () => {
               <div
                 className="w-16 h-16 bg-slate-200 rounded-lg shrink-0 bg-cover bg-center"
                 style={{
-                  backgroundImage: `url("${
+                  backgroundImage: `url("${process.env.NEXT_PUBLIC_HOST_IMAGE}${
                     booking?.cover_image || "https://placehold.co/100"
                   }")`,
                 }}

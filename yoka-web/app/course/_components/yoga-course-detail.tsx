@@ -19,6 +19,7 @@ import CourseCalendar from "@/components/CourseCalendar";
 import { useBooking } from "@/store/useBooking";
 import { isSameDay } from "date-fns";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const CourseDetailPage = ({
   course,
@@ -38,7 +39,7 @@ const CourseDetailPage = ({
     return course.rounds[0];
   });
   const { setBooking } = useBooking();
-
+  const router = useRouter();
   const { dateLabel, timeLabel } = formatRoundEnglish(
     selectRound.startDateTime,
     selectRound.endDateTime
@@ -195,9 +196,11 @@ const CourseDetailPage = ({
                 ) : (
                   <AvatarImage src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1976&auto=format&fit=crop" />
                 )}
-                <AvatarFallback className="bg-emerald-200 text-emerald-800 font-bold text-xl">
-                  T
-                </AvatarFallback>
+                {course.teacher?.userInfo?.firstName && (
+                  <AvatarFallback className="bg-emerald-200 text-emerald-800 font-bold text-xl">
+                    {course.teacher.userInfo.firstName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                )}
               </Avatar>
 
               <div className="text-center sm:text-left flex-1 z-10">
@@ -213,7 +216,10 @@ const CourseDetailPage = ({
                     "Certified yoga instructor with over 5 years of experience specializing in Hatha and Vinyasa flow. Passionate about helping students find balance and strength."}
                 </p>
                 <div className="mt-6 flex justify-center sm:justify-start gap-4">
-                  <button className="text-emerald-700 font-semibold text-sm border-2 border-emerald-600/30 px-5 py-2.5 rounded-xl hover:bg-emerald-600 hover:text-white transition-all duration-300">
+                  <button
+                    onClick={() => router.push(`/instructor`)}
+                    className="text-emerald-700 font-semibold text-sm border-2 border-emerald-600/30 px-5 py-2.5 rounded-xl hover:bg-emerald-600 hover:text-white transition-all duration-300"
+                  >
                     View Full Profile
                   </button>
                 </div>
