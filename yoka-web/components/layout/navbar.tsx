@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { authService } from "@/service/auth.service";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface UserProps {
   user: {
@@ -32,7 +33,7 @@ interface UserProps {
 
 const Navbar = () => {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+  const { user, checkAuth, logout, isLoading } = useAuthStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -45,6 +46,11 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    // เรียกเช็ค Token ทันทีที่เข้าเว็บ
+    checkAuth();
+  }, [checkAuth]);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -199,23 +205,12 @@ const Navbar = () => {
 
 // Component Dropdown (เหมือนเดิม)
 const UserDropdown = ({ user }: UserProps) => {
-  const router = useRouter();
+  const { logout } = useAuthStore();
+
   const displayName =
     user?.userInfo?.firstName && user?.userInfo?.lastName
       ? `${user?.userInfo?.firstName} ${user?.userInfo?.lastName}`
       : user?.email;
-
-  const logout = async () => {
-    const res = await authService.logout();
-    if (res.success) {
-      toast.success("Logout successfully");
-      router.push("/");
-      useAuthStore.setState({ user: null });
-    } else {
-      toast.error("Logout failed");
-    }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -284,7 +279,9 @@ const UserDropdown = ({ user }: UserProps) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Button
-            onClick={logout}
+            onClick={async () => {
+              await logout();
+            }}
             variant={"outline"}
             className="w-full cursor-pointer"
           >
