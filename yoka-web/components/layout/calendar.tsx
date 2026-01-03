@@ -13,6 +13,7 @@ import {
   isSameDay,
   eachDayOfInterval,
   parseISO,
+  differenceInMinutes,
 } from "date-fns";
 import { th } from "date-fns/locale";
 import {
@@ -242,79 +243,94 @@ const Calendar = () => {
             <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
           </div>
         ) : roundCourse.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
+            {" "}
+            {/* เพิ่ม space-y ให้ห่างกันสวยงาม */}
             {roundCourse.map((event) => {
-              const startTime = format(new Date(event.startDateTime), "HH:mm");
-              const endTime = format(new Date(event.endDateTime), "HH:mm");
-              const duration = Number(endTime) - Number(startTime);
-
-              const hours = Math.floor(duration / (1000 * 60 * 60));
-              const minutes = Math.floor(
-                (duration % (1000 * 60 * 60)) / (1000 * 60)
-              );
-              const formattedDuration = `${hours} ชั่วโมง ${minutes} นาที`;
+              // --- 🛠️ แก้ไข Logic คำนวณเวลาให้ถูกต้อง ---
+              const start = new Date(event.startDateTime);
+              const end = new Date(event.endDateTime);
+              const diffInMinutes = differenceInMinutes(end, start);
+              const hours = Math.floor(diffInMinutes / 60);
+              const minutes = diffInMinutes % 60;
+              const formattedDuration =
+                `${hours > 0 ? `${hours} ชม.` : ""} ${minutes > 0 ? `${minutes} นาที` : ""}`.trim();
 
               return (
                 <div
                   key={event.id}
-                  className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-sm transition-shadow"
+                  // 📱 Mobile: flex-col (ตั้ง), 🖥️ Desktop: flex-row (นอน)
+                  className="flex flex-col sm:flex-row items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-md transition-all duration-200"
                 >
-                  <div className="bg-white p-2 relative rounded-lg border border-gray-200 aspect-square overflow-hidden shadow-sm text-center h-full min-w-[80px]">
+                  {/* --- Image Section --- */}
+                  <div className="relative shrink-0 w-full sm:w-[120px] aspect-video sm:aspect-square rounded-lg border border-gray-200 overflow-hidden bg-white">
                     <Image
                       src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${event.course.cover_image}`}
-                      alt="teacher"
+                      alt="course cover"
                       fill
-                      className="object-cover object-center"
+                      className="object-cover object-center hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-                  <div className="w-full">
-                    <div className="flex justify-between items-center w-full">
-                      <h4 className="text-md font-bold text-gray-800">
+
+                  {/* --- Content Section --- */}
+                  <div className="flex-1 w-full min-w-0">
+                    {" "}
+                    {/* min-w-0 ช่วยแก้ปัญหา truncate ไม่ทำงานใน flex */}
+                    {/* Header: Title & Date */}
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-4">
+                      <h4 className="text-base md:text-lg font-bold text-gray-800 line-clamp-1">
                         {event.course.title}
                       </h4>
-                      <span className="text-xs text-gray-600">
-                        วันที่เริ่ม:{" "}
-                        {format(new Date(event.startDateTime), "dd MMMM yyyy", {
-                          locale: th,
-                        })}
+                      <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md whitespace-nowrap">
+                        เริ่ม: {format(start, "d MMM yy", { locale: th })}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2 max-w-sm">
+                    {/* Description */}
+                    <p className="text-sm text-gray-500 mt-2 line-clamp-2">
                       {event.course.description}
                     </p>
-                    <div className="flex justify-between items-center w-full">
-                      <div className="flex items-center gap-4 mt-2">
-                        <span className="text-xs text-gray-600">
-                          ผู้สอน: {event.course.teacher.userInfo.firstName}{" "}
-                          {event.course.teacher.userInfo.lastName}
+                    {/* Details Tags (Responsive Grid/Flex) */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-gray-600">
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">ผู้สอน:</span>
+                        {event.course.teacher.userInfo.firstName}{" "}
+                        {event.course.teacher.userInfo.lastName}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">เวลา:</span>
+                        {formattedDuration}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                        Online: {event.max_online}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                        Walk-in: {event.max_walk_in}
+                      </div>
+                    </div>
+                    {/* Footer: Price & Button */}
+                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200/60">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-gray-400">
+                          ราคาต่อท่าน
                         </span>
-                        <span className="text-xs text-gray-600">
-                          จำนวนเวลาที่ใช้: {formattedDuration}
-                        </span>
-                        <span className="text-xs text-gray-600">
-                          จำนวนคนที่รับออนไลน์: {event.max_online}
-                        </span>
-                        <span className="text-xs text-gray-600">
-                          จำนวนคนที่รับออฟไลน์: {event.max_walk_in}
+                        <span className="text-lg font-bold text-blue-600">
+                          ฿{event.course.price.toLocaleString()}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold">
-                          {event.course.price}฿
-                        </span>
-                        <Button
-                          onClick={() =>
-                            router.push(
-                              `/course?courseId=${event.courseId}&date=${event.startDateTime}`
-                            )
-                          }
-                          size={"sm"}
-                          variant="default"
-                          className="cursor-pointer text-white bg-primary"
-                        >
-                          Booking
-                        </Button>
-                      </div>
+
+                      <Button
+                        onClick={() =>
+                          router.push(
+                            `/course?courseId=${event.courseId}&date=${event.startDateTime}`
+                          )
+                        }
+                        size="sm"
+                        className="bg-primary text-white hover:bg-primary/90 shadow-sm px-6"
+                      >
+                        จองเลย
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -322,8 +338,8 @@ const Calendar = () => {
             })}
           </div>
         ) : (
-          <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-            <p className="text-gray-400">ไม่มีคอร์สเรียนในวันนี้</p>
+          <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+            <p className="text-gray-400 font-medium">ไม่มีคอร์สเรียนในวันนี้</p>
           </div>
         )}
       </div>
