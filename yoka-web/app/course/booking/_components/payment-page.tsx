@@ -20,7 +20,6 @@ const PaymentPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
   const [totlePrice, setTotlePrice] = useState(0);
-  console.log(totlePrice, "totlePrice");
   // State สำหรับเก็บข้อมูลบัตร
   const [cardDetail, setCardDetail] = useState({
     cardNumber: "",
@@ -45,7 +44,6 @@ const PaymentPage = () => {
 
   // ราคาสุทธิที่ต้องจ่าย
   const grandTotal = subtotal + taxAmount - discountAmount;
-  console.log(grandTotal, "grandTotal");
   // ฟังก์ชันจัดการการพิมพ์ และจัดรูปแบบ (Formatting)
   const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
