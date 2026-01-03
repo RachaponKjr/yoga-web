@@ -1,21 +1,31 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { MapPin, Star, Clock, Calendar, CheckCircle, User } from "lucide-react";
+import {
+  MapPin,
+  Star,
+  Clock,
+  Calendar,
+  CheckCircle,
+  User,
+  Sparkles,
+  Share2,
+  Heart,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { CourseProps } from "../page";
 import { formatRoundEnglish, formatRoundTime } from "@/utils/format";
 import CourseCalendar from "@/components/CourseCalendar";
 import { useBooking } from "@/store/useBooking";
-import { useOmise } from "@/hooks/useOmise";
 import { isSameDay } from "date-fns";
+import Image from "next/image";
 
 const CourseDetailPage = ({
   course,
   date,
 }: {
   course: CourseProps;
-  date: Date;
+  date: Date | string;
 }) => {
   const [selectRound, setSelectRound] = useState(() => {
     if (date) {
@@ -52,208 +62,289 @@ const CourseDetailPage = ({
     setBooking,
   ]);
 
+  // Calculate Discount Percentage
+  const discountPercentage =
+    course.discount_price < course.price
+      ? Math.round(
+          ((course.price - course.discount_price) / course.price) * 100
+        )
+      : 0;
+
+  const availableSeats = selectRound.max_online - selectRound.current_online;
+
   return (
-    <div className="max-w-[1600px] mx-auto p-8 md:p-12 bg-white rounded-2xl    font-sans text-slate-800">
-      {/* Layout หลักแบ่งเป็น 2 ส่วน: เนื้อหา (2 ส่วน) และ การ์ดจอง (1 ส่วน) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-        {/* --- Left Content (Main) --- */}
-        <div className="lg:col-span-2 flex flex-col gap-8">
-          {/* Header Section */}
+    <div className="w-full mx-auto bg-white min-h-screen py-20 px-4 sm:px-6 lg:px-8 font-sans text-slate-800">
+      <div className="max-w-8xl mx-auto">
+        {/* --- Header Section & Actions --- */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div className="space-y-3">
-            <div className="flex flex-wrap gap-2 text-sm font-medium">
-              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">
-                Yoga
+            <div className="flex flex-wrap gap-2 text-sm font-semibold tracking-wide uppercase">
+              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full flex items-center gap-1">
+                <Sparkles size={14} /> Yoga Class
               </span>
-              <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
-                Beginner
-              </span>
+              {discountPercentage > 0 && (
+                <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+                  Special Offer
+                </span>
+              )}
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold leading-tight text-slate-900">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-slate-900 tracking-tight">
               {course.title}
             </h1>
-            <div className="flex items-center gap-4 text-slate-500 text-sm">
-              <div className="flex items-center gap-1">
-                <Star size={16} className="text-orange-400 fill-orange-400" />
-                <span className="font-semibold text-slate-800">4.8</span> (124
-                รีวิว)
-              </div>
-              <div className="flex items-center gap-1">
-                <MapPin size={16} />
-                <span>สุขุมวิท 39, กรุงเทพฯ</span>
-              </div>
-            </div>
           </div>
 
-          {/* Image Gallery (Bento Grid Style) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 h-[400px] md:h-[450px] overflow-hidden">
-            {/* รูปใหญ่ซ้าย */}
-            <div className="md:col-span-2 h-full relative group cursor-pointer rounded-2xl overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1544367563-12123d8965cd?q=80&w=2070&auto=format&fit=crop"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                alt="Main"
-              />
-            </div>
-            {/* รูปเล็กขวา 2 รูป */}
-            <div className="hidden md:flex flex-col gap-3 h-full">
-              <div className="flex-1 relative overflow-hidden group rounded-2xl o">
-                <img
-                  src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=2070&auto=format&fit=crop"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Sub 1"
-                />
-              </div>
-              <div className="flex-1 relative overflow-hidden group rounded-2xl o">
-                <img
-                  src="https://images.unsplash.com/photo-1599447421405-0e32096b3071?q=80&w=2070&auto=format&fit=crop"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Sub 2"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white font-medium border border-white/50 px-3 py-1 rounded-full backdrop-blur-sm">
-                    ดูรูปทั้งหมด
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="prose prose-slate max-w-none">
-            <h3 className="text-xl font-bold text-slate-900 mb-3">
-              รายละเอียดคอร์ส
-            </h3>
-            <p className="text-slate-600 leading-relaxed text-lg">
-              {course.description}
-            </p>
-          </div>
-
-          {/* Instructor Section */}
-          <div className="border border-slate-100 bg-slate-50/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <Avatar className="size-16">
-              <AvatarImage src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className="text-center sm:text-left flex-1">
-              <span className="text-sm font-bold text-emerald-600 tracking-wide uppercase">
-                ครูผู้สอน
-              </span>
-              <h4 className="text-xl font-bold text-slate-900 mt-1">
-                {course.teacher?.userInfo?.firstName || "ไม่ระบุ"}{" "}
-                {course.teacher?.userInfo?.lastName || "ไม่ระบุ"}
-              </h4>
-              <p className="text-slate-500 text-sm mt-2 leading-relaxed">
-                {course.teacher?.userInfo?.experience || "ไม่ระบุ"}
-              </p>
-            </div>
-            <button className="text-slate-900 font-medium text-sm border border-slate-300 px-4 py-2 rounded-lg hover:bg-white transition-colors">
-              ดูโปรไฟล์
+          {/* Actions Buttons */}
+          <div className="flex items-center gap-3">
+            <button className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all">
+              <Heart size={20} />
+            </button>
+            <button className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-all">
+              <Share2 size={20} />
             </button>
           </div>
         </div>
 
-        {/* --- Right Sidebar (Booking Card) --- */}
-        <div className="flex flex-col gap-4">
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 bg-white shadow-sm border border-slate-100 rounded-2xl p-4 lg:p-6">
-              <div className="flex justify-between items-end w-full">
-                {/* ส่วนของการแสดงราคา */}
-                <div className="flex items-center justify-between gap-3 w-full">
-                  <div>
-                    {/* ถ้ามีส่วนลด ให้แสดงราคาเต็มที่ขีดฆ่า */}
-                    {course.discount_price < course.price && (
-                      <span className="text-slate-400 text-sm line-through">
-                        THB {course.price.toLocaleString()}
-                      </span>
-                    )}
-
-                    <div className="text-3xl font-extrabold text-emerald-600">
-                      THB {course.discount_price.toLocaleString()}
-                    </div>
-                  </div>
-
-                  {/* แสดงป้าย SAVE % เฉพาะเมื่อมีส่วนลดเท่านั้น */}
-                  {course.discount_price < course.price && (
-                    <span className="bg-red-50 text-red-600 text-xs font-bold px-2 py-1 rounded-lg">
-                      SAVE{" "}
-                      {Math.round(
-                        ((course.price - course.discount_price) /
-                          course.price) *
-                          100
-                      )}
-                      %
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
-                  <Calendar
-                    className="text-slate-400 shrink-0 mt-0.5"
-                    size={20}
-                  />
-                  <div>
-                    <span className="block text-xs text-slate-500 font-bold uppercase">
-                      วันที่เรียน
-                    </span>
-                    <span className="text-slate-800 font-medium">
-                      {dateLabel}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
-                  <Clock className="text-slate-400 shrink-0 mt-0.5" size={20} />
-                  <div>
-                    <span className="block text-xs text-slate-500 font-bold uppercase">
-                      เวลา
-                    </span>
-                    <span className="text-slate-800 font-medium">
-                      {timeLabel}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
-                  <User className="text-slate-400 shrink-0 mt-0.5" size={20} />
-                  <div>
-                    <span className="block text-xs text-slate-500 font-bold uppercase">
-                      ที่ว่าง สำหรับจองออนไลน์
-                    </span>
-                    <span className="text-emerald-600 font-medium">
-                      ว่าง {selectRound.max_online - selectRound.current_online}{" "}
-                      ที่นั่งสุดท้าย
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={handleBooking}
-                className="w-full cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold py-3 rounded-md shadow-sm shadow-emerald-200 transition-all active:scale-[0.98]"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* --- Left Content (Main - 8 cols) --- */}
+          <div className="lg:col-span-8 flex flex-col gap-10">
+            {/* Image Gallery (Modern Grid Style) */}
+            <div className="grid grid-cols-4 grid-rows-2 gap-3 h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
+              {/* รูปใหญ่ซ้าย */}
+              <div
+                className={`col-span-4 md:col-span-3 row-span-2 relative group cursor-pointer overflow-hidden bg-slate-200`}
               >
-                <Link
-                  href={`/course/booking?roundId=${selectRound.id}`}
-                  className="w-full h-full flex items-center justify-center"
-                >
-                  จองคอร์สเรียน
-                </Link>
-              </button>
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${course.cover_image}`}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Main Course Image"
+                  fill
+                  priority
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
+              </div>
 
-              <p className="text-center text-xs text-slate-400 mt-4">
-                รับประกันคืนเงินภายใน 24 ชม. หลังจอง
-              </p>
+              {/* รูปเล็กขวา */}
+              <div className="hidden md:flex flex-col col-span-1 row-span-2 gap-3 h-full">
+                {course.images && course.images.length > 0 ? (
+                  course.images.slice(0, 2).map((image, index) => (
+                    <div
+                      key={index}
+                      className="flex-1 relative overflow-hidden group bg-slate-200"
+                    >
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${image}`}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        alt={`Gallery Image ${index + 1}`}
+                        fill
+                      />
+                      {index === 1 && course.images.length > 2 && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer group-hover:bg-black/40 transition-colors">
+                          <span className="text-white font-bold text-lg">
+                            +{course.images.length - 2} photos
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  // Placeholder ถ้าไม่มีรูปอื่น
+                  <div className="h-full bg-slate-100 flex items-center justify-center text-slate-400 font-medium">
+                    No extra photos
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <CheckCircle className="text-emerald-600" size={24} />
+                About this course
+              </h3>
+              <div className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed">
+                <p>{course.description}</p>
+                {/* ตัวอย่างการเพิ่ม List (ถ้ามีข้อมูล) */}
+                {/* <ul>
+                    <li>Suitable for all levels</li>
+                    <li>Mats and towels provided</li>
+                </ul> */}
+              </div>
+            </div>
+
+            {/* Instructor Section (Enhanced) */}
+            <div className="bg-linear-to-br from-emerald-50 to-white rounded-3xl p-8 border border-emerald-100 flex flex-col sm:flex-row items-center sm:items-start gap-8 shadow-sm relative overflow-hidden">
+              {/* Background Pattern Decor */}
+              <div className="absolute right-0 top-0 -mt-10 -mr-10 text-emerald-100 opacity-50">
+                <svg
+                  width="200"
+                  height="200"
+                  viewBox="0 0 200 200"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="100" cy="100" r="100" fill="currentColor" />
+                </svg>
+              </div>
+
+              <Avatar className="size-24 border-4 border-white shadow-md z-10">
+                {course.teacher?.userInfo?.avatar ? (
+                  <AvatarImage
+                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE}${course.teacher?.userInfo?.avatar}`}
+                    className="object-cover"
+                  />
+                ) : (
+                  <AvatarImage src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1976&auto=format&fit=crop" />
+                )}
+                <AvatarFallback className="bg-emerald-200 text-emerald-800 font-bold text-xl">
+                  T
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="text-center sm:text-left flex-1 z-10">
+                <span className="text-sm font-extrabold text-emerald-600 tracking-wider uppercase mb-2 block">
+                  Your Instructor
+                </span>
+                <h4 className="text-2xl font-bold text-slate-900">
+                  {course.teacher?.userInfo?.firstName || "Professional"}{" "}
+                  {course.teacher?.userInfo?.lastName || "Instructor"}
+                </h4>
+                <p className="text-slate-600 text-base mt-3 leading-relaxed">
+                  {course.teacher?.userInfo?.experience ||
+                    "Certified yoga instructor with over 5 years of experience specializing in Hatha and Vinyasa flow. Passionate about helping students find balance and strength."}
+                </p>
+                <div className="mt-6 flex justify-center sm:justify-start gap-4">
+                  <button className="text-emerald-700 font-semibold text-sm border-2 border-emerald-600/30 px-5 py-2.5 rounded-xl hover:bg-emerald-600 hover:text-white transition-all duration-300">
+                    View Full Profile
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <CourseCalendar
-            rounds={course.rounds}
-            // 🔥 ส่ง prop selectedDate ไปยัง Calendar
-            selectedDate={new Date(selectRound.startDateTime)}
-            onDateSelect={(date, rounds) => {
-              // เมื่อเลือกวันที่ในปฏิทิน ให้เลือก Round แรกของวันนั้น
-              if (rounds && rounds.length > 0) {
-                setSelectRound(rounds[0]);
-              }
-            }}
-          />
+
+          {/* --- Right Sidebar (Booking Card - 4 cols) --- */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <div className="sticky top-8">
+              {/* Booking Card (Elevated) */}
+              <div className="bg-white shadow-md shadow-emerald-100/50 border border-slate-100 rounded-3xl p-6 lg:p-8 overflow-hidden relative">
+                {/* Top Accent Line */}
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-linear-to-r from-emerald-400 to-teal-500"></div>
+
+                {/* Price Section */}
+                <div className="mb-8">
+                  <p className="text-slate-500 font-medium text-sm mb-1">
+                    Total Price (per person)
+                  </p>
+                  <div className="flex items-end gap-3 flex-wrap">
+                    <div className="text-4xl font-extrabold text-slate-900">
+                      ฿{course.discount_price.toLocaleString()}
+                    </div>
+                    {discountPercentage > 0 && (
+                      <>
+                        <span className="text-slate-400 text-lg line-through font-medium mb-1.5">
+                          ฿{course.price.toLocaleString()}
+                        </span>
+                        <span className="bg-red-100 text-red-700 text-xs font-extrabold px-2.5 py-1 rounded-full mb-2 ml-auto">
+                          SAVE {discountPercentage}%
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Details Info */}
+                <div className="space-y-4 mb-8 bg-slate-50/80 p-5 rounded-2xl border border-slate-100/80">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-white p-2 rounded-lg shadow-sm text-emerald-600">
+                      <Calendar size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <span className="block text-xs text-slate-500 font-bold uppercase tracking-wider">
+                        Date
+                      </span>
+                      <span className="text-slate-900 font-bold text-[15px]">
+                        {dateLabel}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full h-px bg-slate-200/60"></div>{" "}
+                  {/* Divider */}
+                  <div className="flex items-start gap-4">
+                    <div className="bg-white p-2 rounded-lg shadow-sm text-emerald-600">
+                      <Clock size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <span className="block text-xs text-slate-500 font-bold uppercase tracking-wider">
+                        Time
+                      </span>
+                      <span className="text-slate-900 font-bold text-[15px]">
+                        {timeLabel}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full h-px bg-slate-200/60"></div>{" "}
+                  {/* Divider */}
+                  <div className="flex items-start gap-4">
+                    <div className="bg-white p-2 rounded-lg shadow-sm text-emerald-600">
+                      <User size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <span className="block text-xs text-slate-500 font-bold uppercase tracking-wider">
+                        Availability
+                      </span>
+                      <span
+                        className={`${availableSeats > 3 ? "text-emerald-600" : "text-orange-600"} font-bold text-[15px]`}
+                      >
+                        {availableSeats > 0
+                          ? `${availableSeats} spots left`
+                          : "Sold Out"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA Button (Gradient) */}
+                <Link
+                  href={`/course/booking?roundId=${selectRound.id}`}
+                  onClick={handleBooking}
+                  className={`w-full group flex items-center justify-center gap-2 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200/50 transition-all duration-300 active:scale-[0.98] ${availableSeats === 0 ? "pointer-events-none opacity-70 grayscale" : ""}`}
+                >
+                  <span>Book Now</span>
+                  <CheckCircle
+                    size={20}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </Link>
+
+                <p className="text-center text-xs text-slate-400 mt-5 flex items-center justify-center gap-1.5">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-emerald-500"
+                  >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                  Secure payment. Cancel within 24h for full refund.
+                </p>
+              </div>
+
+              {/* Calendar Widget (Separate Card) */}
+              <div className="mt-6">
+                <CourseCalendar
+                  rounds={course.rounds}
+                  selectedDate={new Date(selectRound.startDateTime)}
+                  onDateSelect={(date, rounds) => {
+                    if (rounds && rounds.length > 0) {
+                      setSelectRound(rounds[0]);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

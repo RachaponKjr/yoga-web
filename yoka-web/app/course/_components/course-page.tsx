@@ -9,7 +9,13 @@ import {
 import CourseDetailPage from "./yoga-course-detail";
 import { CourseProps } from "../page";
 
-const CoursePage = ({ course, date }: { course: CourseProps; date: Date }) => {
+const CoursePage = ({
+  course,
+  date,
+}: {
+  course: CourseProps;
+  date: Date | string;
+}) => {
   return (
     <div className="container mx-auto flex flex-col gap-6">
       <Breadcrumb>

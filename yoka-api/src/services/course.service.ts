@@ -181,11 +181,11 @@ const getCourseByIdService = async ({ id }: { id: string }) => {
         id,
       },
       include: {
+        teacher: true,
         rounds: {
           orderBy: {
-            startDateTime: "asc", // เรียงจากวันที่ใกล้ที่สุดไปหาอนาคต
+            startDateTime: "asc",
           },
-          // หากต้องการเอาเฉพาะรอบที่ยังไม่หมดเวลา สามารถใส่ where เพิ่มได้
           where: { startDateTime: { gte: new Date() } },
         },
       },
@@ -235,32 +235,22 @@ const getCourseRoundTodayOrMonthService = async ({
   let startQueryDate: Date;
   let endQueryDate: Date;
 
-  // CASE 1: ค้นหารายวัน (Today)
   if (today) {
     startQueryDate = new Date(`${today}T00:00:00`);
 
-    // จบที่ 00:00 ของวันถัดไป
     endQueryDate = new Date(startQueryDate);
     endQueryDate.setDate(endQueryDate.getDate() + 1);
-  }
-  // CASE 2: ค้นหารายเดือน (Month)
-  else if (month) {
-    // สมมติ month ส่งมาเป็น "YYYY-MM" เช่น "2023-11"
-    // เริ่มวันที่ 1 ของเดือนนั้น
+  } else if (month) {
     startQueryDate = new Date(`${month}-01T00:00:00`);
 
-    // จบที่วันที่ 1 ของเดือนถัดไป (Prisma จะหาแบบ < endQueryDate คือไม่รวมวันเริ่มต้นของเดือนถัดไป)
     endQueryDate = new Date(startQueryDate);
     endQueryDate.setMonth(endQueryDate.getMonth() + 1);
-  }
-  // CASE 3: ไม่ส่งอะไรมาเลย
-  else {
+  } else {
     throw new Error(
       "Parameter required: 'today' (YYYY-MM-DD) or 'month' (YYYY-MM)"
     );
   }
 
-  // เช็คว่าวันที่ถูกต้องหรือไม่ (กัน User ส่ง string มั่วๆ มา)
   if (isNaN(startQueryDate.getTime()) || isNaN(endQueryDate.getTime())) {
     throw new Error(`Invalid Date format. Today: ${today}, Month: ${month}`);
   }

@@ -21,7 +21,7 @@ const page = async ({
     return notFound();
   }
 
-  return <CoursePage course={data} date={date} />;
+  return <CoursePage course={data} date={date as string} />;
 };
 
 export default page;
