@@ -181,7 +181,11 @@ const getCourseByIdService = async ({ id }: { id: string }) => {
         id,
       },
       include: {
-        teacher: true,
+        teacher: {
+          include: {
+            userInfo: true,
+          },
+        },
         rounds: {
           orderBy: {
             startDateTime: "asc",
