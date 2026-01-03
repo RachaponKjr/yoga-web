@@ -328,6 +328,26 @@ const deleteCourseService = async ({
   }
 };
 
+const getMyRoundService = async ({ userId }: { userId: string }) => {
+  try {
+    // เปลี่ยนจาก findMany ที่ courseYoga เป็น findMany ที่ courseRound
+    const rounds = await prisma.courseRound.findMany({
+      where: {
+        course: {
+          teacherId: userId, // Filter ว่าเอา Round ที่มาจาก Course ของ Teacher คนนี้
+        },
+      },
+      orderBy: {
+        startDateTime: "asc", // (Optional) เรียงตามเวลาเริ่ม
+      },
+    });
+
+    return rounds; // จะได้ Array ของ Round โดยตรงเลย
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   createCourseService,
   getCourseService,
@@ -339,4 +359,5 @@ export {
   getCourseRoundTodayOrMonthService,
   getMyCourseService,
   deleteCourseService,
+  getMyRoundService,
 };

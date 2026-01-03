@@ -11,6 +11,7 @@ import {
   getCourseRoundController,
   getCourseRoundTodayOrMonthController,
   getMyCourseController,
+  getMyRoundController,
 } from "../controllers/course.controller";
 import { createUploader } from "../middlewares/upload.middleware";
 
@@ -46,6 +47,7 @@ router.delete("/delete/:id", authMiddleware, deleteCourseController);
 router.get("/rounds", getCourseRoundController);
 router.get("/round-coursesId/:id", getCourseRoundByCourseIdController);
 router.get("/round-today-or-month", getCourseRoundTodayOrMonthController);
+router.get("/round-my-round", authMiddleware, getMyRoundController);
 
 router.get("/round/:id", getCourseRoundByIdController);
 router.put("/update/:id", () => {});

@@ -16,6 +16,7 @@ import {
   getCourseRoundTodayOrMonthService,
   getCourseService,
   getMyCourseService,
+  getMyRoundService,
 } from "../services/course.service";
 import { StatusCodes } from "http-status-codes";
 
@@ -402,6 +403,41 @@ const deleteCourseController = async (
   }
 };
 
+const getMyRoundController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const user = req.user;
+
+    const courseRound = await getMyRoundService({ userId: user?.id });
+
+    if (!courseRound) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "Course round not found",
+      });
+      return;
+    }
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Course round fetched successfully",
+      data: courseRound,
+    });
+    return;
+  } catch (error: Error | unknown) {
+    console.error("Get Course Round Error:", error); // Log ไว้ดูใน Server
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
 export {
   createCourseController,
   getCourseController,
@@ -413,4 +449,5 @@ export {
   getCourseRoundTodayOrMonthController,
   getMyCourseController,
   deleteCourseController,
+  getMyRoundController,
 };
