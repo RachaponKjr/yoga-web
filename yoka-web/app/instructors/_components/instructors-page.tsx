@@ -71,7 +71,7 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
               </DialogClose>
               <div className="flex flex-col md:grid md:grid-cols-5 h-[90vh] md:h-auto md:max-h-[65vh]">
                 {/* --- ส่วนรูปภาพ (Left / Top) --- */}
-                <div className="relative aspect-3/3 md:h-full md:col-span-2 bg-gray-100 overflow-hidden">
+                <div className="relative w-full md:h-full md:col-span-2 bg-gray-100 overflow-hidden">
                   <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent z-10 md:hidden" />{" "}
                   {/* Gradient สำหรับมือถือเพื่อให้ text อ่านง่าย */}
                   {instructor.userInfo.avatar ? (
