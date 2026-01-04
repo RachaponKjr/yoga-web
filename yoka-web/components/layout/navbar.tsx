@@ -275,6 +275,19 @@ const UserDropdown = ({ user }: UserProps) => {
             </DropdownMenuItem>
           </>
         )}
+        {user.role === "Admin" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-primary">
+              Admin Panel
+            </DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/dashboard" className="cursor-pointer">
+                Admin Dashboard
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
 
         <DropdownMenuSeparator />
         <DropdownMenuItem>

@@ -15,10 +15,10 @@ const Hero = () => {
             Yoga Studio & Restaurant
           </h1>
           <div className="flex flex-col gap-4">
-            <span className="text-[clamp(1rem,4vw,2rem)] text-[#132B28]">
+            <span className="text-sm md:text-2xl text-[#132B28]">
               Lorem ipsum dolor sit amet consectetur.
             </span>
-            <p className="text-[#666666] text-[clamp(0.5rem,4vw,2rem)]">
+            <p className="text-[#666666] text-sm md:text-lg max-w-2xl">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus
               maxime quibusdam praesentium recusandae tempora sunt, ipsa
               delectus facere modi nisi!

@@ -4,16 +4,21 @@ import Input from "@/components/ui/input";
 import { authService } from "@/service/auth.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AuthSchema } from "@/types/auth.type";
-import { setAuthToken } from "@/utils/cookie";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// 1. เพิ่ม useSearchParams
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const SignInPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
   const router = useRouter();
+  // 2. เรียกใช้ hook ดึงค่า query param
+  const searchParams = useSearchParams();
+  // ดึงค่า callbackUrl ถ้าไม่มีให้เป็น "/" (หน้าแรก)
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const { setUser } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,7 +39,7 @@ const SignInPage = () => {
         return;
       }
       if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        document.cookie = `token=${response.data.token}; path=/`;
       }
       setUser(response.data.user);
       toast.success("Login success", {
@@ -42,7 +47,9 @@ const SignInPage = () => {
         icon: "✅",
         className: "!text-green-500",
       });
-      router.push("/");
+
+      // 3. เปลี่ยนจาก "/" เป็น callbackUrl ที่เตรียมไว้
+      router.push(callbackUrl);
       router.refresh();
       return;
     } catch (error) {
@@ -60,17 +67,16 @@ const SignInPage = () => {
     <div className="h-max md:h-[calc(100vh-6rem)] container mx-auto my-24 md:my-0 px-4 md:px-0 flex items-center">
       <div className="bg-white w-full max-w-6xl mx-auto p-6 rounded-2xl shadow-md md:shadow-2xl flex gap-4">
         <div className="flex-1 py-8 flex flex-col  gap-8 items-center justify-between">
-          <div className="flex flex-col gap-8 items-center">
+          <div className="flex flex-col gap-8 items-center w-full">
             <div className="flex flex-col items-center gap-4">
               <h5 className="text-4xl font-semibold">Welcome Back!</h5>
               <p className="text-center text-sm text-[#666666] max-w-sm">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est,
-                mollitia.
+                Login to continue to your course booking.
               </p>
             </div>
             <form
               onSubmit={handleSubmit}
-              className="max-w-sm flex flex-col gap-4 w-full"
+              className="max-w-sm  flex flex-col gap-4 w-full"
             >
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="text-sm font-semibold">
@@ -121,8 +127,9 @@ const SignInPage = () => {
           <div className="w-full flex items-center justify-center">
             <p className="text-sm text-[#666666]">
               Don&apos;t have an account?{" "}
+              {/* ส่ง callbackUrl ไปที่หน้า signup ด้วย เผื่อเขาสมัครเสร็จจะได้เด้งกลับถูก */}
               <Link
-                href="/signup"
+                href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
                 className="text-primary cursor-pointer font-semibold"
               >
                 Sign Up

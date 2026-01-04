@@ -10,12 +10,14 @@ import { Loader2 } from "lucide-react";
 import { bookingService } from "@/service/booking.service";
 import { toast } from "sonner";
 import { paymentService } from "@/service/payment.service";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const PaymentPage = () => {
   const { booking, decrementQuantity, incrementQuantity } = useBooking();
   // 2. เรียกใช้ Hook
   // loading: คือสถานะว่า Script ของ Omise โหลดเสร็จหรือยัง (ถ้ายังไม่เสร็จ ห้ามกดปุ่ม)
   const { createToken, loading: isScriptLoading } = useOmise();
+  const { checkAuth } = useAuthStore();
   // State สำหรับ Loading ตอนกดปุ่มจ่ายเงิน (หมุนๆ)
   const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
@@ -94,10 +96,8 @@ const PaymentPage = () => {
 
     try {
       // 1. ขอ Token จาก Omise
-      console.log("💳 Creating Token...");
       const tokenResponse = await createToken(cardObject);
       const omiseToken = tokenResponse.id;
-      console.log(omiseToken, "omiseToken");
       const bookingRes = await bookingService.createBooking({
         roundId: booking?.id || "",
         type: "ONLINE",

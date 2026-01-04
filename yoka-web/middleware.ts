@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authService } from "./service/auth.service";
 
-const protectedPaths = ["/dashboard", "/admin", "/booking", "/profile2"];
+const protectedPaths = ["/dashboard", "/admin", "/booking", "/course/booking"];
 
 const isProtectedPath = (path: string) => {
   return protectedPaths.some((prefix) => path.startsWith(prefix));
@@ -12,10 +12,10 @@ export async function middleware(request: NextRequest) {
   const tokenValue = request.cookies.get("token")?.value;
 
   const isProtected = isProtectedPath(pathname);
-
+  console.log(tokenValue);
   if (!tokenValue) {
     if (isProtected) {
-      const url = new URL("/singin", request.url);
+      const url = new URL("/signin", request.url);
       url.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(url);
     }
@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
     console.error("Middleware Auth Error:", error);
 
     const response = isProtected
-      ? NextResponse.redirect(new URL("/singin", request.url))
+      ? NextResponse.redirect(new URL("/signin", request.url))
       : NextResponse.next();
 
     response.cookies.delete("token");
