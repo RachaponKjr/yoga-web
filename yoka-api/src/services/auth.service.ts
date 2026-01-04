@@ -102,10 +102,19 @@ const getInstructorService = async () => {
   return user;
 };
 
+const getUserAllService = async () => {
+  const user = await prisma.user.findMany({
+    include: { userInfo: true, bookings: true },
+  });
+
+  return user;
+};
+
 export {
   registerService,
   checkUserExistService,
   getUserService,
   updateProfilService,
   getInstructorService,
+  getUserAllService,
 };

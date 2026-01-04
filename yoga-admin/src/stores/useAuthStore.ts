@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { authService } from "../service/auth.service";
 import type { UserInfoType } from "../types/auth.type";
-
+import Cookies from "js-cookie";
 // 1. กำหนดหน้าตาของ User (ปรับตาม T
 interface User {
   id: string;
@@ -56,15 +56,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true }); // เริ่มหมุนติ้วๆ
     try {
       const token = localStorage.getItem("token");
+      const cookie = Cookies.get("token");
 
       // ถ้าไม่มี Token -> จบงาน เป็น Guest
-      if (!token) {
+      if (!token && !cookie) {
         set({ user: null, isAuthenticated: false, isLoading: false });
         return;
       }
 
       // ถ้ามี Token -> เอาไปถาม Server ว่า Token นี้ของใคร? ยังดีอยู่ไหม?
-      const userData = await authService.me(token); // ต้องแก้ service.me ให้รับ token หรืออ่านจาก header ได้
+      const userData = await authService.me(token || cookie); // ต้องแก้ service.me ให้รับ token หรืออ่านจาก header ได้
 
       if (userData) {
         // Token ดี -> Set User เข้า Store

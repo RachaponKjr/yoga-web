@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import Button from "../../components/share/Button";
 import { authService } from "../../service/auth.service";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const SignInPage = () => {
+  const navigate = useNavigate();
+  const { setUser } = useAuthStore();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,8 +27,17 @@ const SignInPage = () => {
     try {
       const res = await authService.login(formData);
       console.log(res);
+      if (res.success && res.data.token) {
+        setUser(res.data.user);
+        Cookies.set("token", res.data.token);
+        toast.success("Login successfully");
+        navigate("/");
+      } else {
+        toast.error("Login failed");
+      }
     } catch (error) {
       console.log(error);
+      toast.error("Login failed");
     }
   };
 

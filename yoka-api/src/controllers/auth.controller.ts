@@ -11,6 +11,7 @@ import jwt, { SignOptions } from "jsonwebtoken";
 import {
   checkUserExistService,
   getInstructorService,
+  getUserAllService,
   getUserService,
   registerService,
   updateProfilService,
@@ -285,6 +286,37 @@ const getInstructorController = async (
   }
 };
 
+const getUserAllController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userRes = await getUserAllService();
+    if (!userRes) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "User not found!",
+      });
+      return;
+    }
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "User found successfully",
+      data: userRes,
+    });
+    return;
+  } catch (error) {
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: "Server error!",
+    });
+    return;
+  }
+};
+
 export {
   registerController,
   loginController,
@@ -292,4 +324,5 @@ export {
   getMeController,
   updateProfileController,
   getInstructorController,
+  getUserAllController,
 };

@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { Loader2 } from "lucide-react"; // หรือ Icon loading ที่คุณใช้
-import { useAuthStore } from "../stores/useAuthStore";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 interface ProtectedRouteProps {
   allowedRoles?: string[]; // รับ role ที่อนุญาตให้เข้าได้ (เป็น Array)
@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { user, isAuthenticated, isLoading } = useAuthStore();
-
+  console.log(user);
   // 1. ถ้ากำลังเช็ค Token อยู่ ให้หมุนรอก่อน (สำคัญมาก ไม่งั้นจะโดนดีดออกตอน Refresh)
   if (isLoading) {
     return (
