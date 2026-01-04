@@ -30,6 +30,7 @@ const SignInPage = () => {
       if (res.success && res.data.token) {
         setUser(res.data.user);
         Cookies.set("token", res.data.token);
+        localStorage.setItem("token", res.data.token);
         toast.success("Login successfully");
         navigate("/");
       } else {

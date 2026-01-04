@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Search,
   Filter,
@@ -11,84 +10,101 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { bookingService } from "@/service/booking.service";
 
 const BookingPage = () => {
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await bookingService.getAllBooking();
+        console.log(response);
+        setBookings(response.data);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
+    };
+    fetchBookings();
+  }, []);
+
   // 1. Mock Data: ข้อมูลจำลองการจอง
-  const bookings = [
-    {
-      id: "BK-001",
-      user: {
-        name: "อารยา สวยงาม",
-        image: "https://i.pravatar.cc/150?u=1",
-        phone: "081-234-5678",
-      },
-      classInfo: { name: "Morning Vinyasa", level: "Intermediate" },
-      date: "12 ต.ค. 2023",
-      time: "08:00 - 09:00",
-      status: "Confirmed", // Confirmed, Pending, Cancelled
-      price: "฿450",
-      paymentMethod: "Credit Card",
-    },
-    {
-      id: "BK-002",
-      user: {
-        name: "สมชาย ใจดี",
-        image: "https://i.pravatar.cc/150?u=2",
-        phone: "089-999-8888",
-      },
-      classInfo: { name: "Hatha Yoga Basic", level: "Beginner" },
-      date: "12 ต.ค. 2023",
-      time: "10:00 - 11:30",
-      status: "Pending",
-      price: "฿350",
-      paymentMethod: "Transfer",
-    },
-    {
-      id: "BK-003",
-      user: {
-        name: "Nancy Johnson",
-        image: "https://i.pravatar.cc/150?u=3",
-        phone: "090-555-4444",
-      },
-      classInfo: { name: "Pilates Mat", level: "All Levels" },
-      date: "13 ต.ค. 2023",
-      time: "17:00 - 18:00",
-      status: "Cancelled",
-      price: "฿500",
-      paymentMethod: "-",
-    },
-    {
-      id: "BK-004",
-      user: {
-        name: "เอกชัย มานะ",
-        image: "https://i.pravatar.cc/150?u=4",
-        phone: "082-333-2222",
-      },
-      classInfo: { name: "Ashtanga Yoga", level: "Advanced" },
-      date: "13 ต.ค. 2023",
-      time: "19:00 - 20:30",
-      status: "Confirmed",
-      price: "฿450",
-      paymentMethod: "Cash",
-    },
-    {
-      id: "BK-005",
-      user: {
-        name: "วิภาดา รักษ์สุขภาพ",
-        image: "https://i.pravatar.cc/150?u=5",
-        phone: "086-777-6666",
-      },
-      classInfo: { name: "Morning Vinyasa", level: "Intermediate" },
-      date: "14 ต.ค. 2023",
-      time: "08:00 - 09:00",
-      status: "Confirmed",
-      price: "฿450",
-      paymentMethod: "Credit Card",
-    },
-  ];
+  //   const bookings = [
+  //     {
+  //       id: "BK-001",
+  //       user: {
+  //         name: "อารยา สวยงาม",
+  //         image: "https://i.pravatar.cc/150?u=1",
+  //         phone: "081-234-5678",
+  //       },
+  //       classInfo: { name: "Morning Vinyasa", level: "Intermediate" },
+  //       date: "12 ต.ค. 2023",
+  //       time: "08:00 - 09:00",
+  //       status: "Confirmed", // Confirmed, Pending, Cancelled
+  //       price: "฿450",
+  //       paymentMethod: "Credit Card",
+  //     },
+  //     {
+  //       id: "BK-002",
+  //       user: {
+  //         name: "สมชาย ใจดี",
+  //         image: "https://i.pravatar.cc/150?u=2",
+  //         phone: "089-999-8888",
+  //       },
+  //       classInfo: { name: "Hatha Yoga Basic", level: "Beginner" },
+  //       date: "12 ต.ค. 2023",
+  //       time: "10:00 - 11:30",
+  //       status: "Pending",
+  //       price: "฿350",
+  //       paymentMethod: "Transfer",
+  //     },
+  //     {
+  //       id: "BK-003",
+  //       user: {
+  //         name: "Nancy Johnson",
+  //         image: "https://i.pravatar.cc/150?u=3",
+  //         phone: "090-555-4444",
+  //       },
+  //       classInfo: { name: "Pilates Mat", level: "All Levels" },
+  //       date: "13 ต.ค. 2023",
+  //       time: "17:00 - 18:00",
+  //       status: "Cancelled",
+  //       price: "฿500",
+  //       paymentMethod: "-",
+  //     },
+  //     {
+  //       id: "BK-004",
+  //       user: {
+  //         name: "เอกชัย มานะ",
+  //         image: "https://i.pravatar.cc/150?u=4",
+  //         phone: "082-333-2222",
+  //       },
+  //       classInfo: { name: "Ashtanga Yoga", level: "Advanced" },
+  //       date: "13 ต.ค. 2023",
+  //       time: "19:00 - 20:30",
+  //       status: "Confirmed",
+  //       price: "฿450",
+  //       paymentMethod: "Cash",
+  //     },
+  //     {
+  //       id: "BK-005",
+  //       user: {
+  //         name: "วิภาดา รักษ์สุขภาพ",
+  //         image: "https://i.pravatar.cc/150?u=5",
+  //         phone: "086-777-6666",
+  //       },
+  //       classInfo: { name: "Morning Vinyasa", level: "Intermediate" },
+  //       date: "14 ต.ค. 2023",
+  //       time: "08:00 - 09:00",
+  //       status: "Confirmed",
+  //       price: "฿450",
+  //       paymentMethod: "Credit Card",
+  //     },
+  //   ];
 
   // Function แปลงสถานะเป็น Badge สวยๆ
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "Confirmed":
         return (

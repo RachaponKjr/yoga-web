@@ -9,9 +9,11 @@ import {
   ChevronRight,
   BookIcon,
 } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Sidebar = () => {
   const location = useLocation();
+  const { logout, user } = useAuthStore();
   const [expanded, setExpanded] = useState(true); // State ควบคุมการหุบ/ขยาย
 
   const menuItems = [
@@ -21,9 +23,9 @@ const Sidebar = () => {
     { name: "จัดการสมาชิก", path: "/users", icon: Users },
   ];
 
-  const handleLogout = () => {
-    console.log("Logout");
-    // ใส่ logic logout
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
   };
 
   return (
@@ -138,16 +140,16 @@ const Sidebar = () => {
               }`}
             >
               <div className="leading-4">
-                <h4 className="font-semibold text-sm text-gray-700">
-                  คุณแอดมิน
+                <h4 className="font-semibold text-sm text-gray-700 whitespace-nowrap max-w-[100px]">
+                  {user?.email}
                 </h4>
-                <span className="text-xs text-gray-500">super_admin</span>
+                <span className="text-xs text-gray-500">{user?.role}</span>
               </div>
 
               {/* ปุ่ม Logout แบบ Minimal */}
               <button
                 onClick={handleLogout}
-                className="p-1.5 rounded-md hover:bg-white hover:text-red-500 text-gray-400 transition-colors shadow-sm"
+                className="p-1.5 rounded-md cursor-pointer hover:bg-white hover:text-red-500 text-gray-400 transition-colors shadow-sm"
               >
                 <LogOut size={16} />
               </button>

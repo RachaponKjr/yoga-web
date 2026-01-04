@@ -8,7 +8,6 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { user, isAuthenticated, isLoading } = useAuthStore();
-  console.log(user);
   // 1. ถ้ากำลังเช็ค Token อยู่ ให้หมุนรอก่อน (สำคัญมาก ไม่งั้นจะโดนดีดออกตอน Refresh)
   if (isLoading) {
     return (
@@ -18,8 +17,10 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     );
   }
 
+  console.log(user, isAuthenticated);
+
   // 2. ถ้ายังไม่ Login ให้ไปหน้า Sign In
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || user === null) {
     // แนบ callbackUrl ไปด้วยเพื่อให้ Login เสร็จแล้วเด้งกลับมาหน้านี้
     return <Navigate to="/signin" replace />;
   }

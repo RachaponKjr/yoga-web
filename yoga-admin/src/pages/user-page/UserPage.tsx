@@ -9,63 +9,64 @@ import {
   User,
 } from "lucide-react";
 import AddUser from "./AddUser";
+import { useState, useEffect } from "react";
+import { authService } from "../../service/auth.service";
+import Cookies from "js-cookie";
+import type { UserInfoType, UserType } from "@/types/auth.type";
+
+interface UserProps extends UserType {
+  createdAt: string;
+  userInfo: UserInfoType;
+}
 
 const UserPage = () => {
-  // 1. Mock Data: ข้อมูลผู้ใช้งาน
-  const users = [
-    {
-      id: 1,
-      name: "คุณแอดมิน สูงสุด",
-      email: "admin@yoga.com",
-      phone: "081-111-2222",
-      avatar: "https://i.pravatar.cc/150?u=1",
-      role: "Admin",
-      gender: "Male", // เพิ่มข้อมูลเพศ
-      joinedDate: "01 ม.ค. 2022",
-    },
-    {
-      id: 2,
-      name: "ครูพี่แอน โยคะ",
-      email: "anne.teach@yoga.com",
-      phone: "089-555-4444",
-      avatar: "https://i.pravatar.cc/150?u=20",
-      role: "Instructor",
-      gender: "Female",
-      joinedDate: "15 ก.พ. 2022",
-    },
-    {
-      id: 3,
-      name: "พิมพ์มาดา รักสุขภาพ",
-      email: "pim.m@example.com",
-      phone: "090-999-8888",
-      avatar: "https://i.pravatar.cc/150?u=10",
-      role: "User",
-      gender: "Female",
-      joinedDate: "10 ม.ค. 2023",
-    },
-    {
-      id: 4,
-      name: "สมชาย ใจดี",
-      email: "somchai@example.com",
-      phone: "081-444-5555",
-      avatar: "https://i.pravatar.cc/150?u=25",
-      role: "User",
-      gender: "Male",
-      joinedDate: "20 พ.ค. 2023",
-    },
-    {
-      id: 5,
-      name: "John Smith",
-      email: "john@example.com",
-      phone: "082-333-7777",
-      avatar: "https://i.pravatar.cc/150?u=12",
-      role: "Instructor",
-      gender: "Male",
-      joinedDate: "05 มี.ค. 2023",
-    },
-  ];
+  const [users, setUsers] = useState<UserProps[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Helper: Role Badge (แสดงสีตามสิทธิ์)
+  // 1. เพิ่ม State สำหรับคำค้นหา
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const token = Cookies.get("token");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const response = await authService.getUserAll({ token });
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [token]);
+
+  // 2. Logic การกรองข้อมูล (Filter)
+  const filteredUsers = users.filter((user) => {
+    // แปลงคำค้นหาเป็นตัวเล็กเพื่อให้ค้นหาแบบ Case Insensitive
+    const term = searchTerm.toLowerCase();
+
+    // ดึงค่า field ต่างๆ มาเตรียมไว้ (กัน null ด้วย || "")
+    const firstName = user.userInfo?.firstName?.toLowerCase() || "";
+    const lastName = user.userInfo?.lastName?.toLowerCase() || "";
+    const email = user.email?.toLowerCase() || "";
+    const phone = user.userInfo?.phone_number?.toLowerCase() || "";
+    const role = user.role?.toLowerCase() || "";
+
+    // เช็คว่ามีคำค้นหาอยู่ใน field ใด field หนึ่งหรือไม่
+    return (
+      firstName.includes(term) ||
+      lastName.includes(term) ||
+      email.includes(term) ||
+      phone.includes(term) ||
+      role.includes(term)
+    );
+  });
+
+  // Helper: Role Badge
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "Admin":
@@ -91,7 +92,7 @@ const UserPage = () => {
     }
   };
 
-  // Helper: Gender Badge (แสดงสีตามเพศ)
+  // Helper: Gender Badge
   const getGenderBadge = (gender: string) => {
     switch (gender) {
       case "Male":
@@ -111,9 +112,19 @@ const UserPage = () => {
     }
   };
 
+  // Helper: Format Date (แปลงวันที่ให้สวยงาม)
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString("th-TH", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="bg-gray-50/50 min-h-max font-sans">
-      {/* 1. Header Section */}
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
@@ -123,24 +134,25 @@ const UserPage = () => {
             กำหนดสิทธิ์การใช้งาน: Admin, Instructor, User
           </p>
         </div>
-        <AddUser />
+        {/* <AddUser /> */}
       </div>
 
-      {/* 2. Main Table Container */}
+      {/* Main Table Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Toolbar */}
         <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4 items-center">
           <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+
+            {/* 3. ผูก Input กับ State searchTerm */}
             <input
               type="text"
-              placeholder="ค้นหาชื่อ, สิทธิ์ หรืออีเมล..."
+              placeholder="ค้นหาชื่อ, สิทธิ์, เบอร์ หรืออีเมล..."
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 text-gray-600 hover:bg-gray-50 rounded-xl text-sm font-medium transition-colors border border-gray-200 hover:border-gray-300">
-            <Filter size={18} /> ตัวกรอง
-          </button>
         </div>
 
         {/* Table */}
@@ -154,7 +166,6 @@ const UserPage = () => {
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   สิทธิ์ (Role)
                 </th>
-                {/* เปลี่ยนจาก สถานะ เป็น เพศ */}
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   เพศ
                 </th>
@@ -170,74 +181,88 @@ const UserPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="group hover:bg-gray-50 transition-colors"
-                >
-                  {/* Name & Contact Info */}
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
-                      />
-                      <div>
-                        <p className="text-sm font-bold text-gray-800">
-                          {user.name}
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                          <span className="flex items-center gap-1">
-                            <Mail size={10} /> {user.email}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Role (สิทธิ์) */}
-                  <td className="py-4 px-6">{getRoleBadge(user.role)}</td>
-
-                  {/* Gender (เพศ) - เปลี่ยนตรงนี้ */}
-                  <td className="py-4 px-6">{getGenderBadge(user.gender)}</td>
-
-                  {/* Phone */}
-                  <td className="py-4 px-6 text-sm text-gray-600 font-medium">
-                    {user.phone}
-                  </td>
-
-                  {/* Joined Date */}
-                  <td className="py-4 px-6 text-sm text-gray-500">
-                    {user.joinedDate}
-                  </td>
-
-                  {/* Actions */}
-                  <td className="py-4 px-6 text-center">
-                    <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                        title="แก้ไขสิทธิ์"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="ลบผู้ใช้"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-gray-500">
+                    กำลังโหลดข้อมูล...
                   </td>
                 </tr>
-              ))}
+              ) : filteredUsers.length > 0 ? (
+                // 4. ใช้ filteredUsers ในการ map ข้อมูล
+                filteredUsers.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="group hover:bg-gray-50 transition-colors"
+                  >
+                    {/* Name & Contact Info */}
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={
+                            user.userInfo.avatar ||
+                            `https://ui-avatars.com/api/?name=${user.userInfo.firstName}+${user.userInfo.lastName}&background=random`
+                          }
+                          alt={user.userInfo.firstName}
+                          className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
+                        />
+                        <div>
+                          <p className="text-sm font-bold text-gray-800">
+                            {user.userInfo.firstName} {user.userInfo.lastName}
+                          </p>
+                          <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                            <span className="flex items-center gap-1">
+                              <Mail size={10} /> {user.email}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="py-4 px-6">{getRoleBadge(user.role)}</td>
+                    <td className="py-4 px-6">
+                      {getGenderBadge(user?.userInfo?.sex || "")}
+                    </td>
+                    <td className="py-4 px-6 text-sm text-gray-600 font-medium">
+                      {user?.userInfo?.phone_number || "ไม่ระบุ"}
+                    </td>
+                    <td className="py-4 px-6 text-sm text-gray-500">
+                      {formatDate(user.createdAt)}
+                    </td>
+
+                    <td className="py-4 px-6 text-center">
+                      <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                          title="แก้ไขสิทธิ์"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                          title="ลบผู้ใช้"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                // กรณีไม่พบข้อมูล
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-gray-400">
+                    ไม่พบข้อมูลที่ค้นหา "{searchTerm}"
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-100 flex items-center justify-center">
-          <button className="text-sm text-gray-500 hover:text-indigo-600 font-medium transition-colors">
+        <div className="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
+          <span>แสดง {filteredUsers.length} รายการ</span>
+          <button className="text-indigo-600 hover:underline font-medium cursor-pointer">
             โหลดข้อมูลเพิ่มเติม...
           </button>
         </div>

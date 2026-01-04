@@ -51,4 +51,14 @@ export const authService = {
     const response = await http.post("/auth/logout");
     return response.data;
   },
+
+  getUserAll: async ({ token }: { token?: string }) => {
+    const response = await http.get("/auth/users-all", {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  },
 };
