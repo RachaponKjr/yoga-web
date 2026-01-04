@@ -12,6 +12,7 @@ import courseRoutes from "./routes/course.route";
 import bookingRoutes from "./routes/booking.route";
 import webhookRouter from "./routes/webhook.route";
 import paymentRoutes from "./routes/payment.route";
+import adminRoutes from "./routes/admin.route";
 
 import path from "path";
 
@@ -45,6 +46,7 @@ app.use(`${apiPrefix}/auth`, authRoutes);
 app.use(`${apiPrefix}/course`, courseRoutes);
 app.use(`${apiPrefix}/booking`, bookingRoutes);
 app.use(`${apiPrefix}/payment`, paymentRoutes);
+app.use(`${apiPrefix}/admin`, adminRoutes);
 
 // Webhook
 app.use("/webhook", webhookRouter);
