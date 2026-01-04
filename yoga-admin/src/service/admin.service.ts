@@ -5,4 +5,8 @@ export const adminService = {
     const response = await http.get("/admin/stats");
     return response.data;
   },
+  getBookingLast: async () => {
+    const response = await http.get("/admin/booking-last");
+    return response.data;
+  },
 };

@@ -158,12 +158,9 @@ const BookingPage = () => {
                       <div className="flex items-center gap-3">
                         {/* ผมใส่ Avatar placeholder ให้เผื่อรูปไม่มี */}
                         <img
-                          src={
-                            booking.student?.userInfo?.avatar ||
-                            `https://ui-avatars.com/api/?name=${
-                              booking.student?.userInfo?.firstName || "User"
-                            }&background=random`
-                          }
+                          src={`${"http://119.59.99.141:4001/"}${
+                            booking.student.userInfo.avatar || ""
+                          }`}
                           alt={booking.student.email}
                           className="h-10 w-10 rounded-full object-cover border border-gray-100"
                         />

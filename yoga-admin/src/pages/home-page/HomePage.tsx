@@ -1,15 +1,7 @@
-import React, { useEffect, useState } from "react";
-import {
-  Users,
-  Calendar,
-  Wallet,
-  Activity,
-  Clock,
-  MoreHorizontal,
-  ArrowUpRight,
-  MapPin,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Users, Calendar, Wallet, Activity, Clock } from "lucide-react";
 import { adminService } from "@/service/admin.service";
+import type { BookingType } from "@/types/booking.type";
 
 interface StatusType {
   users: {
@@ -29,7 +21,7 @@ interface StatusType {
 
 const HomePage = () => {
   const [status, setStatus] = useState<StatusType>();
-
+  const [bookings, setBookings] = useState<BookingType[]>();
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -39,7 +31,16 @@ const HomePage = () => {
         console.error("Error fetching dashboard stats:", error);
       }
     };
+    const fetchBookings = async () => {
+      try {
+        const response = await adminService.getBookingLast();
+        setBookings(response.data);
+      } catch (error) {
+        console.error("Error fetching booking list:", error);
+      }
+    };
     fetchStatus();
+    fetchBookings();
   }, []);
 
   // 1. Mockup Data: ข้อมูลตัวอย่างสำหรับแสดงผล
@@ -109,33 +110,6 @@ const HomePage = () => {
     },
   ];
 
-  const recentBookings = [
-    {
-      user: "อารยา สวยงาม",
-      class: "Vinyasa Flow",
-      time: "2 นาทีที่แล้ว",
-      img: "https://i.pravatar.cc/150?u=1",
-    },
-    {
-      user: "สมชาย ใจดี",
-      class: "Hatha Yoga",
-      time: "15 นาทีที่แล้ว",
-      img: "https://i.pravatar.cc/150?u=2",
-    },
-    {
-      user: "Nancy J.",
-      class: "Pilates Mat",
-      time: "32 นาทีที่แล้ว",
-      img: "https://i.pravatar.cc/150?u=3",
-    },
-    {
-      user: "เอกชัย มานะ",
-      class: "Morning Flow",
-      time: "1 ชม. ที่แล้ว",
-      img: "https://i.pravatar.cc/150?u=4",
-    },
-  ];
-
   return (
     <div className=" bg-gray-50/50 font-sans">
       {/* Header Section */}
@@ -174,27 +148,16 @@ const HomePage = () => {
                 <span className="text-2xl font-bold text-gray-800 mt-1">
                   {stat.value}
                 </span>
-                {stat.sub && (
+                {/* {stat.sub && (
                   <span className="text-xs text-orange-500 font-medium mt-1">
                     {stat.sub}
                   </span>
-                )}
+                )} */}
               </div>
               <div className={`p-3 rounded-xl ${stat.color}`}>
                 <stat.icon size={22} strokeWidth={2.5} />
               </div>
             </div>
-            {/* Trend Indicator */}
-            {stat.trend && (
-              <div className="mt-4 flex items-center gap-1 text-sm">
-                <span className="flex items-center text-green-600 font-semibold bg-green-50 px-1.5 py-0.5 rounded-md">
-                  <ArrowUpRight size={14} className="mr-1" /> {stat.trend}
-                </span>
-                <span className="text-gray-400 text-xs ml-1">
-                  จากเดือนที่แล้ว
-                </span>
-              </div>
-            )}
           </div>
         ))}
       </div>
@@ -298,36 +261,35 @@ const HomePage = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold text-gray-800">การจองล่าสุด</h2>
-            <MoreHorizontal
-              size={20}
-              className="text-gray-400 cursor-pointer hover:text-gray-600"
-            />
           </div>
 
           <div className="space-y-4">
-            {recentBookings.map((item, idx) => (
+            {bookings?.slice(0, 3)?.map((item, idx) => (
               <div
                 key={idx}
                 className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-100"
               >
                 <img
-                  src={item.img}
+                  src={`${"http://119.59.99.141:4001/"}${
+                    item.student.userInfo.avatar || ""
+                  }`}
                   alt="User"
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-gray-800 truncate">
-                    {item.user}
+                    {item.student.userInfo.firstName}{" "}
+                    {item.student.userInfo.lastName}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
                     จองคลาส{" "}
                     <span className="text-indigo-600 font-medium">
-                      {item.class}
+                      {item.round.course.title}
                     </span>
                   </p>
                 </div>
                 <span className="text-xs text-gray-400 whitespace-nowrap">
-                  {item.time}
+                  {String(item.round.startDateTime).split("T")[0]}
                 </span>
               </div>
             ))}

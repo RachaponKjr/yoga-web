@@ -1,18 +1,13 @@
-import {
-  Search,
-  Filter,
-  Mail,
-  Edit,
-  Trash2,
-  Shield,
-  Briefcase,
-  User,
-} from "lucide-react";
-import AddUser from "./AddUser";
+import { Search, Mail, Shield, Briefcase, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { authService } from "../../service/auth.service";
 import Cookies from "js-cookie";
 import type { UserInfoType, UserType } from "@/types/auth.type";
+import EditUser from "./EditUser"; // Import Component ที่เราเพิ่งสร้าง
+import DelUser from "./DelUser";
+
+// กำหนด Base URL รูป
+const BASE_IMG_URL = "http://119.59.99.141:4001/";
 
 interface UserProps extends UserType {
   createdAt: string;
@@ -22,10 +17,7 @@ interface UserProps extends UserType {
 const UserPage = () => {
   const [users, setUsers] = useState<UserProps[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // 1. เพิ่ม State สำหรับคำค้นหา
   const [searchTerm, setSearchTerm] = useState("");
-
   const token = Cookies.get("token");
 
   useEffect(() => {
@@ -33,6 +25,7 @@ const UserPage = () => {
       setLoading(true);
       try {
         const response = await authService.getUserAll({ token });
+        // สมมติ response.data เป็น Array
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -40,23 +33,18 @@ const UserPage = () => {
         setLoading(false);
       }
     };
-
     fetchUsers();
   }, [token]);
 
-  // 2. Logic การกรองข้อมูล (Filter)
+  // Filter Logic
   const filteredUsers = users.filter((user) => {
-    // แปลงคำค้นหาเป็นตัวเล็กเพื่อให้ค้นหาแบบ Case Insensitive
     const term = searchTerm.toLowerCase();
-
-    // ดึงค่า field ต่างๆ มาเตรียมไว้ (กัน null ด้วย || "")
     const firstName = user.userInfo?.firstName?.toLowerCase() || "";
     const lastName = user.userInfo?.lastName?.toLowerCase() || "";
     const email = user.email?.toLowerCase() || "";
     const phone = user.userInfo?.phone_number?.toLowerCase() || "";
     const role = user.role?.toLowerCase() || "";
 
-    // เช็คว่ามีคำค้นหาอยู่ใน field ใด field หนึ่งหรือไม่
     return (
       firstName.includes(term) ||
       lastName.includes(term) ||
@@ -66,7 +54,6 @@ const UserPage = () => {
     );
   });
 
-  // Helper: Role Badge
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "Admin":
@@ -92,7 +79,6 @@ const UserPage = () => {
     }
   };
 
-  // Helper: Gender Badge
   const getGenderBadge = (gender: string) => {
     switch (gender) {
       case "Male":
@@ -112,7 +98,6 @@ const UserPage = () => {
     }
   };
 
-  // Helper: Format Date (แปลงวันที่ให้สวยงาม)
   const formatDate = (dateString: string) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("th-TH", {
@@ -124,7 +109,6 @@ const UserPage = () => {
 
   return (
     <div className="bg-gray-50/50 min-h-max font-sans">
-      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
@@ -134,28 +118,22 @@ const UserPage = () => {
             กำหนดสิทธิ์การใช้งาน: Admin, Instructor, User
           </p>
         </div>
-        {/* <AddUser /> */}
       </div>
 
-      {/* Main Table Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        {/* Toolbar */}
         <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4 items-center">
           <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-
-            {/* 3. ผูก Input กับ State searchTerm */}
             <input
               type="text"
               placeholder="ค้นหาชื่อ, สิทธิ์, เบอร์ หรืออีเมล..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -188,21 +166,22 @@ const UserPage = () => {
                   </td>
                 </tr>
               ) : filteredUsers.length > 0 ? (
-                // 4. ใช้ filteredUsers ในการ map ข้อมูล
                 filteredUsers.map((user) => (
                   <tr
                     key={user.id}
                     className="group hover:bg-gray-50 transition-colors"
                   >
-                    {/* Name & Contact Info */}
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <img
                           src={
-                            user.userInfo.avatar ||
-                            `https://ui-avatars.com/api/?name=${user.userInfo.firstName}+${user.userInfo.lastName}&background=random`
+                            user.userInfo.avatar
+                              ? `${BASE_IMG_URL}${user.userInfo.avatar}`
+                              : `https://ui-avatars.com/api/?name=${
+                                  user.userInfo.firstName || "User"
+                                }`
                           }
-                          alt={user.userInfo.firstName}
+                          alt="avatar"
                           className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
                         />
                         <div>
@@ -231,24 +210,22 @@ const UserPage = () => {
 
                     <td className="py-4 px-6 text-center">
                       <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
-                          title="แก้ไขสิทธิ์"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                          title="ลบผู้ใช้"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        {/* ✅ ปุ่ม Edit อยู่ตรงนี้ (ส่ง user เข้าไป) */}
+                        <EditUser user={user} />
+
+                        <DelUser
+                          userId={user.id}
+                          userName={
+                            user.userInfo.firstName +
+                            " " +
+                            user.userInfo.lastName
+                          }
+                        />
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
-                // กรณีไม่พบข้อมูล
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-gray-400">
                     ไม่พบข้อมูลที่ค้นหา "{searchTerm}"
@@ -259,12 +236,8 @@ const UserPage = () => {
           </table>
         </div>
 
-        {/* Footer */}
         <div className="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
           <span>แสดง {filteredUsers.length} รายการ</span>
-          <button className="text-indigo-600 hover:underline font-medium cursor-pointer">
-            โหลดข้อมูลเพิ่มเติม...
-          </button>
         </div>
       </div>
     </div>

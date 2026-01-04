@@ -5,11 +5,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { UserPlus, Upload, X } from "lucide-react";
+import { UserPlus, Upload } from "lucide-react";
 
 const AddUser = () => {
   return (

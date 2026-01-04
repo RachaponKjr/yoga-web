@@ -1,0 +1,420 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
+  Edit,
+  User as UserIcon,
+  Facebook,
+  Instagram,
+  Twitter,
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  Upload,
+  Loader2,
+} from "lucide-react";
+import React, { useState, useRef } from "react";
+import type { UserInfoType, UserType } from "@/types/auth.type";
+import { authService } from "../../service/auth.service"; // อย่าลืม Import Service
+import Cookies from "js-cookie";
+
+const BASE_IMG_URL = "http://119.59.99.141:4001/";
+
+interface EditUserProps {
+  user: UserType & {
+    userInfo: UserInfoType | null;
+  };
+  onSuccess?: () => void; // เพิ่ม Callback เมื่อบันทึกสำเร็จ
+}
+
+const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 1. State สำหรับ Preview รูปภาพใหม่
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+  // 2. State สำหรับ Form Data (Controlled Inputs)
+  const [userEdit, setUserEdit] = useState({
+    firstName: user.userInfo?.firstName || "",
+    lastName: user.userInfo?.lastName || "",
+    sex: user.userInfo?.sex || "NotSpecify",
+    phone_number: user.userInfo?.phone_number || "",
+    country: user.userInfo?.country || "",
+    facebook: user.userInfo?.facebook || "",
+    instagram: user.userInfo?.instagram || "",
+    twitter: user.userInfo?.twitter || "",
+    role: user.role,
+    experience: user.userInfo?.experience || "",
+  });
+
+  console.log(userEdit);
+
+  // URL รูปเดิมจากฐานข้อมูล
+  const originalAvatarUrl = user.userInfo?.avatar
+    ? `${BASE_IMG_URL}${user.userInfo.avatar}`
+    : null;
+
+  // 3. Handle Change ทั่วไป (Input, Select, Textarea)
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setUserEdit((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // 4. Handle Image Change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      // สร้าง URL สำหรับ Preview รูปทันที
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewImage(objectUrl);
+    }
+  };
+
+  // 5. Submit Form
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const token = Cookies.get("token");
+
+    try {
+      // เตรียมข้อมูลเป็น FormData (เพราะมีไฟล์รูปภาพ)
+      const formData = new FormData();
+
+      // วนลูป append text fields
+      Object.entries(userEdit).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+
+      // ถ้ามีการเปลี่ยนรูป ให้ append รูปไปด้วย
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+
+      // เรียก API (ต้องไปสร้าง function updateUser ใน authService)
+      // ตัวอย่าง: await authService.updateUser(user.id, formData, { token });
+      console.log("Submitting FormData:", Object.fromEntries(formData));
+
+      // จำลอง Delay
+      await new Promise((r) => setTimeout(r, 1000));
+
+      alert("บันทึกข้อมูลเรียบร้อย");
+
+      setOpen(false); // ปิด Dialog
+      if (onSuccess) onSuccess(); // แจ้งหน้าหลักให้โหลดข้อมูลใหม่
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+          title={`แก้ไขข้อมูล ${user.email}`}
+        >
+          <Edit size={16} />
+        </button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-white p-0 gap-0 rounded-2xl">
+        <form onSubmit={handleSubmit}>
+          {/* Header */}
+          <div className="p-6 border-b border-gray-100 bg-gray-50/50 sticky top-0 z-10 backdrop-blur-sm">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-gray-800">
+                แก้ไขข้อมูลผู้ใช้
+              </DialogTitle>
+              <DialogDescription className="text-gray-500 text-sm">
+                แก้ไขข้อมูลของบัญชี:{" "}
+                <span className="text-indigo-600 font-medium">
+                  {user.email}
+                </span>
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+
+          {/* Body Form */}
+          <div className="p-6 space-y-6">
+            {/* Avatar Section */}
+            <div className="flex items-center gap-5">
+              <div className="relative group">
+                <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 overflow-hidden">
+                  {/* แสดง Preview ถ้ามี, ถ้าไม่มีแสดงรูปเดิม, ถ้าไม่มีอีกแสดง Icon */}
+                  {previewImage ? (
+                    <img
+                      src={previewImage}
+                      alt="preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : originalAvatarUrl ? (
+                    <img
+                      src={originalAvatarUrl}
+                      alt="avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <UserIcon size={32} />
+                  )}
+                </div>
+
+                {/* ปุ่มอัปโหลด */}
+                <div className="absolute -bottom-1 -right-1">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 shadow-sm border-2 border-white cursor-pointer transition-transform active:scale-95"
+                  >
+                    <Upload size={14} />
+                  </button>
+                  {/* Hidden Input */}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/jpg"
+                  />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-800">รูปโปรไฟล์</h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  คลิกที่ไอคอนกล้องเพื่อเปลี่ยนรูป
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100 my-4"></div>
+
+            {/* Personal Info */}
+            <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <UserIcon size={16} className="text-indigo-600" /> ข้อมูลส่วนตัว
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  ชื่อจริง
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={userEdit.firstName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  นามสกุล
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={userEdit.lastName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  เพศ
+                </label>
+                <select
+                  name="sex"
+                  value={userEdit.sex}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 h-10 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white transition-all"
+                >
+                  <option value="NotSpecify">ไม่ระบุ</option>
+                  <option value="Male">ชาย</option>
+                  <option value="Female">หญิง</option>
+                  <option value="Other">อื่นๆ</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  ประเทศ
+                </label>
+                <div className="relative">
+                  <MapPin
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="text"
+                    name="country"
+                    value={userEdit.country}
+                    onChange={handleChange}
+                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100 my-4"></div>
+
+            {/* Account Info */}
+            <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <Briefcase size={16} className="text-indigo-600" /> ข้อมูลบัญชี
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  อีเมล
+                </label>
+                <div className="relative">
+                  <Mail
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="email"
+                    value={user.email}
+                    readOnly
+                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  สิทธิ์การใช้งาน
+                </label>
+                <select
+                  name="role"
+                  value={userEdit.role}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 h-10 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white transition-all"
+                >
+                  <option value="Student">Student</option>
+                  <option value="Instructor">Instructor</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600">
+                  เบอร์โทรศัพท์
+                </label>
+                <div className="relative">
+                  <Phone
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="tel"
+                    name="phone_number"
+                    value={userEdit.phone_number}
+                    onChange={handleChange}
+                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100 my-4"></div>
+
+            {/* Social */}
+            <h4 className="text-sm font-bold text-gray-800 mb-3">
+              โซเชียลมีเดีย
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
+                  <Facebook size={12} /> Facebook
+                </label>
+                <input
+                  type="text"
+                  name="facebook"
+                  value={userEdit.facebook}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
+                  <Instagram size={12} /> Instagram
+                </label>
+                <input
+                  type="text"
+                  name="instagram"
+                  value={userEdit.instagram}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
+                  <Twitter size={12} /> Twitter
+                </label>
+                <input
+                  type="text"
+                  name="twitter"
+                  value={userEdit.twitter}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Experience */}
+            <div className="space-y-1.5 pt-2">
+              <label className="text-xs font-semibold text-gray-600">
+                ประสบการณ์
+              </label>
+              <textarea
+                name="experience"
+                value={userEdit.experience}
+                onChange={handleChange}
+                rows={5}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+              />
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50 sticky bottom-0 z-10">
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white hover:text-gray-800 border border-transparent hover:border-gray-200 transition-all cursor-pointer"
+              >
+                ยกเลิก
+              </button>
+            </DialogClose>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-6 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all cursor-pointer flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading && <Loader2 size={16} className="animate-spin" />}
+              {isLoading ? "กำลังบันทึก..." : "บันทึก"}
+            </button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default EditUser;

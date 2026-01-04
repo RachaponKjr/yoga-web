@@ -1,5 +1,6 @@
 import prisma from "../config/prisma";
-import { PaymentStatus, Status } from "@prisma/client";
+import { PaymentStatus, Role, Sex, Status } from "@prisma/client";
+import { UserEditState } from "../controllers/admin.controller";
 
 export const getStatsService = async () => {
   // 1. เตรียมตัวแปรสำหรับหา "คลาสเรียนวันนี้"
@@ -134,4 +135,49 @@ export const getBookingListService = async () => {
   });
 
   return bookings;
+};
+
+export const updateUserService = async (
+  userId: string,
+  profile: UserEditState
+) => {
+  const {
+    firstName,
+    lastName,
+    sex,
+    phone_number,
+    country,
+    facebook,
+    instagram,
+    twitter,
+    role,
+    experience,
+  } = profile;
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      role: role as Role,
+      userInfo: {
+        update: {
+          firstName,
+          lastName,
+          sex: (sex === "NotSpecify" || sex === "" ? "NotSpecify" : sex) as Sex,
+          phone_number,
+          country,
+          facebook,
+          instagram,
+          twitter,
+          experience,
+        },
+      },
+    },
+    include: {
+      userInfo: true,
+    },
+  });
+
+  return updatedUser;
 };

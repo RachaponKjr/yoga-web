@@ -2,7 +2,21 @@ import { Request, Response } from "express";
 import {
   getBookingListService,
   getStatsService,
+  updateUserService,
 } from "../services/admin.service";
+
+export interface UserEditState {
+  firstName: string;
+  lastName: string;
+  sex: string;
+  phone_number: string;
+  country: string;
+  facebook: string;
+  instagram: string;
+  twitter: string;
+  role: string;
+  experience: string;
+}
 
 const getDashboardStats = async (req: Request, res: Response) => {
   try {
@@ -45,4 +59,50 @@ const getBookingList = async (req: Request, res: Response) => {
   }
 };
 
-export { getDashboardStats, getBookingList };
+const updateProfileController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const {
+      firstName,
+      lastName,
+      sex,
+      phone_number,
+      country,
+      facebook,
+      instagram,
+      twitter,
+      role,
+      experience,
+    } = req.body as UserEditState;
+
+    const profile = {
+      firstName,
+      lastName,
+      sex,
+      phone_number,
+      country,
+      facebook,
+      instagram,
+      twitter,
+      role,
+      experience,
+    };
+
+    const updatedUser = await updateUserService(id, profile);
+
+    return res.status(200).json({
+      success: true,
+      message: "Update user profile successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update user profile",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export { getDashboardStats, getBookingList, updateProfileController };
