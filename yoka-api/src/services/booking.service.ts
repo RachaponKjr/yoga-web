@@ -16,8 +16,16 @@ const getAllBookingService = async ({
 }) => {
   const res = await prisma.booking.findMany({
     include: {
-      round: true,
-      student: true,
+      round: {
+        include: {
+          course: true,
+        },
+      },
+      student: {
+        include: {
+          userInfo: true,
+        },
+      },
     },
     take: limit,
     skip: offset,

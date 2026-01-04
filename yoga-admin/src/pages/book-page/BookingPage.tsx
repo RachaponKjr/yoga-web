@@ -12,9 +12,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { bookingService } from "@/service/booking.service";
+import type { BookingType } from "@/types/booking.type";
 
 const BookingPage = () => {
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState<BookingType[]>([]);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -204,16 +205,16 @@ const BookingPage = () => {
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
                       <img
-                        src={booking.user.image}
-                        alt={booking.user.name}
+                        src={""}
+                        alt={booking.student.email}
                         className="h-10 w-10 rounded-full object-cover border border-gray-100"
                       />
                       <div>
                         <p className="text-sm font-bold text-gray-800">
-                          {booking.user.name}
+                          {booking.student.email}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {booking.user.phone}
+                          {booking.student.phone}
                         </p>
                       </div>
                     </div>
@@ -234,8 +235,10 @@ const BookingPage = () => {
                   {/* Date Column */}
                   <td className="py-4 px-6">
                     <div className="text-sm text-gray-600">
-                      <p>{booking.date}</p>
-                      <p className="text-xs text-gray-400">{booking.time}</p>
+                      <p>{booking?.createdAt}</p>
+                      <p className="text-xs text-gray-400">
+                        {booking.round.startDateTime}
+                      </p>
                     </div>
                   </td>
 
@@ -249,9 +252,7 @@ const BookingPage = () => {
                     <p className="text-sm font-bold text-gray-800">
                       {booking.price}
                     </p>
-                    <p className="text-xs text-gray-400">
-                      {booking.paymentMethod}
-                    </p>
+                    <p className="text-xs text-gray-400">Card</p>
                   </td>
 
                   {/* Action Column */}
