@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
-import { getStatsService } from "../services/admin.service";
+import {
+  getBookingListService,
+  getStatsService,
+} from "../services/admin.service";
 
-export const getDashboardStats = async (req: Request, res: Response) => {
+const getDashboardStats = async (req: Request, res: Response) => {
   try {
     // 1. เรียก Service เพื่อดึงข้อมูล
     const stats = await getStatsService();
@@ -23,3 +26,23 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     });
   }
 };
+
+const getBookingList = async (req: Request, res: Response) => {
+  try {
+    const bookings = await getBookingListService();
+    return res.status(200).json({
+      success: true,
+      message: "ดึงข้อมูลจองสำเร็จ",
+      data: bookings,
+    });
+  } catch (error) {
+    console.error("Error fetching booking list:", error);
+    return res.status(500).json({
+      success: false,
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลจอง",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export { getDashboardStats, getBookingList };

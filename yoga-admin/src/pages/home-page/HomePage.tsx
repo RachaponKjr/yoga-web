@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Users,
   Calendar,
@@ -9,35 +9,63 @@ import {
   ArrowUpRight,
   MapPin,
 } from "lucide-react";
+import { adminService } from "@/service/admin.service";
+
+interface StatusType {
+  users: {
+    total: number;
+  };
+  bookings: {
+    total: number;
+  };
+  classes: {
+    total: number;
+  };
+  revenue: {
+    total: number;
+    monthly: Array<{ month: string; amount: number }>;
+  };
+}
 
 const HomePage = () => {
+  const [status, setStatus] = useState<StatusType>();
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await adminService.getDashboardStatus();
+        setStatus(response.data);
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      }
+    };
+    fetchStatus();
+  }, []);
+
   // 1. Mockup Data: ข้อมูลตัวอย่างสำหรับแสดงผล
   const stats = [
     {
       label: "ยอดจองทั้งหมด",
-      value: "1,245",
-      trend: "+12.5%",
+      value: status?.bookings.total?.toString() || "0",
       icon: Calendar,
       color: "bg-purple-100 text-purple-600",
     },
     {
       label: "สมาชิก Active",
-      value: "854",
-      trend: "+5.2%",
+      value: status?.users.total?.toString() || "0",
       icon: Users,
       color: "bg-blue-100 text-blue-600",
     },
     {
       label: "รายได้เดือนนี้",
-      value: "฿145,200",
-      trend: "+8.1%",
+      value: "฿" + status?.revenue.total?.toFixed(2) || "0",
       icon: Wallet,
       color: "bg-green-100 text-green-600",
     },
     {
       label: "คลาสวันนี้",
-      value: "12",
-      sub: "Active Now: 3",
+      value: status?.classes.total?.toString() || "0",
+      //   sub: "Active Now: 3",
       icon: Activity,
       color: "bg-orange-100 text-orange-600",
     },

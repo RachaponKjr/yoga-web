@@ -87,3 +87,48 @@ export const getStatsService = async () => {
     },
   };
 };
+
+export const getBookingListService = async () => {
+  const bookings = await prisma.booking.findMany({
+    // 1. เอาแค่ 5 อันล่าสุด
+    take: 5,
+
+    // 2. เรียงจากวันที่สร้างล่าสุด (ใหม่ -> เก่า)
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    // 3. Join ตารางเพื่อเอาข้อมูลไปแสดงผล
+    include: {
+      // ดึงข้อมูลคนจอง (User + UserInfo)
+      student: {
+        select: {
+          email: true,
+          userInfo: {
+            select: {
+              firstName: true,
+              lastName: true,
+              avatar: true,
+              phone_number: true,
+            },
+          },
+        },
+      },
+      // ดึงข้อมูลรอบเรียน และคอร์ส
+      round: {
+        select: {
+          startDateTime: true,
+          endDateTime: true,
+          course: {
+            select: {
+              title: true, // ชื่อคอร์ส
+              cover_image: true, // รูปปกคอร์ส
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return bookings;
+};
