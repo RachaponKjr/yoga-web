@@ -91,7 +91,7 @@ export const getStatsService = async () => {
 export const getBookingListService = async () => {
   const bookings = await prisma.booking.findMany({
     where: {
-      status: PaymentStatus.PAID,
+      status: PaymentStatus.PENDING,
     },
     // 1. เอาแค่ 5 อันล่าสุด
     take: 5,
