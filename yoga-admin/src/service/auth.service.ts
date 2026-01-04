@@ -61,4 +61,14 @@ export const authService = {
     });
     return response.data;
   },
+
+  updateUser: async (payload: any) => {
+    const response = await http.patch("/admin/update-profile", payload, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  },
 };

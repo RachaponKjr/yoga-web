@@ -17,13 +17,11 @@ import {
   Phone,
   MapPin,
   Briefcase,
-  Upload,
   Loader2,
 } from "lucide-react";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import type { UserInfoType, UserType } from "@/types/auth.type";
 import { authService } from "../../service/auth.service"; // อย่าลืม Import Service
-import Cookies from "js-cookie";
 
 const BASE_IMG_URL = "http://119.59.99.141:4001/";
 
@@ -37,14 +35,10 @@ interface EditUserProps {
 const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // 1. State สำหรับ Preview รูปภาพใหม่
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   // 2. State สำหรับ Form Data (Controlled Inputs)
   const [userEdit, setUserEdit] = useState({
+    id: user.id,
     firstName: user.userInfo?.firstName || "",
     lastName: user.userInfo?.lastName || "",
     sex: user.userInfo?.sex || "NotSpecify",
@@ -77,45 +71,13 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
     }));
   };
 
-  // 4. Handle Image Change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAvatarFile(file);
-      // สร้าง URL สำหรับ Preview รูปทันที
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewImage(objectUrl);
-    }
-  };
-
   // 5. Submit Form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const token = Cookies.get("token");
-
     try {
-      // เตรียมข้อมูลเป็น FormData (เพราะมีไฟล์รูปภาพ)
-      const formData = new FormData();
-
-      // วนลูป append text fields
-      Object.entries(userEdit).forEach(([key, value]) => {
-        formData.append(key, value as string);
-      });
-
-      // ถ้ามีการเปลี่ยนรูป ให้ append รูปไปด้วย
-      if (avatarFile) {
-        formData.append("avatar", avatarFile);
-      }
-
-      // เรียก API (ต้องไปสร้าง function updateUser ใน authService)
-      // ตัวอย่าง: await authService.updateUser(user.id, formData, { token });
-      console.log("Submitting FormData:", Object.fromEntries(formData));
-
-      // จำลอง Delay
-      await new Promise((r) => setTimeout(r, 1000));
-
-      alert("บันทึกข้อมูลเรียบร้อย");
+      const res = await authService.updateUser(userEdit);
+      console.log(res);
 
       setOpen(false); // ปิด Dialog
       if (onSuccess) onSuccess(); // แจ้งหน้าหลักให้โหลดข้อมูลใหม่
@@ -162,9 +124,9 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
               <div className="relative group">
                 <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 overflow-hidden">
                   {/* แสดง Preview ถ้ามี, ถ้าไม่มีแสดงรูปเดิม, ถ้าไม่มีอีกแสดง Icon */}
-                  {previewImage ? (
+                  {user.userInfo?.avatar ? (
                     <img
-                      src={previewImage}
+                      src={`${BASE_IMG_URL}${user.userInfo.avatar}`}
                       alt="preview"
                       className="w-full h-full object-cover"
                     />
@@ -178,31 +140,6 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
                     <UserIcon size={32} />
                   )}
                 </div>
-
-                {/* ปุ่มอัปโหลด */}
-                <div className="absolute -bottom-1 -right-1">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="p-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 shadow-sm border-2 border-white cursor-pointer transition-transform active:scale-95"
-                  >
-                    <Upload size={14} />
-                  </button>
-                  {/* Hidden Input */}
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    className="hidden"
-                    accept="image/png, image/jpeg, image/jpg"
-                  />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-gray-800">รูปโปรไฟล์</h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  คลิกที่ไอคอนกล้องเพื่อเปลี่ยนรูป
-                </p>
               </div>
             </div>
 

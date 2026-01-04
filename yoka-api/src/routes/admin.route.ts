@@ -17,7 +17,7 @@ router.get(
 );
 
 router.patch(
-  "/update-profile",
+  "/update-profile/:id",
   authMiddleware,
   restrictTo("Admin"),
   updateProfileController
