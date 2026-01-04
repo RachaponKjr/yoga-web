@@ -15,19 +15,19 @@ services:
     depends_on:
       - backend
 
-  admin:
-    container_name: yoga-admin
-    build:
-      context: ./yoga-admin
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - "3002:3002"
-    env_file: .env
-    networks:
-      - yoga-network
-    depends_on:
-      - backend
+  # admin:
+  #   container_name: yoga-admin
+  #   build:
+  #     context: ./yoga-admin
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - "3002:3002"
+  #   env_file: .env
+  #   networks:
+  #     - yoga-network
+  #   depends_on:
+  #     - backend
 
   backend:
     container_name: yoga-backend
