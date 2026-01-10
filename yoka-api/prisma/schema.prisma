@@ -17,10 +17,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userInfo       UserInfo?
-  courseYogas    CourseYoga[] @relation("TeacherCourses")
-  bookings       Booking[]    @relation("StudentBookings")
-  teacherCourses Booking[]    @relation("TeacherCourses")
+  userInfo UserInfo?
+
+  // แก้ไข 1: เปลี่ยนชื่อ Relation ไม่ให้ซ้ำกัน
+  createdCourses CourseYoga[]  @relation("CourseOwner") // คอร์สที่เป็นเจ้าของ/คนสร้าง
+  teachingRounds CourseRound[] @relation("RoundTeacher") // รอบที่ต้องไปสอน (Instructor)
+  bookings       Booking[]     @relation("StudentBookings") // การจองเรียน (Student)
 }
 
 model UserInfo {
@@ -43,77 +45,75 @@ model UserInfo {
 
 model CourseYoga {
   id             String   @id @default(cuid())
-  title          String // ชื่อคอร์ส (name_course)
+  title          String
   description    String?  @db.Text
   price          Float
   discount_price Float?
-  cover_image    String? // รูปปก (course_poster)
-  images         String[] @default([]) // รูปเพิ่มเติม (รวมจาก CourseYogaDetail)
+  cover_image    String?
+  images         String[] @default([])
   status         Status   @default(Draft)
-  teacherId      String
-  teacher        User     @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  // แก้ไข 2: แมทช์ชื่อ Relation กับ User ("CourseOwner")
+  teacherId String
+  teacher   User   @relation("CourseOwner", fields: [teacherId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relation ไปหารอบการสอน
   rounds CourseRound[]
 }
 
-// 2. CourseRound (รอบการสอน): เก็บแค่วันที่ เวลา และโควต้า
 model CourseRound {
   id String @id @default(cuid())
 
-  // เชื่อมกลับไปหา Course หลัก
   courseId String
   course   CourseYoga @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  // วันเวลาสำหรับรอบนี้เท่านั้น
-  startDateTime DateTime // วันและเวลาเริ่ม (รวมกันเป็น DateTime เดียวสะดวกกว่า)
-  endDateTime   DateTime // วันและเวลาจบ
+  startDateTime DateTime
+  endDateTime   DateTime
 
-  // โควต้าของรอบนี้
   max_online  Int @default(0)
   max_walk_in Int @default(0)
 
-  // นับจำนวนคนจอง (Prisma ใช้นับจาก relation ได้ หรือจะเก็บแยกก็ได้)
-  // ในที่นี้ผมแนะนำให้ใช้วิธีนับจาก Booking จะแม่นยำกว่า แต่ถ้าอยากเก็บ field ก็ได้
+  // แก้ไข 3: แมทช์ชื่อ Relation กับ User ("RoundTeacher")
+  teacherId String?
+  teacher   User?   @relation("RoundTeacher", fields: [teacherId], references: [id], onDelete: SetNull)
+
   current_online  Int @default(0)
   current_walk_in Int @default(0)
 
-  status Status @default(Open) // Open, Full, Cancelled, Completed
+  status Status @default(Open)
 
-  // คนที่จองรอบนี้
   bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// 3. Booking (การจอง): นักเรียนจอง "รอบ" ไหน
 model Booking {
   id String @id @default(cuid())
 
   studentId String
-  student   User        @relation("StudentBookings", fields: [studentId], references: [id])
-  price     Float
-  roundId   String
-  round     CourseRound @relation(fields: [roundId], references: [id], onDelete: SetNull)
-  teacherId String?
-  teacher   User?       @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: SetNull)
+  student   User   @relation("StudentBookings", fields: [studentId], references: [id])
 
-  type      BookingType // ONLINE, WALK_IN
+  price Float
+
+  // แก้ไข 4: เปลี่ยน onDelete เป็น Cascade
+  // เพราะ roundId เป็น String (ห้าม Null) ดังนั้นถ้า Round หาย Booking นี้ควรหายไปด้วย
+  // ถ้าอยากใช้ SetNull ตัว roundId ต้องเป็น String? (Optional)
+  roundId String
+  round   CourseRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+
+  type      BookingType
   status    PaymentStatus @default(PENDING)
   paidAt    DateTime?
   paymentId String?
 
-  // คำอธิบาย
   description String?
 
   createdAt DateTime @default(now())
 }
 
-// Enum ช่วยจัดการสถานะ
 enum Status {
   Draft
   Open
