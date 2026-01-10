@@ -18,7 +18,7 @@ router.get(
 );
 router.get("/:id", authMiddleware, getBookingByIdController);
 router.get("/booking-user/:id", authMiddleware, getBookingByUserIdController);
-router.put(
+router.patch(
   "/update-booking/:id",
   authMiddleware,
   restrictTo("Admin"),
