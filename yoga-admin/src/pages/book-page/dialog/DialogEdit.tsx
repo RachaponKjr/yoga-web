@@ -30,27 +30,40 @@ import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import type { UserType } from "@/types/auth.type";
 import { authService } from "@/service/auth.service";
+import { bookingService } from "@/service/booking.service";
+
+export interface PayloadProps {
+  status: string;
+  roundId: string;
+  courseId: string;
+  teacherId: string;
+  price: number;
+  description: string;
+}
 
 const DialogEdit = ({ booking }: { booking: BookingType }) => {
   const [course, setCourse] = useState<CourseType[]>([]);
   const [round, setRound] = useState<RoundType[]>([]);
   const [instructor, setInstructor] = useState<UserType[]>([]);
 
-  const [payload, setPayload] = useState({
+  const [payload, setPayload] = useState<PayloadProps>({
     status: booking.status,
     roundId: booking.round.id,
     courseId: booking.round.course.id,
-    teacherId: booking.round.teacherId,
+    teacherId: booking.round.teacherId || "",
     price: booking.price,
-    description: booking.description,
+    description: booking.description || "",
   });
 
   console.log(payload);
 
-  //   const handleSubmit = async () => {
-  //     const response = await courseService.updateBooking(payload, booking.id);
-  //     console.log(response);
-  //   };
+  const handleSubmit = async () => {
+    const response = await bookingService.updateBookingService(
+      booking.id,
+      payload
+    );
+    console.log(response);
+  };
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -299,7 +312,11 @@ const DialogEdit = ({ booking }: { booking: BookingType }) => {
               ยกเลิก
             </Button>
           </DialogClose>
-          <Button size={"lg"} className="bg-primary! cursor-pointer">
+          <Button
+            size={"lg"}
+            onClick={handleSubmit}
+            className="bg-primary! cursor-pointer"
+          >
             บันทึก
           </Button>
         </DialogFooter>

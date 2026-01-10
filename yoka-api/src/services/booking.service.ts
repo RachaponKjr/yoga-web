@@ -1,6 +1,15 @@
 import { BookingType } from "../types/order.type";
 import prisma from "../config/prisma";
 
+export interface PayloadProps {
+  status: string;
+  roundId: string;
+  courseId: string;
+  teacherId: string;
+  price: number;
+  description: string;
+}
+
 const createBookingService = async ({ payload }: { payload: BookingType }) => {
   const res = await prisma.booking.create({ data: payload });
 
@@ -63,14 +72,32 @@ const updateBookingService = async ({
   payload,
 }: {
   id: string;
-  payload: BookingType;
+  payload: PayloadProps;
 }) => {
-  const res = await prisma.booking.update({
-    where: { id },
-    data: payload,
+  const { roundId, courseId, teacherId, price, description } = payload;
+
+  const round = await prisma.courseRound.update({
+    where: { id: roundId },
+    data: { courseId, teacherId },
   });
 
-  return res;
+  const res = await prisma.booking.update({
+    where: { id },
+    data: {
+      round: {
+        connect: { id: roundId },
+      },
+      price,
+      description,
+    },
+  });
+
+  const payloadRes = {
+    ...round,
+    ...res,
+  };
+
+  return payloadRes;
 };
 
 export {
