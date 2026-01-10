@@ -17,9 +17,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userInfo    UserInfo?
-  courseYogas CourseYoga[] @relation("TeacherCourses")
-  bookings    Booking[]    @relation("StudentBookings")
+  userInfo       UserInfo?
+  courseYogas    CourseYoga[] @relation("TeacherCourses")
+  bookings       Booking[]    @relation("StudentBookings")
+  teacherCourses Booking[]    @relation("TeacherCourses")
 }
 
 model UserInfo {
@@ -98,11 +99,16 @@ model Booking {
   price     Float
   roundId   String
   round     CourseRound @relation(fields: [roundId], references: [id], onDelete: SetNull)
+  teacherId String?
+  teacher   User?       @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: SetNull)
 
   type      BookingType // ONLINE, WALK_IN
   status    PaymentStatus @default(PENDING)
   paidAt    DateTime?
   paymentId String?
+
+  // คำอธิบาย
+  description String?
 
   createdAt DateTime @default(now())
 }
