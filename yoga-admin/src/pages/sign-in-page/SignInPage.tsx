@@ -33,6 +33,7 @@ const SignInPage = () => {
         localStorage.setItem("token", res.data.token);
         toast.success("Login successfully");
         navigate("/");
+        window.location.reload();
       } else {
         toast.error("Login failed");
       }

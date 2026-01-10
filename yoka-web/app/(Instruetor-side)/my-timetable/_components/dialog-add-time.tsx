@@ -36,6 +36,7 @@ import { courseService } from "@/service/course.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { CourseType } from "@/types/course.type";
 import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 
 type FormValues = z.infer<typeof RoundSchema>;
 
@@ -43,7 +44,6 @@ const DialogAddTime = ({ date }: { date: string }) => {
   const [open, setOpen] = useState(false);
   const { user } = useAuthStore();
   const [courses, setCourses] = useState<CourseType[]>([]);
-  console.log(courses, "courses");
   const form = useForm<FormValues>({
     resolver: zodResolver(RoundSchema) as Resolver<FormValues>,
     defaultValues: {
@@ -52,6 +52,7 @@ const DialogAddTime = ({ date }: { date: string }) => {
       endDateTime: "",
       max_online: 0,
       max_walk_in: 0,
+      description: "",
     },
   });
 
@@ -68,6 +69,8 @@ const DialogAddTime = ({ date }: { date: string }) => {
       endDateTime: endDateTime.toISOString(),
       max_online: values.max_online,
       max_walk_in: values.max_walk_in,
+      teacherId: user?.id || "",
+      description: values.description,
     };
 
     const res = await courseService.createRound(payload);
@@ -223,6 +226,23 @@ const DialogAddTime = ({ date }: { date: string }) => {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>รายละเอียด</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      className="max-h-40! min-h-40! overflow-y-auto"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter className="mt-6 flex flex-col gap-4">
               <Button

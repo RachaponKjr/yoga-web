@@ -69,7 +69,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       if (userData) {
         // Token ดี -> Set User เข้า Store
-        set({ user: userData, isAuthenticated: true });
+        set({ user: userData.data, isAuthenticated: true });
       } else {
         throw new Error("User data not found");
       }

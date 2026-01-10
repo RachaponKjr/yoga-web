@@ -7,7 +7,22 @@ import SignInPage from "./pages/sign-in-page/SignInPage";
 import AdminLayout from "./components/layout/AdminLayout";
 import BookingPage from "./pages/book-page/BookingPage";
 import UserPage from "./pages/user-page/UserPage";
+import { useAuthStore } from "./stores/useAuthStore";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 function App() {
+  const { isLoading, checkAuth } = useAuthStore();
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
   return (
     <>
       <BrowserRouter>

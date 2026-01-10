@@ -5,6 +5,7 @@ import {
   getAllBookingController,
   getBookingByIdController,
   getBookingByUserIdController,
+  updateBookingController,
 } from "../controllers/booking.controller";
 const router = Router();
 
@@ -21,7 +22,7 @@ router.put(
   "/update-booking/:id",
   authMiddleware,
   restrictTo("Admin"),
-  () => {}
+  updateBookingController
 );
 router.delete(
   "/delete-booking/:id",

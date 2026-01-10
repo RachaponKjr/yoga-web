@@ -81,7 +81,8 @@ export const RoundSchema = z.object({
   max_walk_in: z.number().int().min(0),
   current_online: z.number().int().min(0),
   current_walk_in: z.number().int().min(0),
-
+  description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
+  teacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
   status: RoundStatusEnum.or(z.string()),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -100,6 +101,8 @@ export const BookingSchema = z.object({
   roundId: z.string(),
   type: BookingTypeEnum,
   status: BookingStatusEnum,
+  description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
+
   paidAt: z.coerce.date().nullable(), // อนุญาตให้เป็น null
   paymentId: z.string().nullable(), // อนุญาตให้เป็น null
   createdAt: z.coerce.date(),

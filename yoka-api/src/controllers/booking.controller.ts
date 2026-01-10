@@ -7,6 +7,7 @@ import {
   getAllBookingService,
   getBookingByIdService,
   getBookingByUserIdService,
+  updateBookingService,
 } from "../services/booking.service";
 
 interface AuthenticatedRequest extends Request {
@@ -165,9 +166,59 @@ const getBookingByUserIdController = async (
   }
 };
 
+const updateBookingController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const { payload } = req.body;
+    if (!id) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: "Booking ID is required!",
+      });
+      return;
+    }
+    if (!payload) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: "Payload is required!",
+      });
+      return;
+    }
+    const updateBookingRes = await updateBookingService({ id, payload });
+    if (!updateBookingRes) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "Booking not found!",
+      });
+      return;
+    }
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Booking updated successfully",
+      data: updateBookingRes,
+    });
+    return;
+  } catch (error) {
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: "Server error!",
+    });
+    return;
+  }
+};
+
 export {
   createBookingController,
   getAllBookingController,
   getBookingByIdController,
   getBookingByUserIdController,
+  updateBookingController,
 };

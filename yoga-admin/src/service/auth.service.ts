@@ -62,8 +62,8 @@ export const authService = {
     return response.data;
   },
 
-  updateUser: async (payload: any) => {
-    const response = await http.patch("/admin/update-profile", payload, {
+  updateUser: async (payload: any, id: string) => {
+    const response = await http.patch(`/admin/update-profile/${id}`, payload, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

@@ -1,5 +1,5 @@
 import { Search, Mail, Shield, Briefcase, User } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { authService } from "../../service/auth.service";
 import Cookies from "js-cookie";
 import type { UserInfoType, UserType } from "@/types/auth.type";
@@ -20,21 +20,22 @@ const UserPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const token = Cookies.get("token");
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await authService.getUserAll({ token });
-        // สมมติ response.data เป็น Array
-        setUsers(response.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
+  const getUser = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await authService.getUserAll({ token });
+      // สมมติ response.data เป็น Array
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [token]);
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
 
   // Filter Logic
   const filteredUsers = users.filter((user) => {
@@ -68,7 +69,7 @@ const UserPage = () => {
             <Briefcase size={12} /> Instructor
           </span>
         );
-      case "User":
+      case "Student":
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-600 border border-blue-100">
             <User size={12} /> User
@@ -211,7 +212,7 @@ const UserPage = () => {
                     <td className="py-4 px-6 text-center">
                       <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         {/* ✅ ปุ่ม Edit อยู่ตรงนี้ (ส่ง user เข้าไป) */}
-                        <EditUser user={user} />
+                        <EditUser user={user} onSuccess={getUser} />
 
                         <DelUser
                           userId={user.id}

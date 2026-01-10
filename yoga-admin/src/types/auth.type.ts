@@ -5,13 +5,6 @@ export const AuthSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-export const UserSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  email: z.string(),
-  role: z.string(),
-});
-
 export const UserInforSchema = z.object({
   avatar: z.string().nullable(),
   firstName: z.string().nullable(),
@@ -23,6 +16,13 @@ export const UserInforSchema = z.object({
   facebook: z.string().nullable(),
   instagram: z.string().nullable(),
   twitter: z.string().nullable(),
+});
+
+export const UserSchema = z.object({
+  id: z.string(),
+  userInfo: UserInforSchema,
+  email: z.string(),
+  role: z.string(),
 });
 
 export type AuthType = z.infer<typeof AuthSchema>;

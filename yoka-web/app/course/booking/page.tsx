@@ -1,4 +1,3 @@
-import React from "react";
 import PaymentPage from "./_components/payment-page";
 
 const page = () => {

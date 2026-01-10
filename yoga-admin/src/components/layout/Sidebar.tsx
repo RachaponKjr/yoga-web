@@ -15,7 +15,7 @@ const Sidebar = () => {
   const location = useLocation();
   const { logout, user } = useAuthStore();
   const [expanded, setExpanded] = useState(true); // State ควบคุมการหุบ/ขยาย
-
+  console.log(user);
   const menuItems = [
     { name: "หน้าแรก", path: "/", icon: Home },
     { name: "การจอง", path: "/bookings", icon: BookIcon },
@@ -140,7 +140,7 @@ const Sidebar = () => {
               }`}
             >
               <div className="leading-4">
-                <h4 className="font-semibold text-sm text-gray-700 whitespace-nowrap max-w-[100px]">
+                <h4 className="font-semibold text-sm text-gray-700 whitespace-nowrap">
                   {user?.email}
                 </h4>
                 <span className="text-xs text-gray-500">{user?.role}</span>

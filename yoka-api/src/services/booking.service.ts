@@ -58,9 +58,25 @@ const getBookingByUserIdService = async ({ id }: { id: string }) => {
   return res;
 };
 
+const updateBookingService = async ({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: BookingType;
+}) => {
+  const res = await prisma.booking.update({
+    where: { id },
+    data: payload,
+  });
+
+  return res;
+};
+
 export {
   createBookingService,
   getAllBookingService,
   getBookingByIdService,
   getBookingByUserIdService,
+  updateBookingService,
 };

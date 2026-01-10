@@ -76,9 +76,8 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await authService.updateUser(userEdit);
+      const res = await authService.updateUser(userEdit, userEdit.id);
       console.log(res);
-
       setOpen(false); // ปิด Dialog
       if (onSuccess) onSuccess(); // แจ้งหน้าหลักให้โหลดข้อมูลใหม่
     } catch (error) {

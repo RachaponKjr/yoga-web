@@ -34,10 +34,10 @@ export const RoundCourseSchema = z.object({
   max_walk_in: z.number(),
   status: z.string(),
   id: z.string(),
-  description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
-  teacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
+  teacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
 });
 
 export const PaginationSchema = z.object({

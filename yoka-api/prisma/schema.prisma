@@ -82,6 +82,8 @@ model CourseRound {
   current_online  Int @default(0)
   current_walk_in Int @default(0)
 
+  description String?
+
   status Status @default(Open)
 
   bookings Booking[]
