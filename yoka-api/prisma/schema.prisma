@@ -95,8 +95,10 @@ model CourseRound {
 model Booking {
   id String @id @default(cuid())
 
-  studentId String
-  student   User   @relation("StudentBookings", fields: [studentId], references: [id])
+  studentId String?
+  student   User?   @relation("StudentBookings", fields: [studentId], references: [id])
+  email     String?
+  quantity  Int     @default(1)
 
   price Float
 

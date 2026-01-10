@@ -101,6 +101,7 @@ const PaymentPage = () => {
       const bookingRes = await bookingService.createBooking({
         roundId: booking?.id || "",
         type: "ONLINE",
+        quantity: quantity || 1,
         price: grandTotal,
       });
 

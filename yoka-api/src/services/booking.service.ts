@@ -1,19 +1,45 @@
 import { BookingType } from "../types/order.type";
 import prisma from "../config/prisma";
+import { PaymentStatus } from "@prisma/client";
 
 export interface PayloadProps {
-  status: string;
-  roundId: string;
-  courseId: string;
-  teacherId: string;
-  price: number;
-  description: string;
+  status?: string; // ส่งมาเป็น String (เช่น "PAID")
+  price?: number; // แก้ราคา (เฉพาะใบจองนี้)
+  description?: string; // แก้หมายเหตุ
+  roundId?: string; // (Optional) ใส่มาเฉพาะกรณีอยากย้ายรอบเรียน (Reschedule)
 }
 
-const createBookingService = async ({ payload }: { payload: BookingType }) => {
-  const res = await prisma.booking.create({ data: payload });
+const createBookingService = async ({ payload }: { payload: any }) => {
+  const { quantity = 1, roundId } = payload; // สมมติว่าถ้าไม่ส่ง quantity มาคือ 1 คน
 
-  return res;
+  return await prisma.$transaction(async (tx) => {
+    const round = await tx.courseRound.findUnique({
+      where: { id: roundId },
+    });
+
+    if (!round) {
+      throw new Error("Course round not found");
+    }
+
+    if (round.current_online + quantity > round.max_online) {
+      throw new Error(
+        "Class is full (คลาสเต็มแล้วครับ ไม่สามารถจองเกินจำนวนที่กำหนดได้)"
+      );
+    }
+
+    await tx.courseRound.update({
+      where: { id: roundId },
+      data: {
+        current_online: { increment: quantity },
+      },
+    });
+
+    const res = await tx.booking.create({
+      data: payload,
+    });
+
+    return res;
+  });
 };
 
 const getAllBookingService = async ({
@@ -74,30 +100,48 @@ const updateBookingService = async ({
   id: string;
   payload: PayloadProps;
 }) => {
-  const { roundId, courseId, teacherId, price, description } = payload;
+  console.log("Updating Booking ID:", id, "With Payload:", payload);
 
-  const round = await prisma.courseRound.update({
-    where: { id: roundId },
-    data: { courseId, teacherId },
-  });
+  const { roundId, price, description, status } = payload;
 
+  // เตรียมข้อมูลสำหรับ Update Booking
+  const updateData: any = {};
+
+  if (price !== undefined) updateData.price = price;
+  if (description !== undefined) updateData.description = description;
+
+  // เช็ค Enum Status
+  if (status) {
+    // แปลง String เป็น Enum (ต้องระวังพิมพ์ผิด ต้องตรงกับ PaymentStatus)
+    updateData.status = status as PaymentStatus;
+  }
+
+  // **สำคัญ**: ถ้ามีการส่ง roundId มา (ย้ายรอบ)
+  // Booking นี้จะย้ายไปเกาะรอบใหม่ แต่ข้อมูลรอบเดิม (ครู/คอร์ส) จะไม่ถูกแก้ไข
+  if (roundId) {
+    updateData.round = {
+      connect: { id: roundId },
+    };
+  }
+
+  // 2. สั่ง Update แค่ตาราง Booking เท่านั้น
+  // (ผมลบส่วน prisma.courseRound.update ทิ้งไปแล้ว ตามที่คุณต้องการ)
   const res = await prisma.booking.update({
     where: { id },
-    data: {
+    data: updateData,
+    include: {
+      // ดึงข้อมูลรอบเรียนมาแสดงผลเฉยๆ (Read-only)
       round: {
-        connect: { id: roundId },
+        include: {
+          course: true,
+          teacher: true,
+        },
       },
-      price,
-      description,
+      student: true,
     },
   });
 
-  const payloadRes = {
-    ...round,
-    ...res,
-  };
-
-  return payloadRes;
+  return res;
 };
 
 export {

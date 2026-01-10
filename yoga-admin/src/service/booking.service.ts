@@ -14,7 +14,7 @@ export const bookingService = {
   updateBookingService: async (id: string, payload: PayloadProps) => {
     const response = await http.patch(
       `/booking/update-booking/${id}`,
-      payload,
+      { payload },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

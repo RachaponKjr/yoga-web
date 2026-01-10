@@ -1,16 +1,14 @@
 import {
   Search,
   Download,
-  MoreVertical,
   Eye,
   XCircle,
   CheckCircle,
   Clock,
   ChevronLeft,
   ChevronRight,
-  Edit,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { bookingService } from "@/service/booking.service";
 import type { BookingType } from "@/types/booking.type";
 import { formatDate } from "@/utils/format";
@@ -23,18 +21,20 @@ const BookingPage = () => {
   // 1. เพิ่ม State สำหรับคำค้นหา
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await bookingService.getAllBooking();
-        console.log(response);
-        setBookings(response.data);
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-      }
-    };
-    fetchBookings();
+  const fetchBookings = useCallback(async () => {
+    try {
+      const response = await bookingService.getAllBooking();
+      console.log(response);
+      setBookings(response.data);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchBookings();
+  }, [fetchBookings]);
 
   // 2. Logic การกรองข้อมูล (Filter)
   const filteredBookings = bookings.filter((booking) => {
@@ -213,7 +213,10 @@ const BookingPage = () => {
                         >
                           <Eye size={18} />
                         </button>
-                        <DialogEdit booking={booking} />
+                        <DialogEdit
+                          booking={booking}
+                          onComplete={fetchBookings}
+                        />
                       </div>
                     </td>
                   </tr>

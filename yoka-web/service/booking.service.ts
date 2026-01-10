@@ -4,6 +4,7 @@ type BookingProps = {
   roundId: string;
   type: "ONLINE" | "OFFLINE";
   price: number;
+  quantity?: number;
 };
 
 export const bookingService = {

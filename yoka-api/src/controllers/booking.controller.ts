@@ -9,6 +9,7 @@ import {
   getBookingByUserIdService,
   updateBookingService,
 } from "../services/booking.service";
+import { mailService } from "../utils/mail";
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -173,6 +174,9 @@ const updateBookingController = async (
   try {
     const { id } = req.params;
     const { payload } = req.body;
+    const { status } = payload;
+
+    console.log(req.user);
     if (!id) {
       sendResponse(res, {
         success: false,
@@ -198,6 +202,21 @@ const updateBookingController = async (
       });
       return;
     }
+
+    if (status && status === "PAID" && updateBookingRes.student) {
+      await mailService.sendEmail(
+        updateBookingRes.student.email,
+        "Booking Payment Success",
+        "Booking Payment Success"
+      );
+    } else if (status && status === "CANCELLED" && updateBookingRes.student) {
+      await mailService.sendEmail(
+        updateBookingRes.student.email,
+        "Booking Cancellation Success",
+        "Booking Cancellation Success"
+      );
+    }
+
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,

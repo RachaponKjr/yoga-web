@@ -23,46 +23,60 @@ import {
   type CourseType,
   type RoundType,
 } from "@/types/booking.type";
-import { Edit } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Edit, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
-import type { UserType } from "@/types/auth.type";
-import { authService } from "@/service/auth.service";
 import { bookingService } from "@/service/booking.service";
+import { toast } from "sonner";
 
 export interface PayloadProps {
   status: string;
   roundId: string;
-  courseId: string;
-  teacherId: string;
   price: number;
   description: string;
 }
 
-const DialogEdit = ({ booking }: { booking: BookingType }) => {
+const DialogEdit = ({
+  booking,
+  onComplete,
+}: {
+  booking: BookingType;
+  onComplete: () => void;
+}) => {
   const [course, setCourse] = useState<CourseType[]>([]);
   const [round, setRound] = useState<RoundType[]>([]);
-  const [instructor, setInstructor] = useState<UserType[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [payload, setPayload] = useState<PayloadProps>({
     status: booking.status,
     roundId: booking.round.id,
-    courseId: booking.round.course.id,
-    teacherId: booking.round.teacherId || "",
     price: booking.price,
     description: booking.description || "",
   });
 
-  console.log(payload);
-
   const handleSubmit = async () => {
-    const response = await bookingService.updateBookingService(
-      booking.id,
-      payload
-    );
-    console.log(response);
+    setLoading(true);
+    try {
+      const response = await bookingService.updateBookingService(
+        booking.id,
+        payload
+      );
+      if (response.success) {
+        toast.success("อัปเดตข้อมูลสำเร็จ");
+        setOpen(false);
+        onComplete();
+      } else {
+        toast.error("อัปเดตข้อมูลไม่สำเร็จ");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("อัปเดตข้อมูลไม่สำเร็จ");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -80,24 +94,13 @@ const DialogEdit = ({ booking }: { booking: BookingType }) => {
         setRound(filteredRounds);
       }
     };
-    const fetchInstructor = async () => {
-      const response = await authService.getInstructor();
-      if (response) {
-        const instructors = response;
-        const filteredInstructors = instructors.filter(
-          (instructor: UserType) => instructor.role === "Instructor"
-        );
-        setInstructor(filteredInstructors);
-      }
-    };
     fetchCourse();
     fetchRound();
-    fetchInstructor();
   }, [booking]);
 
   if (!course) return null;
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <button
           className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
@@ -110,7 +113,7 @@ const DialogEdit = ({ booking }: { booking: BookingType }) => {
         <DialogHeader>
           <DialogTitle>แก้ไข</DialogTitle>
           <DialogDescription>
-            แก้ไขข้อมูลการจอง (รหัสผู้จอง : 123456)
+            แก้ไขข้อมูลการจอง (รหัสการจอง : {booking.id})
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-2 gap-4">
@@ -184,41 +187,12 @@ const DialogEdit = ({ booking }: { booking: BookingType }) => {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 col-span-2">
             <label
               htmlFor="email"
               className="text-sm font-medium text-gray-700"
             >
-              คอร์สเรียน
-            </label>
-            <Select
-              value={payload.courseId}
-              defaultValue={payload.courseId}
-              onValueChange={(value) =>
-                setPayload({
-                  ...payload,
-                  courseId: String(value),
-                })
-              }
-            >
-              <SelectTrigger className="w-full bg-white!">
-                <SelectValue placeholder="คอร์ส" />
-              </SelectTrigger>
-              <SelectContent>
-                {course.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-gray-700"
-            >
-              รอบวันเรียน
+              คอร์สเรียน/รอบที่เรียน
             </label>
             <Select
               value={payload.roundId}
@@ -231,43 +205,16 @@ const DialogEdit = ({ booking }: { booking: BookingType }) => {
               }
             >
               <SelectTrigger className="w-full bg-white!">
-                <SelectValue placeholder="รอบวันเรียน" />
+                <SelectValue placeholder="รอบที่เรียน" />
               </SelectTrigger>
               <SelectContent>
                 {round.map((item) => (
                   <SelectItem key={item.id} value={item.id}>
-                    {format(item.startDateTime, "d MMMM yyyy", {
-                      locale: th,
-                    })}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-gray-700"
-            >
-              คุณครูที่สอน
-            </label>
-            <Select
-              value={payload.teacherId}
-              defaultValue={payload.teacherId}
-              onValueChange={(value) =>
-                setPayload({
-                  ...payload,
-                  teacherId: String(value),
-                })
-              }
-            >
-              <SelectTrigger className="w-full bg-white!">
-                <SelectValue placeholder="คุณครู" />
-              </SelectTrigger>
-              <SelectContent>
-                {instructor.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.userInfo.firstName + " " + item.userInfo.lastName}
+                    {item.course.title +
+                      " วันที่ " +
+                      format(item.startDateTime, "d MMMM yyyy", {
+                        locale: th,
+                      })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -313,11 +260,11 @@ const DialogEdit = ({ booking }: { booking: BookingType }) => {
             </Button>
           </DialogClose>
           <Button
-            size={"lg"}
+            size={loading ? "icon-lg" : "lg"}
             onClick={handleSubmit}
             className="bg-primary! cursor-pointer"
           >
-            บันทึก
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "อัปเดต"}
           </Button>
         </DialogFooter>
       </DialogContent>
