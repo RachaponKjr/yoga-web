@@ -13,6 +13,7 @@ import bookingRoutes from "./routes/booking.route";
 import webhookRouter from "./routes/webhook.route";
 import paymentRoutes from "./routes/payment.route";
 import adminRoutes from "./routes/admin.route";
+import couponRoutes from "./routes/coupon.routes";
 
 import path from "path";
 
@@ -47,6 +48,7 @@ app.use(`${apiPrefix}/course`, courseRoutes);
 app.use(`${apiPrefix}/booking`, bookingRoutes);
 app.use(`${apiPrefix}/payment`, paymentRoutes);
 app.use(`${apiPrefix}/admin`, adminRoutes);
+app.use(`${apiPrefix}/coupon`, couponRoutes);
 
 // Webhook
 app.use("/webhook", webhookRouter);

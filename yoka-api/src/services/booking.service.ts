@@ -18,13 +18,20 @@ const createBookingService = async ({ payload }: { payload: any }) => {
     });
 
     if (!round) {
-      throw new Error("Course round not found");
+      return {
+        success: false,
+        message: "Course round not found",
+        status: 404,
+      };
     }
 
     if (round.current_online + quantity > round.max_online) {
-      throw new Error(
-        "Class is full (คลาสเต็มแล้วครับ ไม่สามารถจองเกินจำนวนที่กำหนดได้)"
-      );
+      return {
+        success: false,
+        message:
+          "Class is full (คลาสเต็มแล้วครับ ไม่สามารถจองเกินจำนวนที่กำหนดได้)",
+        status: 500,
+      };
     }
 
     await tx.courseRound.update({
@@ -38,7 +45,12 @@ const createBookingService = async ({ payload }: { payload: any }) => {
       data: payload,
     });
 
-    return res;
+    return {
+      success: true,
+      message: "Booking created successfully",
+      status: 200,
+      data: res,
+    };
   });
 };
 

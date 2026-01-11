@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const tokenValue = request.cookies.get("token")?.value;
 
   const isProtected = isProtectedPath(pathname);
-  console.log(tokenValue);
+  // console.log(tokenValue);
   if (!tokenValue) {
     if (isProtected) {
       const url = new URL("/signin", request.url);

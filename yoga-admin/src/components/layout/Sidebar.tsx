@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   BookIcon,
+  Tags,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -20,6 +21,7 @@ const Sidebar = () => {
     { name: "หน้าแรก", path: "/", icon: Home },
     { name: "การจอง", path: "/bookings", icon: BookIcon },
     { name: "จัดการคลาส", path: "/classes", icon: BookIcon },
+    { name: "จัดการคูปอง", path: "/coupons", icon: Tags },
     { name: "จัดการสมาชิก", path: "/users", icon: Users },
   ];
 

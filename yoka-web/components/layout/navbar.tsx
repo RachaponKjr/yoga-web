@@ -247,11 +247,6 @@ const UserDropdown = ({ user }: UserProps) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/my-history" className="cursor-pointer">
-            History
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
           <Link href="/my-booking" className="cursor-pointer">
             My Booking
           </Link>

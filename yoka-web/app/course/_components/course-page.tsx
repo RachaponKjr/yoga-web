@@ -17,18 +17,7 @@ const CoursePage = ({
   date: Date | string;
 }) => {
   return (
-    <div className="container mx-auto flex flex-col gap-6">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{course.title}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <div className="flex flex-col gap-6">
       <CourseDetailPage course={course} date={date} />
     </div>
   );

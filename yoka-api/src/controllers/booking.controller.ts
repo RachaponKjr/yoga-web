@@ -36,11 +36,18 @@ const createBookingController = async (
       payload: payload.data,
     });
 
-    if (!createBookingRes) {
+    if (createBookingRes.status === 404) {
       sendResponse(res, {
         success: false,
         statusCode: StatusCodes.NOT_FOUND,
-        message: "Booking not found!",
+        message: createBookingRes.message,
+      });
+      return;
+    } else if (createBookingRes.status === 500) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: createBookingRes.message,
       });
       return;
     }

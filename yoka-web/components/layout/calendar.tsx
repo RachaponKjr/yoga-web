@@ -302,11 +302,17 @@ const Calendar = () => {
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        Online: {event.max_online}
+                        Online:{" "}
+                        {event.max_online - event.current_online === 0
+                          ? "เต็ม"
+                          : event.max_online - event.current_online}
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-                        Walk-in: {event.max_walk_in}
+                        Walk-in:{" "}
+                        {event.max_walk_in - event.current_walk_in === 0
+                          ? "เต็ม"
+                          : event.max_walk_in - event.current_walk_in}
                       </div>
                     </div>
                     {/* Footer: Price & Button */}

@@ -10,6 +10,7 @@ import UserPage from "./pages/user-page/UserPage";
 import { useAuthStore } from "./stores/useAuthStore";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import CouponPage from "./pages/coupon-page/CouponPage";
 function App() {
   const { isLoading, checkAuth } = useAuthStore();
   useEffect(() => {
@@ -38,7 +39,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/bookings" element={<BookingPage />} />
               <Route path="/users" element={<UserPage />} />
-              <Route path="/settings" element={<div>Settings Page</div>} />
+              <Route path="/coupons" element={<CouponPage />} />
             </Route>
           </Route>
         </Routes>

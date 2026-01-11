@@ -7,8 +7,7 @@ import { AppError } from "../utils/AppError";
 export const chargeCardController = async (req: Request, res: Response) => {
   try {
     // Frontend ต้องส่ง 2 ค่านี้มา
-    const { orderId, omiseToken } = req.body;
-    console.log(req.body, "orderId, omiseToken");
+    const { orderId, omiseToken, couponId } = req.body;
     if (!omiseToken) {
       throw new AppError("Omise Token is required", StatusCodes.BAD_REQUEST);
     }
@@ -25,15 +24,42 @@ export const chargeCardController = async (req: Request, res: Response) => {
 
     // 2. สั่งตัดบัตร
     const charge = await createCardChargeService({
+      couponId: couponId,
       amount: order.price,
       token: omiseToken,
       orderId: order.id,
       email: order.student?.email,
     });
 
-    // 3. เช็คผลลัพธ์เพื่อบอก Frontend ว่าต้อง Redirect ไปหน้า OTP ไหม?
-    // ถ้า charge.status เป็น 'pending' และมี authorize_uri แปลว่าติด 3D Secure (ต้องใส่ OTP)
     const is3DSecure = charge.status === "pending" && charge.authorize_uri;
+
+    await prisma.$transaction(async (tx) => {
+      const updatedCoupon = await tx.coupon.update({
+        where: { id: couponId },
+        data: {
+          currentUses: {
+            increment: 1,
+          },
+        },
+      });
+
+      if (
+        updatedCoupon.usageLimit !== null &&
+        updatedCoupon.currentUses > updatedCoupon.usageLimit
+      ) {
+        throw new Error("Coupon usage limit exceeded during transaction");
+      }
+
+      await tx.couponUsage.create({
+        data: {
+          discount: order.price, // เช็คให้ชัวร์ว่าตัวแปรนี้คือ "ยอดเงินส่วนลด" ไม่ใช่ "ราคาสินค้า"
+          usedAt: new Date(),
+          orderId: orderId,
+          couponId: couponId,
+          userId: order.student?.id || "",
+        },
+      });
+    });
 
     res.status(StatusCodes.OK).json({
       success: true,

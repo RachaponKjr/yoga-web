@@ -30,7 +30,6 @@ const page = async ({
   const { data } = (await courseService.getCourseById(courseId as string)) as {
     data: CourseProps;
   };
-  console.log(data, "DATA");
 
   if (!data) {
     return notFound();

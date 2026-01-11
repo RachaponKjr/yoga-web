@@ -74,8 +74,8 @@ const CourseDetailPage = ({
   const availableSeats = selectRound.max_online - selectRound.current_online;
 
   return (
-    <div className="w-full mx-auto bg-white min-h-screen py-20 px-4 sm:px-6 lg:px-8 font-sans text-slate-800">
-      <div className="max-w-8xl mx-auto">
+    <div className="w-full bg-white min-h-screen py-36 sm:px-6 lg:px-8 font-sans text-slate-800">
+      <div className="max-w-8xl mx-auto container">
         {/* --- Header Section & Actions --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div className="space-y-3">
@@ -85,7 +85,7 @@ const CourseDetailPage = ({
               </span>
               {discountPercentage > 0 && (
                 <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
-                  Special Offer
+                  Discount {discountPercentage}%
                 </span>
               )}
             </div>
@@ -109,10 +109,10 @@ const CourseDetailPage = ({
           {/* --- Left Content (Main - 8 cols) --- */}
           <div className="lg:col-span-8 flex flex-col gap-10">
             {/* Image Gallery (Modern Grid Style) */}
-            <div className="grid grid-cols-4 grid-rows-2 gap-3 h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
+            <div className="grid grid-cols-4 grid-rows-2 gap-3 overflow-hidden ">
               {/* รูปใหญ่ซ้าย */}
               <div
-                className={`col-span-4 md:col-span-3 row-span-2 relative group cursor-pointer overflow-hidden bg-slate-200`}
+                className={`col-span-4 md:col-span-3 row-span-2 relative group cursor-pointer overflow-hidden bg-slate-200 rounded-2xl`}
               >
                 <Image
                   src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.cover_image}`}
@@ -130,7 +130,7 @@ const CourseDetailPage = ({
                   course.images.slice(0, 2).map((image, index) => (
                     <div
                       key={index}
-                      className="flex-1 relative overflow-hidden group bg-slate-200"
+                      className="flex-1 relative overflow-hidden group bg-slate-200 aspect-square rounded-2xl"
                     >
                       <Image
                         src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${image}`}
@@ -232,9 +232,6 @@ const CourseDetailPage = ({
             <div className="sticky top-8">
               {/* Booking Card (Elevated) */}
               <div className="bg-white shadow-md shadow-emerald-100/50 border border-slate-100 rounded-3xl p-6 lg:p-8 overflow-hidden relative">
-                {/* Top Accent Line */}
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-linear-to-r from-emerald-400 to-teal-500"></div>
-
                 {/* Price Section */}
                 <div className="mb-8">
                   <p className="text-slate-500 font-medium text-sm mb-1">

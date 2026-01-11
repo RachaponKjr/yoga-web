@@ -1,7 +1,8 @@
 import React from "react";
+import MyBooking from "./_components/my-booking";
 
 const page = () => {
-  return <div>page</div>;
+  return <MyBooking />;
 };
 
 export default page;

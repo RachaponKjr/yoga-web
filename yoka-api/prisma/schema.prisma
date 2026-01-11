@@ -118,6 +118,55 @@ model Booking {
   createdAt DateTime @default(now())
 }
 
+model Coupon {
+  id          String  @id @default(uuid())
+  code        String  @unique // รหัสคูปอง (เช่น WELCOME2024)
+  description String?
+
+  type  CouponType
+  value Decimal // มูลค่า (ถ้าเป็น % คือ 10, ถ้าเป็นบาท คือ 100)
+
+  // Constraints (เงื่อนไขการใช้)
+  minSpend    Decimal? @default(0) // ยอดซื้อขั้นต่ำที่จะใช้ได้
+  maxDiscount Decimal? // ลดสูงสุด (สำหรับแบบ %) ป้องกันการขาดทุนหนัก
+
+  // Limits (จำกัดจำนวน)
+  usageLimit  Int? // จำนวนสิทธิ์ทั้งหมดที่มี (ถ้า null คือไม่จำกัด)
+  userLimit   Int? @default(1) // จำกัด 1 คนใช้ได้กี่ครั้ง
+  currentUses Int  @default(0) // จำนวนที่ถูกใช้ไปแล้ว
+
+  // Validity (ระยะเวลา)
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(true) // ปิด/เปิด คูปองฉุกเฉิน
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation
+  usages CouponUsage[]
+}
+
+model CouponUsage {
+  id       String   @id @default(uuid())
+  userId   String // ID ของ User ที่ใช้
+  couponId String
+  orderId  String? // ผูกกับ Order ID (ถ้ามี)
+  discount Decimal // บันทึกไว้ว่าลดไปกี่บาทใน transaction นี้
+  usedAt   DateTime @default(now())
+
+  coupon Coupon @relation(fields: [couponId], references: [id])
+
+  // สร้าง Index เพื่อให้ค้นหาประวัติการใช้ของ user ได้เร็ว
+  @@index([userId, couponId])
+}
+
+// Enum ประเภทคูปอง
+enum CouponType {
+  FIXED_AMOUNT // ลดเป็นจำนวนเงิน (เช่น ลด 100 บาท)
+  PERCENTAGE // ลดเป็นเปอร์เซ็นต์ (เช่น ลด 10%)
+}
+
 enum Status {
   Draft
   Open
