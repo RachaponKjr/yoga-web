@@ -26,7 +26,6 @@ const SignInPage = () => {
     e.preventDefault();
     try {
       const res = await authService.login(formData);
-      console.log(res);
       if (res.success && res.data.token) {
         setUser(res.data.user);
         Cookies.set("token", res.data.token);

@@ -32,7 +32,6 @@ http.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.log("Unauthorized / Token Expired");
       // เสริม: ถ้า Token หมดอายุ ให้ลบทิ้งแล้วเด้งไปหน้า Login
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");

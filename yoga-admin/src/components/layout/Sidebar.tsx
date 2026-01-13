@@ -16,7 +16,6 @@ const Sidebar = () => {
   const location = useLocation();
   const { logout, user } = useAuthStore();
   const [expanded, setExpanded] = useState(true); // State ควบคุมการหุบ/ขยาย
-  console.log(user);
   const menuItems = [
     { name: "หน้าแรก", path: "/", icon: Home },
     { name: "การจอง", path: "/bookings", icon: BookIcon },

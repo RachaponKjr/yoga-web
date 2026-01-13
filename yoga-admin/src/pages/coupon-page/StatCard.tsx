@@ -48,8 +48,7 @@ const CreateCouponModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await CouponService.createCoupon(payload);
-      console.log(res);
+      await CouponService.createCoupon(payload);
     } catch (error) {
       console.error(error);
     } finally {

@@ -24,7 +24,7 @@ const BookingPage = () => {
   const fetchBookings = useCallback(async () => {
     try {
       const response = await bookingService.getAllBooking();
-      console.log(response);
+      (response);
       setBookings(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
