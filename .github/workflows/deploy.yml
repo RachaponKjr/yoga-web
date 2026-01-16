@@ -25,7 +25,7 @@ jobs:
             # 3. Build และ Run ใหม่ (เฉพาะตัวที่มีการเปลี่ยนแปลง)
             # -d = run background
             # --build = บังคับ build image ใหม่ถ้ามีการแก้ code
-            docker compose up -d --build
+            docker compose up -d --build --no-cache
 
             # 4. ลบ Image เก่าที่ไม่ได้ใช้ทิ้ง (เพื่อไม่ให้รก Server)
             docker image prune -f

@@ -27,7 +27,7 @@ const ProductItem = ({ course }: { course: CourseType }) => {
       <div className="flex justify-between items-center z-10 relative">
         <span className="text-xl font-semibold">{course?.price}$</span>
         <Button
-          onClick={() => router.push(`/course?courseId=${course.id}`)}
+          onClick={() => router.push(`/course?courseId=${course?.id}`)}
           className="rounded-full text-white bg-[#3D552F] hover:bg-[#3D552F] cursor-pointer shadow-md"
         >
           Book Now
