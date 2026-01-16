@@ -12,20 +12,20 @@ const ProductItem = ({ course }: { course: CourseType }) => {
 
       <div className="w-full aspect-16/14 bg-tertiary/20 rounded-2xl z-10 relative overflow-hidden">
         <Image
-          src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.cover_image}`}
-          alt={course.title}
+          src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course?.cover_image}`}
+          alt={course?.title}
           fill
           className="object-cover object-center"
         />
       </div>
       <div className="flex flex-col gap-2 z-10 relative">
-        <span className="text-lg font-semibold">{course.title}</span>
+        <span className="text-lg font-semibold">{course?.title}</span>
         <p className="text-neutral-700 line-clamp-2 text-sm">
-          {course.description}
+          {course?.description}
         </p>
       </div>
       <div className="flex justify-between items-center z-10 relative">
-        <span className="text-xl font-semibold">{course.price}$</span>
+        <span className="text-xl font-semibold">{course?.price}$</span>
         <Button
           onClick={() => router.push(`/course?courseId=${course.id}`)}
           className="rounded-full text-white bg-[#3D552F] hover:bg-[#3D552F] cursor-pointer shadow-md"
