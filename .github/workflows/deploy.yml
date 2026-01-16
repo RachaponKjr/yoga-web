@@ -23,12 +23,13 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            docker compose down
+            docker compose down --remove-orphans
 
-            # 3. Build และ Run ใหม่ (เฉพาะตัวที่มีการเปลี่ยนแปลง)
-            # -d = run background
-            # --build = บังคับ build image ใหม่ถ้ามีการแก้ code
-            docker compose up -d --build --no-cache --force-recreate
+            # 3. Build ใหม่ (ใส่ --no-cache ตรงนี้ได้!)
+            docker compose build --no-cache
 
-            # 4. ลบ Image เก่าที่ไม่ได้ใช้ทิ้ง (เพื่อไม่ให้รก Server)
+            # 4. รันขึ้นมาใหม่
+            docker compose up -d --force-recreate
+
+            # 5. ลบขยะ
             docker image prune -f
