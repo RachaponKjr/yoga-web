@@ -23,6 +23,16 @@ export default async function Home() {
       <Banner />
       <Instructors data={data} />
       <StepService />
+      {/* <div className="w-full aspect-16/6 bg-amber-500 relative">
+        <video
+          src="/yoga.mp4"
+          autoPlay
+          loop
+          muted
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black opacity-30" />
+      </div> */}
       <DetailRestaurant />
       <Story />
     </main>
