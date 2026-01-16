@@ -47,13 +47,14 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-secondary!`}
       >
         <TanstackProvider>
-          <SmoothScrolling />
-          <AuthHydrator user={user} />
-          <Navbar />
-          {children}
-          <ScrollTop />
-          <Toaster />
-          <Footer />
+          <SmoothScrolling>
+            <AuthHydrator user={user} />
+            <Navbar />
+            {children}
+            <ScrollTop />
+            <Toaster />
+            <Footer />
+          </SmoothScrolling>
         </TanstackProvider>
       </body>
     </html>
