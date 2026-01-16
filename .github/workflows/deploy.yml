@@ -20,12 +20,15 @@ jobs:
             cd ~/yoga-web
 
             # 2. ดึง Code ล่าสุด
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
+
+            docker compose down
 
             # 3. Build และ Run ใหม่ (เฉพาะตัวที่มีการเปลี่ยนแปลง)
             # -d = run background
             # --build = บังคับ build image ใหม่ถ้ามีการแก้ code
-            docker compose up -d --build --no-cache
+            docker compose up -d --build --no-cache --force-recreate
 
             # 4. ลบ Image เก่าที่ไม่ได้ใช้ทิ้ง (เพื่อไม่ให้รก Server)
             docker image prune -f
