@@ -98,7 +98,7 @@ const createCourseRoundController = async (req: Request, res: Response) => {
 const getMyCourseController = async (req: Request, res: Response) => {
   try {
     const { limit, offset, search } = req.query;
-    const { userId } = req.params;
+    const { userId } = req.params as { userId: string };
 
     const parsedLimit = Number(limit) > 0 ? Number(limit) : 10;
     const parsedOffset = Number(offset) >= 0 ? Number(offset) : 0;
@@ -192,9 +192,9 @@ const getCourseController = async (req: Request, res: Response) => {
 
 const getCourseByIdController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
-    const course = await getCourseByIdService({ id });
+    const course = await getCourseByIdService({ id: id as string });
 
     if (!course) {
       sendResponse(res, {
@@ -268,9 +268,9 @@ const getCourseRoundController = async (req: Request, res: Response) => {
 
 const getCourseRoundByIdController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
-    const courseRound = await getCourseRoundByIdService({ id });
+    const courseRound = await getCourseRoundByIdService({ id: id });
 
     if (!courseRound) {
       sendResponse(res, {
@@ -302,9 +302,9 @@ const getCourseRoundByCourseIdController = async (
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
-    const courseRound = await getCourseRoundByCourseIdService({ id });
+    const courseRound = await getCourseRoundByCourseIdService({ id: id });
 
     if (!courseRound) {
       sendResponse(res, {
@@ -372,7 +372,7 @@ const deleteCourseController = async (
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const user = req.user;
 
     const course = await deleteCourseService({ id, userId: user?.id });
