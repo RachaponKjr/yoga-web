@@ -10,6 +10,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import cc2063 from "@/assets/images/yoga/cc2063.jpg";
+import Image from "next/image";
+
 const SignInPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -65,8 +68,8 @@ const SignInPage = () => {
 
   return (
     <div className="h-max md:h-[calc(100vh-6rem)] min-h-screen container mx-auto my-24 md:my-0 px-4 md:px-0 flex items-center">
-      <div className="bg-white w-full max-w-6xl mx-auto p-6 rounded-2xl shadow-md md:shadow-2xl flex gap-4">
-        <div className="flex-1 py-8 flex flex-col  gap-8 items-center justify-between">
+      <div className="bg-white w-full max-w-6xl items-center mx-auto p-6 rounded-2xl shadow-md md:shadow-2xl flex gap-4">
+        <div className="flex-1 py-8 flex flex-col items-center gap-8 justify-between">
           <div className="flex flex-col gap-8 items-center w-full">
             <div className="flex flex-col items-center gap-4">
               <h5 className="text-4xl font-semibold">Welcome Back!</h5>
@@ -122,22 +125,23 @@ const SignInPage = () => {
               <span className="mx-4 text-gray-400 text-xs">OR</span>
               <div className="grow border-t border-gray-200"></div>
             </div>
-          </div>
-
-          <div className="w-full flex items-center justify-center">
-            <p className="text-sm text-[#666666]">
-              Don&apos;t have an account?{" "}
-              {/* ส่ง callbackUrl ไปที่หน้า signup ด้วย เผื่อเขาสมัครเสร็จจะได้เด้งกลับถูก */}
-              <Link
-                href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                className="text-primary cursor-pointer font-semibold"
-              >
-                Sign Up
-              </Link>
-            </p>
+            <div className="w-full flex items-center justify-center">
+              <p className="text-sm text-[#666666]">
+                Don&apos;t have an account?{" "}
+                {/* ส่ง callbackUrl ไปที่หน้า signup ด้วย เผื่อเขาสมัครเสร็จจะได้เด้งกลับถูก */}
+                <Link
+                  href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+                  className="text-primary cursor-pointer font-semibold"
+                >
+                  Sign Up
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
-        <div className="flex-1 aspect-14/16 bg-primary/80 rounded-2xl hidden md:block"></div>
+        <div className="flex-1 aspect-14/16 bg-primary/80 rounded-2xl hidden md:block relative overflow-hidden">
+          <Image src={cc2063} alt="cc2063" fill className="object-cover" />
+        </div>
       </div>
     </div>
   );

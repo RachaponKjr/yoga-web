@@ -28,6 +28,8 @@ model User {
 model UserInfo {
   id           String   @id @default(cuid())
   userId       String   @unique
+  // ยินยอมให้เปิดภายข้อมูลส่วนตัว
+  isAgree      Boolean  @default(false)
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   avatar       String?
   sex          Sex?     @default(NotSpecify)
