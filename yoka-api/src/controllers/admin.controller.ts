@@ -61,7 +61,7 @@ const getBookingList = async (req: Request, res: Response) => {
 
 const updateProfileController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const {
       firstName,
       lastName,

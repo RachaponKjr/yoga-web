@@ -113,7 +113,7 @@ const getBookingByIdController = async (
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
     const getBookingByIdRes = await getBookingByIdService({ id });
     if (!getBookingByIdRes) {
@@ -179,7 +179,7 @@ const updateBookingController = async (
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const { payload } = req.body;
     const { status } = payload;
 
