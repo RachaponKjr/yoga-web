@@ -8,6 +8,7 @@ import DetailRestaurant from "./_components/detail-restaurant";
 import Story from "./_components/story";
 import { authService } from "@/service/auth.service";
 import { UserInfoType, UserType } from "@/types/auth.type";
+import PortfolioGallery from "./_components/gallory";
 
 interface InstructorProps extends UserType {
   userInfo: UserInfoType;
@@ -19,9 +20,11 @@ export default async function Home() {
     <main className="relative flex flex-col">
       <Social />
       <Hero />
-      <ProductCourse />
-      <Banner />
-      <Instructors data={data} />
+      <div className="py-12 bg-[#283618] md:py-20 flex flex-col gap-6">
+        <ProductCourse />
+        <Banner />
+        <Instructors data={data} />
+      </div>
       <StepService />
       {/* <div className="w-full aspect-16/6 bg-amber-500 relative">
         <video
@@ -35,6 +38,7 @@ export default async function Home() {
       </div> */}
       <DetailRestaurant />
       <Story />
+      <PortfolioGallery />
     </main>
   );
 }

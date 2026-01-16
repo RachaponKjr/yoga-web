@@ -74,7 +74,7 @@ const CourseDetailPage = ({
   const availableSeats = selectRound.max_online - selectRound.current_online;
 
   return (
-    <div className="w-full bg-white min-h-screen py-36 sm:px-6 lg:px-8 font-sans text-slate-800">
+    <div className="w-full bg-white min-h-screen py-8 px-4 sm:px-6 lg:px-8 font-sans text-slate-800">
       <div className="max-w-8xl mx-auto container">
         {/* --- Header Section & Actions --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -233,9 +233,9 @@ const CourseDetailPage = ({
           <div className="lg:col-span-4 flex flex-col gap-6">
             <div className="sticky top-8">
               {/* Booking Card (Elevated) */}
-              <div className="bg-white shadow-md shadow-emerald-100/50 border border-slate-100 rounded-3xl p-6 lg:p-8 overflow-hidden relative">
+              <div className="bg-white shadow-md flex flex-col gap-4 shadow-emerald-100/50 border border-slate-100 rounded-3xl p-6 lg:p-8 overflow-hidden relative">
                 {/* Price Section */}
-                <div className="mb-8">
+                <div className="">
                   <p className="text-slate-500 font-medium text-sm mb-1">
                     Total Price (per person)
                   </p>
@@ -257,7 +257,7 @@ const CourseDetailPage = ({
                 </div>
 
                 {/* Details Info */}
-                <div className="space-y-4 mb-8 bg-slate-50/80 p-5 rounded-2xl border border-slate-100/80">
+                <div className="space-y-4 bg-slate-50/80 p-5 rounded-2xl border border-slate-100/80">
                   <div className="flex items-start gap-4">
                     <div className="bg-white p-2 rounded-lg shadow-sm text-emerald-600">
                       <Calendar size={20} strokeWidth={2.5} />
@@ -307,6 +307,13 @@ const CourseDetailPage = ({
                   </div>
                 </div>
 
+                <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-100/80">
+                  <h6 className="text-lg font-semibold mb-2">หมายเหตุ</h6>
+                  <p className="text-sm text-slate-600">
+                    กรุณาตรวจสอบตารางวันการเรียนก่อนการจอง
+                  </p>
+                </div>
+
                 {/* CTA Button (Gradient) */}
                 <Link
                   href={`/course/booking?roundId=${selectRound.id}`}
@@ -338,6 +345,7 @@ const CourseDetailPage = ({
 
               {/* Calendar Widget (Separate Card) */}
               <div className="mt-6">
+                <h4 className="text-lg font-semibold mb-4">ตารางวันการเรียน</h4>
                 <CourseCalendar
                   rounds={course.rounds}
                   selectedDate={new Date(selectRound.startDateTime)}

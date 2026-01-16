@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const Story = () => {
   return (
-    <section className="relative pt-12 pb-24 overflow-hidden">
+    <section className="relative py-12 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           {/* ส่วนรูปภาพ (Image Section) */}

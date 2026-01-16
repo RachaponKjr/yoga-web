@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import AuthHydrator from "@/components/AuthHydrator";
 import { headers } from "next/headers";
 import Footer from "@/components/layout/footer";
+import SmoothScrolling from "@/components/SmoothScrolling";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-secondary!`}
       >
         <TanstackProvider>
+          <SmoothScrolling />
           <AuthHydrator user={user} />
           <Navbar />
           {children}

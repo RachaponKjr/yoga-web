@@ -38,13 +38,13 @@ const CourseBox = () => {
   }
 
   return (
-    <div className="w-full relative px-4 md:px-0">
+    <div className="w-full relative md:px-0">
       <Swiper
         // 3. กำหนด Modules ที่จะใช้
         modules={[Navigation, Pagination, Autoplay]}
         // 4. การตั้งค่าพื้นฐาน
         spaceBetween={20} // ระยะห่างระหว่างการ์ด (px)
-        slidesPerView={1} // ค่าเริ่มต้น (มือถือ) โชว์ 1 รูป
+        slidesPerView={1.5} // ค่าเริ่มต้น (มือถือ) โชว์ 1 รูป
         navigation={true} // แสดงลูกศร ซ้าย-ขวา
         pagination={{ clickable: true, dynamicBullets: true }} // จุดด้านล่าง
         autoplay={{

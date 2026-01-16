@@ -5,7 +5,7 @@ import leftLeft from "@/assets/images/leaf-left.png";
 
 const ProductCourse = () => {
   return (
-    <div className="relative bg-[#283618] md:pt-20 pt-12 px-4 md:px-0">
+    <div className="relative bg-[#283618] md:pt-20 pt-0 px-4 md:px-0">
       <Image
         width={500}
         height={500}

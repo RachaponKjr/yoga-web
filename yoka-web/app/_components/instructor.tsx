@@ -13,6 +13,7 @@ import { Autoplay, Pagination } from "swiper/modules";
 // Import Swiper Styles
 import "swiper/css";
 import "swiper/css/pagination";
+import { Icon } from "@iconify/react";
 
 interface InstructorProps extends UserType {
   userInfo: UserInfoType;
@@ -20,7 +21,7 @@ interface InstructorProps extends UserType {
 
 const Instructors = ({ data }: { data: InstructorProps[] }) => {
   return (
-    <div className="bg-[#283618] py-10 md:py-20 px-4 md:px-0">
+    <div className="bg-[#283618] py-0 md:py-20 px-4 md:px-0">
       <div className="flex flex-col gap-8 items-center container mx-auto">
         {/* --- ส่วน Header (เหมือนเดิม) --- */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-12 w-full">
@@ -105,7 +106,7 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
         </div>
 
         {/* --- ปุ่ม View All --- */}
-        <Button
+        {/* <Button
           className="text-white rounded-full cursor-pointer bg-[#3D552F] hover:bg-[#3D552F] w-full sm:w-auto"
           size={"lg"}
           asChild
@@ -115,6 +116,18 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
             className="flex items-center justify-center"
           >
             View All
+          </Link>
+        </Button> */}
+        <Button
+          asChild
+          size={"lg"}
+          className="rounded-full bg-[#132B28] hover:bg-[#3D552F] w-full text-white px-10 h-14 text-base shadow-xl shadow-[#132B28]/20 transition-all hover:scale-105 hover:shadow-2xl"
+        >
+          <Link href="/instructors" className="flex items-center  gap-3">
+            View All
+            <div className="bg-white/20 rounded-full p-1">
+              <Icon icon="mdi:arrow-right" className="w-4 h-4" />
+            </div>
           </Link>
         </Button>
       </div>
