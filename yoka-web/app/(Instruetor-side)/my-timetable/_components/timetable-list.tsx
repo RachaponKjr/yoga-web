@@ -4,8 +4,8 @@ import React from "react";
 
 const TimeTableList = () => {
   return (
-    <div className="min-h-max pt-32 pb-20">
-      <div className="container mx-auto  max-w-6xl">
+    <div className="min-h-max py-12">
+      <div className="container mx-auto  max-w-7xl">
         {/* --- Header Section --- */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
           <div className="space-y-3">

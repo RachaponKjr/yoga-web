@@ -18,7 +18,7 @@ const PaymentSuccessPage = () => {
 
   return (
     // เปลี่ยน Container หลัก: เอา bg-gray-50 ออก, ใช้ flex-col เพื่อจัด footer, พื้นหลังขาวสะอาด
-    <div className="min-h-screen my-12 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
       {/* Content Container: จำกัดความกว้างให้อ่านง่าย แต่ไม่มีกรอบ Card */}
       <main className="max-w-2xl w-full text-center grow flex flex-col justify-center">
         {/* Success Icon Section: ขยายขนาดไอคอนให้ใหญ่ขึ้น */}

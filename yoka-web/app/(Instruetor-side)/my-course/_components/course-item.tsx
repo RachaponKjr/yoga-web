@@ -17,27 +17,23 @@ import {
 import { courseService } from "@/service/course.service";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge"; // ถ้ามี Badge component (optional)
+import { useCourseStore } from "@/store/useCourse";
 
-const CourseItem = ({
-  course,
-  fetchCourses,
-}: {
-  course: Course;
-  fetchCourses: () => Promise<void>;
-}) => {
+const CourseItem = ({ course }: { course: Course }) => {
   const [isDelete, setIsDelete] = useState(false);
+  const { getCourses } = useCourseStore();
 
   const delCourse = useCallback(async () => {
     try {
       const delRes = await courseService.deleteCourse(course.id);
       if (delRes.success) {
-        await fetchCourses();
+        await getCourses({ userId: course.teacherId });
         toast.success(delRes.message);
       }
     } catch (error) {
       toast.error("Failed to delete course");
     }
-  }, [course.id, fetchCourses]);
+  }, [course.id, course.teacherId, getCourses]);
 
   // คำนวณ % ส่วนลด (Optional: เพื่อความสวยงาม)
   const hasDiscount =

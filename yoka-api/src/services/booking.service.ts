@@ -97,8 +97,12 @@ const getBookingByUserIdService = async ({ id }: { id: string }) => {
   const res = await prisma.booking.findMany({
     where: { studentId: id },
     include: {
-      round: true,
-      student: true,
+      round: {
+        include: {
+          course: { include: { teacher: { select: { userInfo: true } } } },
+        },
+      },
+      // student: true,
     },
   });
 

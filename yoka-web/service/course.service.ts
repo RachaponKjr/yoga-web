@@ -45,10 +45,10 @@ export const courseService = {
     return response.data;
   },
 
-  getMyCourse: async (userId: string, page: number) => {
+  getMyCourse: async (userId: string, page?: number) => {
     const response = await http.get(`/course/my-course/${userId}`, {
       params: {
-        page,
+        page: page || 1,
         limit: 10,
       },
       headers: {

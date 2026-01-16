@@ -4,7 +4,7 @@ import CourseList from "./course-list";
 const CoursePage = async () => {
   return (
     // Container หลัก: จัดกึ่งกลาง, จำกัดความกว้างสูงสุด, และปรับ Padding ตามขนาดจอ
-    <div className="w-full container mt-24 mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full container mx-auto px-4 flex flex-col sm:px-6 lg:px-8 pb-8">
       {/* ส่วน Header: เรียงแนวตั้งบนมือถือ และแนวนอนบนจอ Tablet ขึ้นไป */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         {/* หัวข้อและคำอธิบาย */}
@@ -29,7 +29,7 @@ const CoursePage = async () => {
 
       {/* ส่วนเนื้อหาหลัก (List): ใส่ Card สีขาว, ขอบมน, และเงาบางๆ */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-6">
+        <div className="p-6 w-full h-full">
           <CourseList />
         </div>
       </div>

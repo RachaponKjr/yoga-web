@@ -18,6 +18,7 @@ import { courseService } from "@/service/course.service";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { Textarea } from "@/components/ui/textarea";
+import { useCourseStore } from "@/store/useCourse";
 
 interface Course {
   title: string | null;
@@ -29,6 +30,7 @@ interface Course {
 
 const DialogCourse = () => {
   const { user } = useAuthStore();
+  const { courses, getCourses, isLoading } = useCourseStore();
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState<UploadableFile[]>([]);
   const [loading, setLoading] = useState(false);
@@ -73,6 +75,7 @@ const DialogCourse = () => {
       if (res.success) {
         toast.success("Create course successfully");
         setOpen(false);
+        await getCourses({ userId: user?.id || "" });
         return;
       }
       toast.error(res.message);
@@ -90,7 +93,7 @@ const DialogCourse = () => {
           เพิ่มคอร์ส
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-2xl! max-h-[calc(100vh-15rem)]! overflow-y-auto">
+      <DialogContent className="md:max-w-2xl! max-h-[calc(100vh-15rem)]! overflow-hidden overflow-y-scroll!">
         <DialogHeader>
           <DialogTitle>Are you create course?</DialogTitle>
           <DialogDescription>

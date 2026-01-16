@@ -22,4 +22,17 @@ export const bookingService = {
     );
     return { response, status };
   },
+
+  getMyBooking: async (userId: string) => {
+    const { data: response, status } = await http.get(
+      `/booking/booking-user/${userId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      }
+    );
+    return { response, status };
+  },
 };

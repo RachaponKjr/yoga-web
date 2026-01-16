@@ -6,6 +6,7 @@ export const CourseYogaSchema = z.object({
   price: z.number().min(1),
   discount_price: z.number().optional(),
   cover_image: z.string().optional(),
+  about: z.string().optional(),
   images: z.string().array().optional(),
   teacherId: z.string(),
 });

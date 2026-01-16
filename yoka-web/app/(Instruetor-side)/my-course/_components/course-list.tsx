@@ -14,6 +14,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import React, { useCallback, useEffect, useState } from "react";
 import CourseItem from "./course-item";
 import { Loader2 } from "lucide-react"; // แนะนำให้ลง lucide-react ถ้ายังไม่มี
+import { useCourseStore } from "@/store/useCourse";
 
 // Interface เดิมของคุณ
 export interface Course {
@@ -42,10 +43,7 @@ interface PaginationProps {
 
 const CourseList = () => {
   const { user } = useAuthStore();
-
-  // State
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { courses, getCourses, isLoading } = useCourseStore();
   const [page, setPage] = useState(1); // เก็บหน้าปัจจุบัน
 
   // Default Pagination State
@@ -59,23 +57,11 @@ const CourseList = () => {
     hasPrevPage: false,
   });
 
-  const fetchCourses = useCallback(async () => {
-    if (!user?.id) return;
-    try {
-      setIsLoading(true);
-      const res = await courseService.getMyCourse(user.id, page);
-      setCourses(res.data.courses || []);
-      setPagination(res.data.pagination);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user?.id, page]);
-  // Fetch Data Function
   useEffect(() => {
-    fetchCourses();
-  }, [user?.id, page, fetchCourses]); // ทำงานเมื่อ user หรือ page เปลี่ยน
+    if (user?.id) {
+      getCourses({ userId: user.id });
+    }
+  }, [user?.id, getCourses]);
 
   // Function เปลี่ยนหน้า
   const handlePageChange = (newPage: number) => {
@@ -190,15 +176,11 @@ const CourseList = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-14rem)] flex flex-col gap-6">
+    <div className="min-h-[calc(100vh-14rem)] w-full h-full flex flex-col gap-6">
       {/* Grid Course */}
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {courses.map((course) => (
-          <CourseItem
-            fetchCourses={fetchCourses}
-            key={course.id}
-            course={course}
-          />
+          <CourseItem key={course.id} course={course} />
         ))}
       </div>
 
