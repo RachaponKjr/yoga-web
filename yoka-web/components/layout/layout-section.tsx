@@ -13,7 +13,7 @@ const LayoutSection = ({
   description: string;
 }>) => {
   return (
-    <div className="flex flex-col gap-6 mt-22">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center justify-center gap-6 w-full md:aspect-16/5 aspect-16/7 bg-neutral-50 relative">
         <div className="absolute top-0 left-0 w-full h-full bg-black/10 z-10" />
         <Image

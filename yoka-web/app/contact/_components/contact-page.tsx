@@ -13,7 +13,7 @@ import { toast } from "sonner";
 const ContactPage = () => {
   const ref = useRef<HTMLFormElement>(null);
   return (
-    <div className="min-h-screen w-full flex items-center justify-center my-24 md:my-12 px-4 sm:px-6">
+    <div className="min-h-screen w-full flex items-center justify-center my-12 md:my-0 px-4 sm:px-6">
       {/* Container Layout: Mobile=Column, Desktop=Row (ขนานกัน) */}
       <div className="w-full max-w-7xl flex flex-col lg:flex-row bg-white rounded-[20px] md:rounded-[40px] overflow-hidden shadow-2xl relative">
         {/* --- Left Side: Info --- */}
