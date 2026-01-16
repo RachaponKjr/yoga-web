@@ -64,7 +64,7 @@ const SignInPage = () => {
   };
 
   return (
-    <div className="h-max md:h-[calc(100vh-6rem)] container mx-auto my-24 md:my-0 px-4 md:px-0 flex items-center">
+    <div className="h-max md:h-[calc(100vh-6rem)] min-h-screen container mx-auto my-24 md:my-0 px-4 md:px-0 flex items-center">
       <div className="bg-white w-full max-w-6xl mx-auto p-6 rounded-2xl shadow-md md:shadow-2xl flex gap-4">
         <div className="flex-1 py-8 flex flex-col  gap-8 items-center justify-between">
           <div className="flex flex-col gap-8 items-center w-full">
@@ -137,7 +137,7 @@ const SignInPage = () => {
             </p>
           </div>
         </div>
-        <div className="flex-1 aspect-square bg-primary/80 rounded-2xl hidden md:block"></div>
+        <div className="flex-1 aspect-14/16 bg-primary/80 rounded-2xl hidden md:block"></div>
       </div>
     </div>
   );

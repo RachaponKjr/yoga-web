@@ -83,6 +83,7 @@ model CourseRound {
   current_walk_in Int @default(0)
 
   description String?
+  about       String?
 
   status Status @default(Open)
 

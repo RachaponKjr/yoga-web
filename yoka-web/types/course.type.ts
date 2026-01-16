@@ -16,6 +16,7 @@ export const CourseSchema = z.object({
   cover_image: z.string(),
   discount_price: z.number(),
   description: z.string(),
+  about: z.string().optional(),
   images: z.array(z.string()),
   price: z.number(),
   title: z.string(),

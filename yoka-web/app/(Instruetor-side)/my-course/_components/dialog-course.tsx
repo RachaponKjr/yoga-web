@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface Course {
   title: string | null;
   description: string | null;
+  about: string | null;
   price: number;
   discount_price: number;
 }
@@ -36,6 +37,7 @@ const DialogCourse = () => {
     description: null,
     price: 0,
     discount_price: 0,
+    about: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,12 +53,13 @@ const DialogCourse = () => {
     try {
       setLoading(true);
       const formData = new FormData();
-      if (!course.title || !course.description) {
+      if (!course.title || !course.description || !course.about) {
         toast.error("Please fill in all fields");
         return;
       }
       formData.append("title", course.title);
       formData.append("description", course.description);
+      formData.append("about", course.about);
       formData.append("price", course.price.toString());
       formData.append("discount_price", course.discount_price.toString());
       formData.append("teacherId", user?.id || "");
@@ -117,6 +120,19 @@ const DialogCourse = () => {
                 setCourse((prev) => ({
                   ...prev,
                   description: e.target.value,
+                }));
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2 col-span-2 ">
+            <label className="text-sm text-[#666666] font-medium">About</label>
+            <Textarea
+              placeholder="About"
+              name="about"
+              onChange={(e) => {
+                setCourse((prev) => ({
+                  ...prev,
+                  about: e.target.value,
                 }));
               }}
             />

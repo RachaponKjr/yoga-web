@@ -51,6 +51,9 @@ export const courseService = {
         page,
         limit: 10,
       },
+      headers: {
+        Authorization: `Bearer ${document.cookie.split("token=")[1].split(";")[0]}`,
+      },
     });
 
     return response.data;
@@ -60,23 +63,37 @@ export const courseService = {
     const response = await http.post("/course/create", course, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${document.cookie.split("token=")[1].split(";")[0]}`,
       },
     });
     return response.data;
   },
 
   createRound: async (round: Round) => {
-    const response = await http.post("/course/set-round", round);
+    const response = await http.post("/course/set-round", round, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${document.cookie.split("token=")[1].split(";")[0]}`,
+      },
+    });
     return response.data;
   },
 
   getMyRound: async () => {
-    const response = await http.get(`/course/round-my-round`);
+    const response = await http.get(`/course/round-my-round`, {
+      headers: {
+        Authorization: `Bearer ${document.cookie.split("token=")[1].split(";")[0]}`,
+      },
+    });
     return response.data;
   },
 
   deleteCourse: async (courseId: string) => {
-    const response = await http.delete(`/course/delete/${courseId}`);
+    const response = await http.delete(`/course/delete/${courseId}`, {
+      headers: {
+        Authorization: `Bearer ${document.cookie.split("token=")[1].split(";")[0]}`,
+      },
+    });
     return response.data;
   },
 };

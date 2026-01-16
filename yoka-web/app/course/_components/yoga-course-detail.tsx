@@ -163,7 +163,9 @@ const CourseDetailPage = ({
                 About this course
               </h3>
               <div className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed">
-                <p>{course.description}</p>
+                <p className="text-slate-600 whitespace-pre-wrap font-medium">
+                  {course.about || "ไม่พบข้อมูล"}
+                </p>
                 {/* ตัวอย่างการเพิ่ม List (ถ้ามีข้อมูล) */}
                 {/* <ul>
                     <li>Suitable for all levels</li>
