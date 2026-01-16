@@ -17,7 +17,8 @@ import {
   ShieldCheck,
   Minus,
   Plus,
-  RefreshCw, // เพิ่ม icon สำหรับ loading ตอนคำนวณใหม่
+  RefreshCw,
+  X, // เพิ่ม icon สำหรับ loading ตอนคำนวณใหม่
 } from "lucide-react";
 import { bookingService } from "@/service/booking.service";
 import { toast } from "sonner";
@@ -497,12 +498,12 @@ const PaymentPage = () => {
                         </div>
                       </div>
                       {/* ถ้าอยากให้ลบออกได้ ก็ Uncomment ตรงนี้ */}
-                      {/* <button
+                      <button
                         onClick={removeCoupon}
                         className="text-emerald-400 hover:text-emerald-700 transition-colors"
                       >
                         <X size={16} />
-                      </button> */}
+                      </button>
                     </div>
                   ) : (
                     <div className="space-y-2">

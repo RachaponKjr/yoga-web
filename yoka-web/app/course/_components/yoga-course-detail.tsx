@@ -112,7 +112,7 @@ const CourseDetailPage = ({
             <div className="grid grid-cols-4 grid-rows-2 gap-3 overflow-hidden ">
               {/* รูปใหญ่ซ้าย */}
               <div
-                className={`col-span-4 md:col-span-3 row-span-2 relative group cursor-pointer overflow-hidden bg-slate-200 rounded-2xl`}
+                className={`col-span-4 md:col-span-3 aspect-16/12 row-span-2 relative group cursor-pointer overflow-hidden bg-slate-200 rounded-2xl`}
               >
                 <Image
                   src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.cover_image}`}

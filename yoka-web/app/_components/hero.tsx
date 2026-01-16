@@ -10,7 +10,7 @@ const Hero = () => {
     // bg-linear-to-b from-[#dfddc6]  to-[#18281E]
     <div className="relative mt-24">
       <div className="h-max md:h-[calc(100vh-6rem)] container mx-auto mb-12 md:mb-0 px-4 md:px-6 flex flex-col md:flex-row items-center gap-12 2xl:relative">
-        <div className="max-w-2xl 2xl:max-w-4xl flex flex-col gap-8 z-50">
+        <div className="max-w-2xl 2xl:max-w-3xl flex flex-col gap-8 z-50">
           <h1 className="text-[clamp(4rem,12vw,6rem)] font-serif leading-none font-bold bg-linear-to-r from-tertiary via-primary to-secondary bg-clip-text text-transparent">
             Yoga Studio & Restaurant
           </h1>

@@ -17,6 +17,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { courseService } from "@/service/course.service";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Course {
   title: string | null;
@@ -86,7 +87,7 @@ const DialogCourse = () => {
           เพิ่มคอร์ส
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-2xl!">
+      <DialogContent className="md:max-w-2xl! max-h-[calc(100vh-15rem)]! overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Are you create course?</DialogTitle>
           <DialogDescription>
@@ -95,7 +96,7 @@ const DialogCourse = () => {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <label className="text-sm text-[#666666] font-medium">
               Course Name
             </label>
@@ -105,14 +106,19 @@ const DialogCourse = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col col-span-2 gap-2">
             <label className="text-sm text-[#666666] font-medium">
               Course Description
             </label>
-            <Input
+            <Textarea
               placeholder="Course Description"
               name="description"
-              onChange={handleChange}
+              onChange={(e) => {
+                setCourse((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }));
+              }}
             />
           </div>
           <div className="flex flex-col gap-2">

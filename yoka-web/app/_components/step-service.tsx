@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import yoga from "@/assets/images/yoga/girlyoga.png";
+import yoga2 from "@/assets/images/yoga/CC2082.jpg";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -34,15 +34,15 @@ const StepService = () => {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tertiary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 -z-10" />
 
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 justify-center items-center">
           {/* --- Image Section (Highlights) --- */}
-          <div className="w-full lg:w-1/2 relative px-4 sm:px-0">
+          <div className="w-full lg:w-1/3 relative px-4 sm:px-0">
             {/* 1. Main Image Container (Arch Shape) */}
             <div className="relative aspect-[3.5/4.5] w-full max-w-md mx-auto">
               {/* กรอบรูปทรง Arch (โค้งบน) */}
               <div className="relative w-full h-full rounded-t-[10rem] rounded-b-4xl overflow-hidden shadow-2xl shadow-[#132B28]/20 z-10 border-[6px] border-white">
                 <Image
-                  src={yoga}
+                  src={yoga2}
                   alt="Yoga Practice"
                   fill
                   className="object-cover object-center hover:scale-110 transition-transform duration-1000 ease-out"

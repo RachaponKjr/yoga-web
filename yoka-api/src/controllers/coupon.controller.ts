@@ -62,7 +62,7 @@ export class CouponController {
   async updateStatusCoupon(req: Request, res: Response) {
     try {
       const updatedCoupon = await couponService.updateStatusCoupon(
-        req.params.id,
+        req.params.id as string,
         req.body
       );
       return res.status(200).json(updatedCoupon);
@@ -74,7 +74,9 @@ export class CouponController {
 
   async deleteCoupon(req: Request, res: Response) {
     try {
-      const deletedCoupon = await couponService.deleteCoupon(req.params.id);
+      const deletedCoupon = await couponService.deleteCoupon(
+        req.params.id as string
+      );
       return res.status(200).json(deletedCoupon);
     } catch (error) {
       console.error(error);
