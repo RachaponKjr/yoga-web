@@ -20,6 +20,7 @@ import { config } from "../config/env";
 import { StatusCodes } from "http-status-codes";
 import { removeFile } from "../utils/file.utils";
 import { mailService } from "../utils/mail";
+import { getRegisterEmailTemplate } from "../templates/register-success";
 
 interface AuthenticatedRequest extends Request {
   user?: any; // หรือใส่ Type User ของคุณ
@@ -47,7 +48,7 @@ const registerController = async (
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const payload = { email, password: hashedPassword, role };
-
+    const loginUrl = "http://localhost:3000/login";
     const registerServiceRes = await registerService({ payload });
 
     if (!registerServiceRes) {
@@ -61,8 +62,8 @@ const registerController = async (
 
     await mailService.sendEmail(
       email,
-      "Thank you for registering!",
-      "<h1>Thank you for registering!</h1>"
+      "Welcome to Yoga by Niti! 🎉",
+      getRegisterEmailTemplate(loginUrl)
     );
 
     sendResponse(res, {

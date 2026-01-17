@@ -43,6 +43,18 @@ const createBookingService = async ({ payload }: { payload: any }) => {
 
     const res = await tx.booking.create({
       data: payload,
+      include: {
+        round: {
+          include: {
+            course: true,
+          },
+        },
+        student: {
+          include: {
+            userInfo: true,
+          },
+        },
+      },
     });
 
     return {

@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
 import { StatusCodes } from "http-status-codes";
+import { mailService } from "../utils/mail";
+import { generateBookingReceipt } from "../utils/pdfGenerator";
+import { getBookingSuccessTemplate } from "../templates/booking-success";
 
 export const omiseWebhookController = async (req: Request, res: Response) => {
   try {
@@ -21,7 +24,6 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
         return res.status(StatusCodes.OK).send();
       }
 
-      // ตรวจสอบสถานะการจ่ายเงิน
       if (charge.status === "successful") {
         console.log(`Payment Successful for Order: ${orderId}`);
 
@@ -35,6 +37,96 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
             paymentId: charge.id,
           },
         });
+        const orderDetail = await prisma.booking.findUnique({
+          where: { id: orderId },
+          include: {
+            round: {
+              include: {
+                course: true,
+              },
+            },
+            student: {
+              select: {
+                email: true,
+                userInfo: {
+                  select: {
+                    phone_number: true,
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        if (!orderDetail) {
+          return res.status(StatusCodes.OK).send();
+        }
+
+        const userDetail = {
+          email: orderDetail.student?.email || "",
+          phone_number: orderDetail.student?.userInfo?.phone_number || "",
+          firstName: orderDetail.student?.userInfo?.firstName || "",
+          lastName: orderDetail.student?.userInfo?.lastName || "",
+        };
+
+        const bookingDetail = {
+          bookingId: orderDetail.id,
+          courseTitle: orderDetail.round?.course?.title || "",
+          startDate: orderDetail.round?.startDateTime || "",
+          endDate: orderDetail.round?.endDateTime || "",
+          totalAmount: orderDetail.price,
+        };
+
+        const pdfBuffer = await generateBookingReceipt({
+          userDetail,
+          bookingDetail,
+        });
+
+        const formatDate = (date: Date) => {
+          return date.toLocaleDateString("en-US", {
+            // หรือ th-TH ถ้าอยากได้ภาษาไทย
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        };
+
+        const formatTime = (date: Date) => {
+          return date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true, // เป็น AM/PM
+          });
+        };
+
+        // ... ตอนเรียกใช้ ...
+
+        const startDate = new Date(
+          orderDetail.round?.startDateTime || new Date()
+        );
+        const endDate = new Date(orderDetail.round?.endDateTime || new Date());
+
+        await mailService.sendEmail(
+          orderDetail.student?.email || "",
+          "Thank you for booking with Yoka by Niti!",
+          getBookingSuccessTemplate({
+            customerName: `${orderDetail.student?.userInfo?.firstName} ${orderDetail.student?.userInfo?.lastName}`,
+            courseTitle: orderDetail.round?.course?.title || "",
+            roundDate: formatDate(startDate),
+            roundTime: formatTime(startDate) + " - " + formatTime(endDate),
+            bookingId: orderDetail.id,
+          }),
+          [
+            {
+              filename: `Receipt-${orderDetail.id}.pdf`, // ชื่อไฟล์ที่จะโชว์ในเมล
+              content: pdfBuffer, // ตัวไฟล์ PDF ที่เราสร้าง
+              contentType: "application/pdf",
+            },
+          ]
+        );
       } else if (charge.status === "failed") {
         console.log(`Payment Failed for Order: ${orderId}`);
 
