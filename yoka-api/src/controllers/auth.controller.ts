@@ -214,12 +214,11 @@ const updateProfileController = async (
 ): Promise<void> => {
   try {
     const user = req.user;
+    const { id } = req.params;
     const payload = req.body as UpdateProfileInput;
     const avatar = req.file;
 
-    console.log(req.file, "req.file");
-
-    const checkAvatar = await getUserService({ id: user.id });
+    const checkAvatar = await getUserService({ id: id ? id : user.id });
     if (checkAvatar?.userInfo?.avatar) {
       removeFile(checkAvatar.userInfo.avatar);
     }
@@ -227,7 +226,10 @@ const updateProfileController = async (
     if (avatar) {
       payload.avatar = avatar.path;
     }
-    const updateUserRes = await updateProfilService({ id: user.id, payload });
+    const updateUserRes = await updateProfilService({
+      id: id ? id : user.id,
+      payload,
+    });
 
     if (!updateUserRes) {
       sendResponse(res, {
