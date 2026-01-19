@@ -65,6 +65,7 @@ export const authService = {
   updateUser: async (payload: any, id: string) => {
     const response = await http.patch(`/admin/update-profile/${id}`, payload, {
       headers: {
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       withCredentials: true,

@@ -3,8 +3,9 @@ import { authMiddleware, restrictTo } from "../middlewares/auth.middleware";
 import {
   getBookingList,
   getDashboardStats,
-  updateProfileController,
 } from "../controllers/admin.controller";
+import { createUploader } from "../middlewares/upload.middleware";
+import { updateProfileController } from "../controllers/auth.controller";
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.patch(
   "/update-profile/:id",
   authMiddleware,
   restrictTo("Admin"),
+  createUploader("avatar").single("avatar"),
   updateProfileController
 );
 

@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import type { UserInfoType, UserType } from "@/types/auth.type";
 import EditUser from "./EditUser"; // Import Component ที่เราเพิ่งสร้าง
 import DelUser from "./DelUser";
+import RegisterUser from "./RegisterUser";
 
 // กำหนด Base URL รูป
 const BASE_IMG_URL = "http://119.59.99.141:4001/";
@@ -24,7 +25,6 @@ const UserPage = () => {
     setLoading(true);
     try {
       const response = await authService.getUserAll({ token });
-      // สมมติ response.data เป็น Array
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -133,6 +133,7 @@ const UserPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <RegisterUser getUser={() => getUser()} />
         </div>
 
         <div className="overflow-x-auto">

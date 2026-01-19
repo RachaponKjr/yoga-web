@@ -18,10 +18,12 @@ import {
   MapPin,
   Briefcase,
   Loader2,
+  Camera,
 } from "lucide-react";
 import React, { useState } from "react";
 import type { UserInfoType, UserType } from "@/types/auth.type";
 import { authService } from "../../service/auth.service"; // อย่าลืม Import Service
+import { Button } from "@/components/ui/button";
 
 const BASE_IMG_URL = "http://119.59.99.141:4001/";
 
@@ -35,7 +37,7 @@ interface EditUserProps {
 const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [avatar, setAvatar] = useState<File | null>(null);
   // 2. State สำหรับ Form Data (Controlled Inputs)
   const [userEdit, setUserEdit] = useState({
     id: user.id,
@@ -50,8 +52,6 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
     role: user.role,
     experience: user.userInfo?.experience || "",
   });
-
-  console.log(userEdit);
 
   // URL รูปเดิมจากฐานข้อมูล
   const originalAvatarUrl = user.userInfo?.avatar
@@ -70,13 +70,27 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
       [name]: value,
     }));
   };
-
+  console.log(avatar);
   // 5. Submit Form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await authService.updateUser(userEdit, userEdit.id);
+      const formData = new FormData();
+      formData.append("firstName", userEdit.firstName);
+      formData.append("lastName", userEdit.lastName);
+      formData.append("sex", userEdit.sex);
+      formData.append("phone_number", userEdit.phone_number);
+      formData.append("country", userEdit.country);
+      formData.append("facebook", userEdit.facebook);
+      formData.append("instagram", userEdit.instagram);
+      formData.append("twitter", userEdit.twitter);
+      formData.append("role", userEdit.role);
+      formData.append("experience", userEdit.experience);
+      if (avatar) {
+        formData.append("avatar", avatar);
+      }
+      const res = await authService.updateUser(formData, userEdit.id);
       console.log(res);
       setOpen(false); // ปิด Dialog
       if (onSuccess) onSuccess(); // แจ้งหน้าหลักให้โหลดข้อมูลใหม่
@@ -120,25 +134,51 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
           <div className="p-6 space-y-6">
             {/* Avatar Section */}
             <div className="flex items-center gap-5">
-              <div className="relative group">
-                <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 overflow-hidden">
-                  {/* แสดง Preview ถ้ามี, ถ้าไม่มีแสดงรูปเดิม, ถ้าไม่มีอีกแสดง Icon */}
-                  {user.userInfo?.avatar ? (
-                    <img
-                      src={`${BASE_IMG_URL}${user.userInfo.avatar}`}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : originalAvatarUrl ? (
-                    <img
-                      src={originalAvatarUrl}
-                      alt="avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <UserIcon size={32} />
-                  )}
-                </div>
+              <div className="relative group w-20 h-20">
+                {/* 1. ย้าย label มาครอบส่วนแสดงผลเพื่อให้คลิกได้ทั้งวงกลม */}
+                <label
+                  htmlFor="avatar-upload"
+                  className="cursor-pointer block w-full h-full relative"
+                >
+                  {/* Container ของรูปภาพ */}
+                  <div className="w-full h-full rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 overflow-hidden relative">
+                    {/* Logic การแสดงรูปภาพ */}
+                    {avatar ? (
+                      <img
+                        src={URL.createObjectURL(avatar)}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : originalAvatarUrl ? (
+                      <img
+                        src={originalAvatarUrl}
+                        alt="avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <UserIcon size={32} />
+                    )}
+
+                    {/* 2. เพิ่ม Overlay เมื่อ Hover (เพื่อให้รู้ว่ากดเปลี่ยนรูปได้) */}
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <Camera size={24} className="text-white" />
+                    </div>
+                  </div>
+                </label>
+
+                {/* 3. Input file (ซ่อนไว้ แต่ทำงานผ่าน id) */}
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setAvatar(file);
+                    }
+                  }}
+                />
               </div>
             </div>
 
@@ -338,14 +378,15 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
                 ยกเลิก
               </button>
             </DialogClose>
-            <button
+            <Button
               type="submit"
+              variant={"outline"}
               disabled={isLoading}
-              className="px-6 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all cursor-pointer flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              // className="px-6 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all cursor-pointer flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading && <Loader2 size={16} className="animate-spin" />}
               {isLoading ? "กำลังบันทึก..." : "บันทึก"}
-            </button>
+            </Button>
           </div>
         </form>
       </DialogContent>

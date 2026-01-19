@@ -25,6 +25,7 @@ export const UpdateProfileInputSchema = z.object({
   facebook: z.string().optional(),
   instagram: z.string().optional(),
   twitter: z.string().optional(),
+  role: z.enum(["Student", "Instructor", "Admin"]).optional(),
 });
 
 export type RegisterInput = z.infer<typeof RegisterInputSchema>;

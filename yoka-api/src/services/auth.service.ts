@@ -63,12 +63,20 @@ const updateProfilService = async ({
   id: string;
   payload: UpdateProfileInput;
 }) => {
+  const { role, ...rest } = payload;
   const user = await prisma.userInfo.update({
     where: {
       userId: id,
     },
     data: {
-      ...payload,
+      ...rest,
+      ...(role && {
+        user: {
+          update: {
+            role,
+          },
+        },
+      }),
     },
   });
 
