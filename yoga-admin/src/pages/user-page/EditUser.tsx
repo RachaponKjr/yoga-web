@@ -52,7 +52,6 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
     role: user.role,
     experience: user.userInfo?.experience || "",
   });
-
   // URL รูปเดิมจากฐานข้อมูล
   const originalAvatarUrl = user.userInfo?.avatar
     ? `${BASE_IMG_URL}${user.userInfo.avatar}`
