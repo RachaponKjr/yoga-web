@@ -21,7 +21,7 @@ interface InstructorProps extends UserType {
 
 const Instructors = ({ data }: { data: InstructorProps[] }) => {
   // สร้าง Ref เพื่อคุม Swiper จากปุ่มด้านนอก
-  const swiperRef = useRef<SwiperType>();
+  const swiperRef = useRef<SwiperType | null>(null);
 
   return (
     <section className="relative bg-[#283618] py-20 overflow-hidden">
