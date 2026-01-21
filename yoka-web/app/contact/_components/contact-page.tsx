@@ -83,15 +83,13 @@ const ContactPage = () => {
           {/* Map Section */}
           <div className="relative w-full h-48 rounded-2xl overflow-hidden border-2 border-white/10 shadow-lg mt-auto">
             <iframe
-              src="https://maps.google.com/maps?q=Rawai%20Phuket&t=&z=13&ie=UTF8&iwloc=&output=embed"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.80375258081!2d98.32157788483991!3d7.791349598877547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30502f5295ff53db%3A0xda161d49bc788348!2sYoga%20by%20Niti!5e0!3m2!1sth!2sth!4v1769008361859!5m2!1sth!2sth"
+              width="600"
+              height="450"
+              style={{ border: "0" }}
               loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="grayscale hover:grayscale-0 transition-all duration-500"
-            />
+              className="w-full h-full"
+            ></iframe>
           </div>
         </div>
 

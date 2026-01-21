@@ -311,6 +311,7 @@ const CouponPage = () => {
                             <DialogTitle>ลบคูปอง : {coupon.code}</DialogTitle>
                             <DialogDescription>
                               คุณต้องการลบคูปองนี้ใช่หรือไม่?
+                              (ถ้าลบเเล้วข้อมูลที่ใช้งานกับคูปองนี้จะหายทั้งหมด)
                             </DialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter className="flex justify-end gap-2">

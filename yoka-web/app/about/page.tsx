@@ -3,10 +3,17 @@ import LayoutSection from "@/components/layout/layout-section";
 import Image from "next/image";
 
 import restaurant1 from "@/assets/images/banner/calender_banner.png";
+import banner from "@/assets/images/banner/banner.png";
+
+import yoga1 from "@/assets/images/gallory/CC__2033.jpg";
+import yoga2 from "@/assets/images/gallory/CC__2048.jpg";
+import yoga3 from "@/assets/images/gallory/CC__2231.jpg";
+import yoga4 from "@/assets/images/gallory/CC__2244.jpg";
+import yoga5 from "@/assets/images/gallory/CC__2427.jpg";
 
 const Page = () => {
   return (
-    <LayoutSection image="" title="Restaurant" description="">
+    <LayoutSection image={banner.src} title="Restaurant" description="">
       {/* เพิ่ม gap ให้ห่างขึ้นเพื่อให้ดูโปร่งแม้ภาพจะใหญ่ */}
       <div className="flex flex-col gap-12 md:gap-48 px-4 md:px-6 my-12 md:my-24 overflow-hidden">
         {/* --- Section 1: Our Story (Big Overlap) --- */}
@@ -49,7 +56,7 @@ const Page = () => {
               {/* Main Image (ขยายเป็น 75% และชิดขวาสุด) */}
               <div className="absolute right-0 top-0 w-[75%] aspect-3/4 shadow-2xl rounded-4xl overflow-hidden z-10">
                 <Image
-                  src={restaurant1}
+                  src={yoga2}
                   alt="Restaurant atmosphere"
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-1000"
@@ -59,7 +66,7 @@ const Page = () => {
               {/* Secondary Image (ขยายเป็น 65% และซ้อนทับให้เห็นชัดๆ) */}
               <div className="absolute left-0 bottom-10 md:bottom-20 w-[65%] aspect-4/3 shadow-2xl rounded-4xl overflow-hidden border-4 border-white z-20">
                 <Image
-                  src={restaurant1}
+                  src={yoga1}
                   alt="Detail dish"
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-1000"
@@ -78,7 +85,7 @@ const Page = () => {
               <div className="w-1/2 flex flex-col gap-6 mt-16 md:mt-32">
                 <div className="w-full aspect-2/3 relative rounded-4xl overflow-hidden shadow-xl">
                   <Image
-                    src="/images/restaurant/restaurant-1.jpg"
+                    src={yoga5}
                     alt="Interior detail"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-700"
@@ -90,7 +97,7 @@ const Page = () => {
               <div className="w-1/2 flex flex-col gap-6">
                 <div className="w-full aspect-square relative rounded-4xl overflow-hidden shadow-xl">
                   <Image
-                    src="/images/restaurant/restaurant-1.jpg"
+                    src={yoga4}
                     alt="Chef at work"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-700"
@@ -98,7 +105,7 @@ const Page = () => {
                 </div>
                 <div className="w-full aspect-3/4 relative rounded-4xl overflow-hidden shadow-xl">
                   <Image
-                    src="/images/restaurant/restaurant-1.jpg"
+                    src={yoga3}
                     alt="Private dining"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-700"
@@ -114,7 +121,7 @@ const Page = () => {
               <div className="flex items-center gap-3 mb-4">
                 <span className="h-px w-12 bg-tertiary/60"></span>
                 <span className="text-tertiary font-bold tracking-[0.2em] uppercase text-xs md:text-sm">
-                  Ambience
+                  Restaurant
                 </span>
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-[#2A2A2A] leading-[1.1]">
@@ -138,6 +145,16 @@ const Page = () => {
         {/* <div className="w-full">
           <BannerItem className="bg-[#8ba888]!" />
         </div> */}
+        <div className="w-full aspect-16/6 overflow-hidden rounded-2xl bg-neutral-200">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.80375258081!2d98.32157788483991!3d7.791349598877547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30502f5295ff53db%3A0xda161d49bc788348!2sYoga%20by%20Niti!5e0!3m2!1sth!2sth!4v1769008361859!5m2!1sth!2sth"
+            width="600"
+            height="450"
+            style={{ border: "0" }}
+            loading="lazy"
+            className="w-full h-full"
+          ></iframe>
+        </div>
       </div>
     </LayoutSection>
   );

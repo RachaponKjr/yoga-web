@@ -56,7 +56,7 @@ const Navbar = () => {
     { href: "/", label: "Home" },
     { href: "/instructors", label: "Instructors" },
     { href: "/yoga-time", label: "Yoga Timetable" },
-    { href: "/restaurant", label: "Restaurant" },
+    { href: "/about", label: "About Us" },
     { href: "/contact", label: "Contact Us" },
   ];
 

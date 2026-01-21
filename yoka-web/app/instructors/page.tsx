@@ -11,7 +11,6 @@ type Instructor = {
 
 const page = async () => {
   const instructors = await authService.getInstructor();
-  console.log(instructors, "DATA");
   return <InstructorsPage instructors={instructors as Instructor[]} />;
 };
 

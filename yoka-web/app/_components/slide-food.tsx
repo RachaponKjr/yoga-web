@@ -75,35 +75,7 @@ const SlideFood = () => {
                 />
 
                 {/* Overlay Gradient (แก้ไขจาก bg-linear-to-t) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80" />
-
-                {/* Content Text ด้านล่าง */}
-                <div className="absolute bottom-0 left-0 w-full p-8 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="text-2xl font-bold font-serif leading-tight mb-1">
-                        {item.title}
-                      </h3>
-                      <div className="flex items-center gap-1 text-yellow-400 text-sm">
-                        <Icon icon="mdi:star" />
-                        <span className="text-white/80">
-                          {item.rating} (120 reviews)
-                        </span>
-                      </div>
-                    </div>
-                    <span className="bg-primary/90 backdrop-blur-md px-3 py-1 rounded-full text-sm font-semibold text-white shadow-lg">
-                      {item.price}
-                    </span>
-                  </div>
-
-                  {/* ปุ่มที่ซ่อนอยู่ จะโผล่มาเมื่อ Hover (ใน Desktop) หรือโชว์ตลอดถ้าชอบ */}
-                  <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300 opacity-0 group-hover:opacity-100 mt-2">
-                    <p className="text-sm text-gray-300 line-clamp-2">
-                      Delicious and healthy choice for your daily meal. Fresh
-                      ingredients only.
-                    </p>
-                  </div>
-                </div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-80" />
               </div>
             </SwiperSlide>
           ))}

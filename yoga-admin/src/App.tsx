@@ -11,6 +11,7 @@ import { useAuthStore } from "./stores/useAuthStore";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import CouponPage from "./pages/coupon-page/CouponPage";
+import CoursePage from "./pages/course-page/CoursePage";
 function App() {
   const { isLoading, checkAuth } = useAuthStore();
   useEffect(() => {
@@ -40,6 +41,7 @@ function App() {
               <Route path="/bookings" element={<BookingPage />} />
               <Route path="/users" element={<UserPage />} />
               <Route path="/coupons" element={<CouponPage />} />
+              <Route path="/classes" element={<CoursePage />} />
             </Route>
           </Route>
         </Routes>

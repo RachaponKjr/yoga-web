@@ -2,6 +2,7 @@ import z from "zod";
 
 export const BookingSchema = z.object({
   studentId: z.string(),
+  agreeToPrivacyPolicy: z.boolean().default(false),
   roundId: z.string(),
   price: z.number(),
   type: z.enum(["ONLINE", "WALK_IN"]),

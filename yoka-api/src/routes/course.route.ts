@@ -4,6 +4,7 @@ import {
   createCourseController,
   createCourseRoundController,
   deleteCourseController,
+  getCourseActiveController,
   getCourseByIdController,
   getCourseController,
   getCourseRoundByCourseIdController,
@@ -25,20 +26,22 @@ router.post(
     { name: "course_poster", maxCount: 1 }, // รับ 1 รูป
     { name: "image_course", maxCount: 10 }, // รับได้สูงสุด 10 รูป
   ]),
-  createCourseController
+  createCourseController,
 );
 router.post(
   "/set-round",
   authMiddleware,
   restrictTo("Admin", "Instructor"),
-  createCourseRoundController
+  createCourseRoundController,
 );
 router.get(
   "/all",
   // authMiddleware,
   // restrictTo("Admin", "Instructor"),
-  getCourseController
+  getCourseController,
 );
+
+router.get("/", getCourseActiveController);
 
 router.get("/course/:id", getCourseByIdController);
 router.get("/my-course/:id", authMiddleware, getMyCourseController);

@@ -20,22 +20,12 @@ export default async function Home() {
     <main className="relative flex flex-col">
       <Social />
       <Hero />
-      <div className="py-12 bg-[#283618] md:py-20 flex flex-col gap-6">
+      <div className="py-12 bg-[#283618] md:py-20 flex flex-col gap-6 relative">
         <ProductCourse />
         <Banner />
         <Instructors data={data} />
       </div>
       <StepService />
-      {/* <div className="w-full aspect-16/6 bg-amber-500 relative">
-        <video
-          src="/yoga.mp4"
-          autoPlay
-          loop
-          muted
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black opacity-30" />
-      </div> */}
       <DetailRestaurant />
       <Story />
       <PortfolioGallery />

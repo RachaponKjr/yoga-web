@@ -5,6 +5,7 @@ type BookingProps = {
   roundId: string;
   type: "ONLINE" | "OFFLINE";
   price: number;
+  agreeToPrivacyPolicy: boolean;
   quantity?: number;
 };
 
@@ -18,7 +19,7 @@ export const bookingService = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getCookie("token")}`,
         },
-      }
+      },
     );
     return { response, status };
   },
@@ -31,7 +32,7 @@ export const bookingService = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getCookie("token")}`,
         },
-      }
+      },
     );
     return { response, status };
   },

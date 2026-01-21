@@ -5,7 +5,7 @@ import leftLeft from "@/assets/images/leaf-left.png";
 
 const ProductCourse = () => {
   return (
-    <div className="relative bg-[#283618] md:pt-20 pt-0 px-4 md:px-0">
+    <div className="bg-[#283618] md:pt-20 pt-0 px-4 md:px-0">
       <Image
         width={500}
         height={500}
@@ -13,7 +13,7 @@ const ProductCourse = () => {
         alt="leftLeft"
         className="absolute top-0 left-0 z-0 hidden opacity-80 md:block"
       />
-      <div className="container mx-auto flex flex-col justify-between gap-6 items-center w-full">
+      <div className="container mx-auto flex flex-col justify-between gap-6 items-center w-full z-10">
         <div className="flex flex-col justify-center items-center gap-2 w-full">
           <div className="border border-white/60 rounded-full p-2">
             <div className="w-3 aspect-square rounded-full bg-white animate-pulse"></div>

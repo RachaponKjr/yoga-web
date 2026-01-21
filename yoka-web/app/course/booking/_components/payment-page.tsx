@@ -2,7 +2,7 @@
 
 import { useBooking } from "@/store/useBooking";
 import { formatRoundEnglish } from "@/utils/format";
-import { useEffect, useState, useCallback } from "react"; // เพิ่ม useCallback
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { OmiseCardInputs, useOmise } from "@/hooks/useOmise";
@@ -18,7 +18,9 @@ import {
   Minus,
   Plus,
   RefreshCw,
-  X, // เพิ่ม icon สำหรับ loading ตอนคำนวณใหม่
+  X,
+  Camera,
+  FileText,
 } from "lucide-react";
 import { bookingService } from "@/service/booking.service";
 import { toast } from "sonner";
@@ -32,8 +34,11 @@ const PaymentPage = () => {
   const { createToken, loading: isScriptLoading } = useOmise();
 
   const [isProcessing, setIsProcessing] = useState(false);
-  // เพิ่ม state เช็คว่ากำลังคำนวณคูปองใหม่อยู่ไหม
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+  // State สำหรับ Checkbox ยินยอม
+  const [isConsentAccepted, setIsConsentAccepted] = useState(false);
+
   const router = useRouter();
 
   // Coupon States
@@ -62,11 +67,7 @@ const PaymentPage = () => {
   const subtotal = pricePerUnit * quantity;
   const itemDiscountTotal = discountPrice * quantity;
   const taxAmount = (subtotal - itemDiscountTotal) * 0.07;
-
-  // คำนวณยอดรวม (ก่อนหักคูปอง)
   const grandTotalBeforeCoupon = subtotal + taxAmount - itemDiscountTotal;
-
-  // ยอดที่ต้องจ่ายจริง
   const amountToPay = finalPrice !== 0 ? finalPrice : grandTotalBeforeCoupon;
 
   // --- Handlers ---
@@ -78,8 +79,11 @@ const PaymentPage = () => {
       const raw = value.replace(/\D/g, "").slice(0, 16);
       formattedValue = raw.replace(/(\d{4})(?=\d)/g, "$1 ");
     } else if (name === "cardExpiry") {
+      // ✅ แก้ไข Logic วันหมดอายุให้ถูกต้อง
       const raw = value.replace(/\D/g, "").slice(0, 4);
       if (raw.length >= 2) {
+        // slice(0, 2) คือ 2 ตัวหน้า (เดือน)
+        // slice(2) คือ ส่วนที่เหลือ (ปี)
         formattedValue = `${raw.slice(0, 2)}/${raw.slice(2)}`;
       } else {
         formattedValue = raw;
@@ -95,30 +99,58 @@ const PaymentPage = () => {
 
   const handleConfirmPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsProcessing(true);
+
+    // ✅ 1. ตรวจสอบ Consent (เปิดใช้งานแล้ว)
+    if (!isConsentAccepted) {
+      toast.error("Please accept the privacy policy and consent terms.");
+      return;
+    }
+
     const { cardNumber, cardHolder, cardExpiry, cardCvv } = cardDetail;
+
+    // ✅ 2. ตรวจสอบข้อมูลบัตรเบื้องต้นก่อนส่ง (Basic Validation)
+    const rawCardNumber = cardNumber.replace(/\s/g, "");
+    if (rawCardNumber.length < 16) {
+      toast.error("Invalid card number");
+      return;
+    }
+    if (cardExpiry.length < 5) {
+      toast.error("Invalid expiry date");
+      return;
+    }
+    if (cardCvv.length < 3) {
+      toast.error("Invalid CVC/CVV");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    // แปลง MM/YY
     const [expMonth, expYear] = cardExpiry.split("/");
 
     const cardObject: OmiseCardInputs = {
       name: cardHolder,
       number: cardNumber,
       expiration_month: parseInt(expMonth),
-      expiration_year: parseInt("20" + expYear),
+      expiration_year: parseInt("20" + expYear), // ระวังปี 2100+ แต่สำหรับตอนนี้ใช้ได้
       security_code: cardCvv,
     };
+
     try {
       const tokenResponse = await createToken(cardObject);
       const omiseToken = tokenResponse.id;
+
       const { response: bookingRes } = await bookingService.createBooking({
         roundId: booking?.id || "",
         type: "ONLINE",
         quantity: quantity || 1,
+        agreeToPrivacyPolicy: isConsentAccepted, // ส่งค่า consent ไปบันทึก
         price: amountToPay,
       });
 
       const paymentRes = await paymentService.payment({
         orderId: bookingRes.data.data.id,
-        couponId: couponId, // ส่ง Coupon ID ไปด้วยถ้ามี
+        couponId: couponId,
         omiseToken,
       });
 
@@ -128,17 +160,24 @@ const PaymentPage = () => {
       }
     } catch (error: any) {
       console.error("❌ Error:", error);
-      toast.error(error.response?.data?.message || "Payment failed");
+      // จัดการ Error จาก Omise หรือ Backend ให้แสดงผลสวยงาม
+      const message =
+        error.response?.data?.message || error.message || "Payment failed";
+
+      if (message.includes("number")) toast.error("Invalid card number");
+      else if (message.includes("expiration"))
+        toast.error("Card expired or invalid date");
+      else if (message.includes("security")) toast.error("Invalid CVC code");
+      else toast.error(message);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // แยก Logic การตรวจสอบคูปองออกมาเป็นฟังก์ชัน (เพื่อให้เรียกใช้ซ้ำได้)
   const verifyCouponLogic = useCallback(
     async (codeToCheck: string, currentTotal: number) => {
       try {
-        setIsValidatingCoupon(true); // เริ่มโหลด
+        setIsValidatingCoupon(true);
         const payload: VerifyCouponPayload = {
           code: codeToCheck,
           cartTotal: currentTotal,
@@ -154,7 +193,6 @@ const PaymentPage = () => {
           setCouponId(res.id);
           return true;
         } else {
-          // กรณีเคยใช้ได้ แต่พอปรับยอดแล้วใช้ไม่ได้ (เช่น ต่ำกว่า Min Spend)
           setCouponUsed(false);
           setCouponDiscount(0);
           setFinalPrice(0);
@@ -170,10 +208,10 @@ const PaymentPage = () => {
         setCouponId("");
         return false;
       } finally {
-        setIsValidatingCoupon(false); // หยุดโหลด
+        setIsValidatingCoupon(false);
       }
     },
-    [user?.id]
+    [user?.id],
   );
 
   const handleApplyCoupon = async () => {
@@ -196,11 +234,8 @@ const PaymentPage = () => {
     toast.info("Coupon removed");
   };
 
-  // --- LOGIC ใหม่: Re-validate Coupon เมื่อ Quantity เปลี่ยน ---
   useEffect(() => {
-    // ถ้ามีการใช้คูปองอยู่ และ จำนวนคนเปลี่ยน
     if (couponUsed && appliedCode) {
-      // ใช้ Debounce เล็กน้อยกันยิง API รัวเกินไป
       const timer = setTimeout(() => {
         verifyCouponLogic(appliedCode, grandTotalBeforeCoupon);
       }, 500);
@@ -225,13 +260,13 @@ const PaymentPage = () => {
 
   const { dateLabel, timeLabel } = formatRoundEnglish(
     booking?.startDateTime || "",
-    booking?.endDateTime || ""
+    booking?.endDateTime || "",
   );
 
   return (
-    <div className="min-h-screen bg-white flex justify-center items-start pt-28 pb-20">
+    <div className="min-h-screen bg-white flex justify-center items-start pt-20 pb-20">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto relative">
+        <div className="flex flex-col-reverse lg:flex-row gap-8 max-w-7xl mx-auto relative">
           {/* --- Left Column: Payment Form --- */}
           <div className="flex-1 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-slate-100">
             <div className="flex items-center gap-3 mb-6">
@@ -245,10 +280,8 @@ const PaymentPage = () => {
 
             {/* Visual Card Display */}
             <div className="mb-8 mx-auto w-full max-w-md aspect-[1.586/1] rounded-2xl bg-linear-to-br from-slate-800 via-slate-900 to-black text-white shadow-2xl relative overflow-hidden transition-all duration-300 group hover:scale-[1.02]">
-              {/* (UI ส่วนบัตรคงเดิม) */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
-
               <div className="relative z-10 p-6 h-full flex flex-col justify-between">
                 <div className="flex justify-between items-start">
                   <div className="w-12 h-8 bg-white/20 rounded-md backdrop-blur-sm border border-white/10"></div>
@@ -256,7 +289,6 @@ const PaymentPage = () => {
                     DEBIT/CREDIT
                   </span>
                 </div>
-
                 <div className="space-y-6">
                   <div className="font-mono text-2xl lg:text-3xl tracking-widest drop-shadow-md">
                     {cardDetail.cardNumber || "**** **** **** ****"}
@@ -287,7 +319,7 @@ const PaymentPage = () => {
               onSubmit={handleConfirmPayment}
               className="space-y-5 max-w-md mx-auto lg:max-w-none"
             >
-              {/* Card Inputs (UI เดิม) */}
+              {/* Card Inputs */}
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-slate-700">
                   Card Number
@@ -375,40 +407,77 @@ const PaymentPage = () => {
                 </div>
               </div>
 
-              {/* Secure Note & Button */}
-              <div>
-                <div className="flex items-center gap-2 mb-4 text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                  <Lock size={14} className="text-emerald-600" />
-                  <span>Your transaction is secured with SSL encryption.</span>
-                </div>
-
-                <Button
-                  type="submit"
-                  // ป้องกันการกดจ่ายเงินถ้ากำลังโหลด Omise, กำลังประมวลผลจ่าย, หรือกำลังคำนวณคูปองใหม่
-                  disabled={
-                    isScriptLoading || isProcessing || isValidatingCoupon
-                  }
-                  className="w-full h-14 text-base font-bold rounded-xl shadow-md shadow-emerald-200 bg-emerald-600 hover:bg-emerald-700 text-white transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Processing...
-                    </div>
-                  ) : isValidatingCoupon ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Updating Price...
-                    </div>
-                  ) : (
-                    `Pay $${amountToPay.toFixed(2)}`
-                  )}
-                </Button>
+              {/* Secure Note */}
+              <div className="flex items-center gap-2 mb-4 text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <Lock size={14} className="text-emerald-600" />
+                <span>Your transaction is secured with SSL encryption.</span>
               </div>
+
+              {/* Consent Checkbox */}
+              <div
+                className={`bg-slate-50 rounded-xl p-4 border transition-colors ${isConsentAccepted ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"}`}
+              >
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="relative flex items-center mt-1">
+                    <input
+                      type="checkbox"
+                      checked={isConsentAccepted}
+                      onChange={(e) => setIsConsentAccepted(e.target.checked)}
+                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-slate-300 shadow-sm transition-all checked:border-emerald-500 checked:bg-emerald-500 hover:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    />
+                    <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                      <Check size={14} strokeWidth={3} />
+                    </div>
+                  </div>
+                  <div className="flex-1 text-sm text-slate-600">
+                    <span className="font-semibold text-slate-800 block mb-1">
+                      Data Privacy & Consent
+                    </span>
+                    <p className="leading-relaxed text-xs">
+                      I agree to allow the studio to collect and use my personal
+                      data, including{" "}
+                      <strong className="text-slate-700">
+                        photos or videos
+                      </strong>{" "}
+                      taken during sessions, for promotional and operational
+                      purposes in accordance with the Privacy Policy.
+                    </p>
+                    <div className="flex gap-3 mt-2">
+                      <div className="flex items-center gap-1 text-[10px] text-slate-500 bg-white px-2 py-1 rounded border border-slate-200">
+                        <Camera size={10} /> Photography
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] text-slate-500 bg-white px-2 py-1 rounded border border-slate-200">
+                        <FileText size={10} /> Personal Data
+                      </div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              {/* Pay Button */}
+              <Button
+                type="submit"
+                disabled={isScriptLoading || isProcessing || isValidatingCoupon}
+                className="w-full h-14 text-base font-bold rounded-xl shadow-md shadow-emerald-200 bg-emerald-600 hover:bg-emerald-700 text-white transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isProcessing ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Processing...
+                  </div>
+                ) : isValidatingCoupon ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Updating Price...
+                  </div>
+                ) : (
+                  `Pay $${amountToPay.toFixed(2)}`
+                )}
+              </Button>
             </form>
           </div>
 
-          {/* --- Right Column: Booking Summary (Sticky) --- */}
+          {/* --- Right Column: Booking Summary --- */}
           <div className="w-full lg:w-[420px]">
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden lg:sticky lg:top-8">
               {/* Header */}
@@ -451,8 +520,7 @@ const PaymentPage = () => {
                   </span>
                   <div className="flex items-center gap-3 bg-white rounded-md shadow-sm border border-slate-200 px-1 py-1">
                     <button
-                      // ลบ disabled={couponUsed} ออก เพื่อให้กดได้ตลอด
-                      disabled={isValidatingCoupon} // แต่ disable ตอนกำลังคำนวณราคา
+                      disabled={isValidatingCoupon}
                       onClick={() => decrementQuantity()}
                       className="w-6 h-6 flex items-center justify-center rounded hover:bg-slate-100 text-slate-600 transition-colors disabled:opacity-50"
                     >
@@ -462,7 +530,6 @@ const PaymentPage = () => {
                       {quantity}
                     </span>
                     <button
-                      // ลบ disabled={couponUsed} ออก
                       disabled={isValidatingCoupon}
                       onClick={() => incrementQuantity()}
                       className="w-6 h-6 flex items-center justify-center rounded hover:bg-slate-100 text-slate-600 transition-colors disabled:opacity-50"
@@ -497,7 +564,6 @@ const PaymentPage = () => {
                           </p>
                         </div>
                       </div>
-                      {/* ถ้าอยากให้ลบออกได้ ก็ Uncomment ตรงนี้ */}
                       <button
                         onClick={removeCoupon}
                         className="text-emerald-400 hover:text-emerald-700 transition-colors"

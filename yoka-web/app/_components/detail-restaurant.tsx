@@ -6,7 +6,7 @@ import SlideFood from "./slide-food";
 
 const DetailRestaurant = () => {
   return (
-    <section className="py-0 md:py-20 px-4 md:px-0 relative overflow-hidden">
+    <section className="py-0 md:py-12 px-4 md:px-0 relative overflow-hidden">
       {/* Decorative Background Blob */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
 

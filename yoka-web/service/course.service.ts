@@ -20,7 +20,7 @@ export const courseService = {
   },
 
   getCourseAll: async () => {
-    const response = await http.get(`/course/all`, {
+    const response = await http.get(`/course`, {
       params: {
         page: 1,
         limit: 10,

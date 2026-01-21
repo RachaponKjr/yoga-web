@@ -9,6 +9,7 @@ import {
   createCourseRoundService,
   createCourseService,
   deleteCourseService,
+  getCourseActiveService,
   getCourseByIdService,
   getCourseRoundByCourseIdService,
   getCourseRoundByIdService,
@@ -222,6 +223,51 @@ const getCourseByIdController = async (req: Request, res: Response) => {
   }
 };
 
+const getCourseActiveController = async (req: Request, res: Response) => {
+  try {
+    const { limit, offset } = req.query;
+
+    const parsedLimit = Number(limit) > 0 ? Number(limit) : 10;
+    const parsedOffset = Number(offset) >= 0 ? Number(offset) : 0;
+
+    const { courses, total } = await getCourseActiveService({
+      limit: parsedLimit,
+      offset: parsedOffset,
+    });
+
+    if (!courses || courses.length === 0) {
+    }
+
+    const totalPages = Math.ceil(total / parsedLimit);
+    const currentPage = Math.floor(parsedOffset / parsedLimit) + 1;
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Courses fetched successfully",
+      data: {
+        courses,
+        pagination: {
+          totalItems: total,
+          totalPages,
+          currentPage,
+          itemsPerPage: parsedLimit,
+          hasNextPage: parsedOffset + parsedLimit < total,
+          hasPrevPage: parsedOffset > 0,
+        },
+      },
+    });
+    return;
+  } catch (error: Error | unknown) {
+    console.error("Get Course Error:", error); // Log ไว้ดูใน Server
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
 const getCourseRoundController = async (req: Request, res: Response) => {
   try {
     const { limit, offset } = req.query;
@@ -299,7 +345,7 @@ const getCourseRoundByIdController = async (req: Request, res: Response) => {
 
 const getCourseRoundByCourseIdController = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { id } = req.params as { id: string };
@@ -333,7 +379,7 @@ const getCourseRoundByCourseIdController = async (
 
 const getCourseRoundTodayOrMonthController = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { today, month } = req.query;
@@ -369,7 +415,7 @@ const getCourseRoundTodayOrMonthController = async (
 
 const deleteCourseController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { id } = req.params as { id: string };
@@ -405,7 +451,7 @@ const deleteCourseController = async (
 
 const getMyRoundController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const user = req.user;
@@ -450,4 +496,5 @@ export {
   getMyCourseController,
   deleteCourseController,
   getMyRoundController,
+  getCourseActiveController,
 };

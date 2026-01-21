@@ -6,78 +6,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react"; // เพิ่ม icon X
 import { Highlighter } from "@/components/ui/highlighter";
 
+import image1 from "@/assets/images/gallory/CC__2033.jpg";
+import image2 from "@/assets/images/gallory/CC__2039.jpg";
+import image3 from "@/assets/images/gallory/CC__2048.jpg";
+import image4 from "@/assets/images/gallory/CC__2063.jpg";
+import image5 from "@/assets/images/gallory/CC__2066.jpg";
+import image6 from "@/assets/images/gallory/CC__2070.jpg";
+import image7 from "@/assets/images/gallory/CC__2091.jpg";
+import image8 from "@/assets/images/gallory/CC__2096.jpg";
+import image9 from "@/assets/images/gallory/CC__2117.jpg";
+import image10 from "@/assets/images/gallory/CC__2137.jpg";
+import image11 from "@/assets/images/gallory/CC__2145.jpg";
+import image12 from "@/assets/images/gallory/CC__2152.jpg";
+import image13 from "@/assets/images/gallory/CC__2195.jpg";
+import image14 from "@/assets/images/gallory/CC__2231.jpg";
+import image15 from "@/assets/images/gallory/CC__2244.jpg";
+import image16 from "@/assets/images/gallory/CC__2245.jpg";
+import image17 from "@/assets/images/gallory/CC__2346.jpg";
+import image18 from "@/assets/images/gallory/CC__2427.jpg";
+import image19 from "@/assets/images/gallory/CC__2467.jpg";
+
 // 1. ข้อมูลรูปภาพ (เหมือนเดิม)
-const galleryItems = [
-  {
-    id: 1,
-    title: "Serene Yoga Session",
-    category: "Photography",
-    src: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Modern Architecture",
-    category: "Design",
-    src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 3,
-    title: "Minimalist Interior",
-    category: "Interior",
-    src: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 4,
-    title: "Nature Retreat",
-    category: "Travel",
-    src: "https://images.unsplash.com/photo-1587578479040-e5fb305dd25e?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 5,
-    title: "Abstract Art",
-    category: "Art",
-    src: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 6,
-    title: "Urban Lifestyle",
-    category: "Photography",
-    src: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 7,
-    title: "Culinary Delight",
-    category: "Food",
-    src: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 8,
-    title: "Tech Workspace",
-    category: "Technology",
-    src: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 9,
-    title: "Fashion Portrait",
-    category: "Fashion",
-    src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-  {
-    id: 10,
-    title: "Mountain Adventure",
-    category: "Travel",
-    src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop",
-    link: "#",
-  },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -98,14 +47,35 @@ const itemVariants = {
 };
 
 // Type Definitions
-type GalleryItem = (typeof galleryItems)[0];
+// type GalleryItem = (typeof galleryItems)[0];
 
 export default function PortfolioGallery() {
   // State สำหรับเก็บรูปที่กำลังเปิดอยู่
-  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const images = [
+    image1,
+    image2,
+    image3,
+    image4,
+    image5,
+    image6,
+    image7,
+    image8,
+    image9,
+    image10,
+    image11,
+    image12,
+    image13,
+    image14,
+    image15,
+    image16,
+    image17,
+    // image18,
+    // image19,
+  ];
 
   return (
-    <section className="relative mb-12">
+    <section className="relative mb-12 py-12">
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <div className="space-y-2 mb-8 text-center sm:text-left">
@@ -125,30 +95,30 @@ export default function PortfolioGallery() {
           viewport={{ once: true, margin: "-100px" }}
           className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
         >
-          {galleryItems.map((item) => (
+          {images.map((item, index) => (
             <motion.div
-              key={item.id}
+              key={index}
               variants={itemVariants as any}
               className="break-inside-avoid relative group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-zoom-in"
               onClick={() => setSelectedItem(item)} // กดแล้ว set state
             >
               {/* Image Container with layoutId for transition */}
               <motion.div
-                layoutId={`image-container-${item.id}`}
+                layoutId={`image-container-${index}`}
                 className="relative w-full"
               >
                 <Image
                   src={item.src}
-                  alt={item.title}
+                  alt={"image"}
                   width={800}
                   height={600}
                   className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority={item.id <= 3}
+                  priority={index <= 3}
                 />
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                {/* <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     whileHover={{ y: 0, opacity: 1 }}
@@ -161,7 +131,7 @@ export default function PortfolioGallery() {
                       {item.title}
                     </h3>
                   </motion.div>
-                </div>
+                </div> */}
               </motion.div>
             </motion.div>
           ))}
@@ -194,30 +164,12 @@ export default function PortfolioGallery() {
             >
               <Image
                 src={selectedItem.src}
-                alt={selectedItem.title}
+                alt={"image"}
                 width={1200}
                 height={800}
                 className="w-full h-full object-contain max-h-[85vh]"
                 priority
               />
-              {/* ข้อมูลใต้ภาพในโหมดขยาย */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/90 to-transparent"
-              >
-                <div className="flex items-end justify-between">
-                  <div>
-                    <span className="text-blue-400 text-sm font-bold uppercase tracking-widest">
-                      {selectedItem.category}
-                    </span>
-                    <h2 className="text-white text-2xl sm:text-3xl font-bold mt-2">
-                      {selectedItem.title}
-                    </h2>
-                  </div>
-                </div>
-              </motion.div>
             </motion.div>
           </motion.div>
         )}

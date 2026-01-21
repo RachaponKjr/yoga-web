@@ -2,7 +2,8 @@ import axios from "axios";
 
 const http = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL ?? "http://119.59.99.141:4001/api/v1",
+    // process.env.NEXT_PUBLIC_API_URL ?? "http://119.59.99.141:4001/api/v1",
+    "http://localhost:3001/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
@@ -25,7 +26,7 @@ http.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 http.interceptors.response.use(
@@ -40,7 +41,7 @@ http.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default http;

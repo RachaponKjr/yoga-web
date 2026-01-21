@@ -67,6 +67,13 @@ const getCourseService = async ({
             select: {
               id: true,
               email: true,
+              userInfo: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  avatar: true,
+                },
+              },
               // firstName: true, (ถ้ามีใน UserInfo ให้ join ต่อ)
             },
           },
@@ -107,6 +114,54 @@ const getMyCourseService = async ({
         orderBy: {
           createdAt: "desc", // เอาคอร์สใหม่ล่าสุดขึ้นก่อน
         },
+      }),
+      prisma.courseYoga.count({ where: whereCondition }),
+    ]);
+
+    return { courses, total };
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getCourseActiveService = async ({
+  limit = 10,
+  offset = 0,
+  search,
+}: GetCourseParams) => {
+  try {
+    // สร้างเงื่อนไขการค้นหา
+    const whereCondition: Prisma.CourseYogaWhereInput = {
+      status: "Open",
+      rounds: {
+        some: {
+          status: "Open",
+          startDateTime: {
+            gte: new Date(),
+          },
+        },
+      },
+
+      // (แถม) ถ้าจะใช้ search ด้วย
+      ...(search
+        ? {
+            title: { contains: search, mode: "insensitive" },
+          }
+        : {}),
+    };
+
+    const [courses, total] = await Promise.all([
+      prisma.courseYoga.findMany({
+        take: limit,
+        skip: offset,
+        where: whereCondition,
+        orderBy: {
+          createdAt: "desc",
+        },
+        // ถ้าอยากเห็นข้อมูลรอบด้วย ให้เปิด include
+        // include: {
+        //   rounds: true
+        // }
       }),
       prisma.courseYoga.count({ where: whereCondition }),
     ]);
@@ -251,7 +306,7 @@ const getCourseRoundTodayOrMonthService = async ({
     endQueryDate.setMonth(endQueryDate.getMonth() + 1);
   } else {
     throw new Error(
-      "Parameter required: 'today' (YYYY-MM-DD) or 'month' (YYYY-MM)"
+      "Parameter required: 'today' (YYYY-MM-DD) or 'month' (YYYY-MM)",
     );
   }
 
@@ -363,4 +418,5 @@ export {
   getMyCourseService,
   deleteCourseService,
   getMyRoundService,
+  getCourseActiveService,
 };
