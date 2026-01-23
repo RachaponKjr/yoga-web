@@ -22,13 +22,13 @@ const ProductCourse = () => {
         </div>
         <div className="flex flex-col items-center justify-center gap-8 w-full">
           <div className="flex flex-col items-center gap-2 max-w-4xl w-full">
-            <span className="text-4xl font-serif font-semibold text-secondary! text-center">
+            <span className="text-2xl md:text-4xl font-serif font-semibold text-secondary! text-center">
               Yoga Memberships & Class Passes
             </span>
-            <p className="text-secondary/80! text-center">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus
-              maxime quibusdam praesentium recusandae tempora sunt, ipsa
-              delectus facere modi nisi!
+            <p className="text-secondary/80! text-sm md:text-base text-center">
+              Choose the plan that fits your lifestyle. From single drop-in
+              classes to unlimited monthly memberships, we offer flexible
+              options to support your journey on the mat.
             </p>
           </div>
           <CourseBox />

@@ -24,8 +24,8 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
   return (
     <LayoutSection
       image={instructorBanner.src}
-      title="Instructors"
-      description="lorem ipsum dolor sit amet consectetur adipisicing elit"
+      title="Meet Our Instructors"
+      description="Dedicated professionals ready to guide your practice with expertise and compassion."
     >
       <div className="grid grid-cols-2 px-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 w-full">
         {instructors.map((instructor, index) => (

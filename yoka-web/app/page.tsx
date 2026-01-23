@@ -20,7 +20,7 @@ export default async function Home() {
     <main className="relative flex flex-col">
       <Social />
       <Hero />
-      <div className="py-12 bg-[#283618] md:py-20 flex flex-col gap-6 relative">
+      <div className="bg-[#283618] py-4 flex flex-col gap-8 relative">
         <ProductCourse />
         <Banner />
         <Instructors data={data} />

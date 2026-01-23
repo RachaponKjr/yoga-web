@@ -6,26 +6,26 @@ import Image from "next/image";
 const BannerItem = ({ className }: { className?: string }) => {
   return (
     // ปรับ my-12 เป็น my-8 บนมือถือเพื่อให้กระชับขึ้น
-    <section className={`w-full p-4 md:p-6 my-0 md:mt-24`}>
+    <section className={`w-full p-4 md:p-6 my-0 `}>
       <div
         // 1. aspect-auto บนมือถือ (เพื่อให้สูงตามเนื้อหา) แล้วค่อยเป็น aspect-16/4 บนจอใหญ่
         // 2. ลด padding จาก p-14 เป็น p-6 บนมือถือ
         // 3. ปรับ rounded ให้เล็กลงนิดหน่อยบนมือถือ
         className={`w-full aspect-auto md:aspect-16/6 lg:aspect-16/4 rounded-3xl md:rounded-4xl p-6 md:p-14 relative overflow-hidden flex items-center ${className}`}
       >
-        <div className="max-w-xl flex flex-col items-start gap-3 md:gap-4 z-50 relative">
+        <div className="max-w-xl flex flex-col items-start gap-2 md:gap-4 z-50 relative">
           <div className="w-full flex items-center justify-between">
             {/* ปรับขนาดตัวอักษร: มือถือ(3xl) -> Tablet(5xl) -> Desktop(6xl) */}
             <span className="text-3xl md:text-5xl lg:text-6xl text-tertiary font-semibold leading-tight">
-              Restaurant Detail.
+              Nourish Your Body.
             </span>
           </div>
 
           {/* ปรับขนาดตัวอักษรเนื้อหาให้อ่านง่ายบนมือถือ */}
-          <p className="text-[#666666] text-sm md:text-lg">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus
-            maxime quibusdam praesentium recusandae tempora sunt, ipsa delectus
-            facere modi nisi!
+          <p className="text-[#666666] font-medium text-shadow-2xs text-sm md:text-lg">
+            Complete your wellness routine with our nutrient-rich menu. From
+            post-workout protein bowls to refreshing cold-pressed juices, every
+            dish is crafted to support your health and recovery.
           </p>
 
           {/* ปุ่มเต็มความกว้างบนมือถือ (w-full) และขนาดปกติบนจอใหญ่ (md:w-auto) */}

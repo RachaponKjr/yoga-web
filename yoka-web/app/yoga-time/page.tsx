@@ -5,11 +5,11 @@ import calenderBanner from "@/assets/images/banner/calender_banner.png";
 const page = () => {
   return (
     <LayoutSection
-      title="Yoga Time"
+      title="Class Schedule"
       image={calenderBanner.src}
-      description="lorem ipsum dolor sit amet consectetur adipisicing elit"
+      description="Plan your week of wellness. Explore our daily classes and find the perfect time to practice."
     >
-      <div className="w-full px-4 md:px-0">
+      <div className="w-full">
         <Calendar />
       </div>
     </LayoutSection>

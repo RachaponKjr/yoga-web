@@ -13,11 +13,15 @@ import yoga5 from "@/assets/images/gallory/CC__2427.jpg";
 
 const Page = () => {
   return (
-    <LayoutSection image={banner.src} title="Restaurant" description="">
+    <LayoutSection
+      image={banner.src}
+      title="Our Story"
+      description="Discover the passion behind Yoga by Niti. Where mindful movement meets wholesome nutrition for a balanced life."
+    >
       {/* เพิ่ม gap ให้ห่างขึ้นเพื่อให้ดูโปร่งแม้ภาพจะใหญ่ */}
-      <div className="flex flex-col gap-12 md:gap-48 px-4 md:px-6 my-12 md:my-24 overflow-hidden">
+      <div className="flex flex-col gap-8 md:gap-48 px-4 md:px-6 my-4 md:my-24 overflow-hidden">
         {/* --- Section 1: Our Story (Big Overlap) --- */}
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20 relative">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-4 lg:gap-20 relative">
           {/* Text Content (ย่อลงเหลือ 40% เพื่อให้ที่รูปภาพเยอะขึ้น) */}
           <div className="w-full lg:w-5/12 flex flex-col gap-8 z-10">
             <div>
@@ -52,7 +56,7 @@ const Page = () => {
             <div className="absolute top-0 right-0 w-[90%] h-full bg-[#F2F0E9]/20 rounded-[3rem] -z-10 transform rotate-1 backdrop-blur-3xl"></div>
 
             {/* เพิ่มความสูง Container เพื่อรองรับรูปใหญ่ */}
-            <div className="relative w-full h-[600px] md:h-[800px] flex items-center">
+            <div className="relative w-full h-[500px] md:h-[800px] flex items-center">
               {/* Main Image (ขยายเป็น 75% และชิดขวาสุด) */}
               <div className="absolute right-0 top-0 w-[75%] aspect-3/4 shadow-2xl rounded-4xl overflow-hidden z-10">
                 <Image
@@ -80,10 +84,10 @@ const Page = () => {
         <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-20">
           {/* Images Content (ให้พื้นที่ 2 ใน 3 ของหน้าจอเลย) */}
           <div className="w-full lg:w-8/12 order-2 lg:order-1">
-            <div className="flex gap-4 md:gap-6 items-start">
+            <div className="flex gap-2 md:gap-6 items-start">
               {/* Column 1 (Left - ใหญ่เต็มตา) */}
               <div className="w-1/2 flex flex-col gap-6 mt-16 md:mt-32">
-                <div className="w-full aspect-2/3 relative rounded-4xl overflow-hidden shadow-xl">
+                <div className="w-full aspect-2/3 relative rounded-2xl md:rounded-4xl overflow-hidden shadow-xl">
                   <Image
                     src={yoga5}
                     alt="Interior detail"
@@ -94,8 +98,8 @@ const Page = () => {
               </div>
 
               {/* Column 2 (Right - ใหญ่เต็มตา) */}
-              <div className="w-1/2 flex flex-col gap-6">
-                <div className="w-full aspect-square relative rounded-4xl overflow-hidden shadow-xl">
+              <div className="w-1/2 flex flex-col gap-2 md:gap-6">
+                <div className="w-full aspect-square relative rounded-2xl md:rounded-4xl overflow-hidden shadow-xl">
                   <Image
                     src={yoga4}
                     alt="Chef at work"
@@ -103,7 +107,7 @@ const Page = () => {
                     className="object-cover hover:scale-105 transition-transform duration-700"
                   />
                 </div>
-                <div className="w-full aspect-3/4 relative rounded-4xl overflow-hidden shadow-xl">
+                <div className="w-full aspect-3/4 relative rounded-2xl md:rounded-4xl overflow-hidden shadow-xl">
                   <Image
                     src={yoga3}
                     alt="Private dining"
@@ -145,7 +149,7 @@ const Page = () => {
         {/* <div className="w-full">
           <BannerItem className="bg-[#8ba888]!" />
         </div> */}
-        <div className="w-full aspect-16/6 overflow-hidden rounded-2xl bg-neutral-200">
+        <div className="w-full aspect-video md:aspect-16/6 overflow-hidden rounded-2xl bg-neutral-200">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.80375258081!2d98.32157788483991!3d7.791349598877547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30502f5295ff53db%3A0xda161d49bc788348!2sYoga%20by%20Niti!5e0!3m2!1sth!2sth!4v1769008361859!5m2!1sth!2sth"
             width="600"

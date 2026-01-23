@@ -32,7 +32,7 @@ const CourseDetailPage = ({
     if (date) {
       const targetDate = new Date(date);
       const foundRound = course.rounds.find((r) =>
-        isSameDay(new Date(r.startDateTime), targetDate)
+        isSameDay(new Date(r.startDateTime), targetDate),
       );
       if (foundRound) return foundRound;
     }
@@ -42,7 +42,7 @@ const CourseDetailPage = ({
   const router = useRouter();
   const { dateLabel, timeLabel } = formatRoundEnglish(
     selectRound.startDateTime,
-    selectRound.endDateTime
+    selectRound.endDateTime,
   );
 
   const handleBooking = useCallback(() => {
@@ -67,7 +67,7 @@ const CourseDetailPage = ({
   const discountPercentage =
     course.discount_price < course.price
       ? Math.round(
-          ((course.price - course.discount_price) / course.price) * 100
+          ((course.price - course.discount_price) / course.price) * 100,
         )
       : 0;
 
@@ -75,9 +75,9 @@ const CourseDetailPage = ({
 
   return (
     <div className="w-full bg-white min-h-screen py-8 px-4 sm:px-6 lg:px-8 font-sans text-slate-800">
-      <div className="max-w-8xl mx-auto container">
+      <div className="max-w-8xl mx-auto container flex flex-col gap-4">
         {/* --- Header Section & Actions --- */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-3">
             <div className="flex flex-wrap gap-2 text-sm font-semibold tracking-wide uppercase">
               <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full flex items-center gap-1">
@@ -107,7 +107,7 @@ const CourseDetailPage = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* --- Left Content (Main - 8 cols) --- */}
-          <div className="lg:col-span-8 flex flex-col gap-10">
+          <div className="lg:col-span-8 flex flex-col gap-4">
             {/* Image Gallery (Modern Grid Style) */}
             <div className="grid grid-cols-4 grid-rows-2 gap-3 overflow-hidden ">
               {/* รูปใหญ่ซ้าย */}
@@ -158,7 +158,7 @@ const CourseDetailPage = ({
 
             {/* Description */}
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <CheckCircle className="text-emerald-600" size={24} />
                 About this course
               </h3>
@@ -231,7 +231,7 @@ const CourseDetailPage = ({
 
           {/* --- Right Sidebar (Booking Card - 4 cols) --- */}
           <div className="lg:col-span-4 flex flex-col gap-6">
-            <div className="sticky top-8">
+            <div className="sticky flex flex-col-reverse gap-4 md:flex-col top-8">
               {/* Booking Card (Elevated) */}
               <div className="bg-white shadow-md flex flex-col gap-4 shadow-emerald-100/50 border border-slate-100 rounded-3xl p-6 lg:p-8 overflow-hidden relative">
                 {/* Price Section */}
@@ -344,7 +344,7 @@ const CourseDetailPage = ({
               </div>
 
               {/* Calendar Widget (Separate Card) */}
-              <div className="mt-6">
+              <div className="mt-0">
                 <h4 className="text-lg font-semibold mb-4">ตารางวันการเรียน</h4>
                 <CourseCalendar
                   rounds={course.rounds}

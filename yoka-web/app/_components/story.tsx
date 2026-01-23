@@ -48,7 +48,7 @@ const Story = () => {
               </h5>
             </div>
 
-            <div className="text-lg text-[#5C6155] font-medium leading-relaxed space-y-6">
+            <div className="text-sm md:text-base text-[#5C6155] font-medium leading-relaxed space-y-6">
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit
                 autem aperiam iure provident quisquam, voluptatum nostrum,

@@ -24,22 +24,22 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
-    <section className="relative bg-[#283618] py-20 overflow-hidden">
+    <section className="relative bg-[#283618] overflow-hidden">
       {/* Background Decor (Optional: ทำให้ดูมีมิติขึ้นแบบ Minimal) */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/5 to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* --- Header Section: Title Left / Arrows Right --- */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-          <div className="space-y-4 max-w-2xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-4">
+          <div className="space-y-2 max-w-2xl">
             <span className="text-emerald-400/80 uppercase tracking-[0.2em] text-xs font-bold">
               Our Experts
             </span>
             <h2 className="text-4xl md:text-5xl font-serif text-[#FEFAE0] leading-tight">
-              Meet Your <br />
-              <span className="text-white">Instructors</span>
+              Meet Your
+              <span className="text-white"> Instructors</span>
             </h2>
-            <p className="text-[#FEFAE0]/60 font-light text-base md:text-lg max-w-md leading-relaxed">
+            <p className="text-[#FEFAE0]/60 font-light text-sm md:text-base max-w-md leading-relaxed">
               Experience guidance from world-class professionals dedicated to
               your wellness journey.
             </p>

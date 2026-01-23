@@ -75,15 +75,16 @@ export default function PortfolioGallery() {
   ];
 
   return (
-    <section className="relative mb-12 py-12">
+    <section className="relative my-24">
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <div className="space-y-2 mb-8 text-center sm:text-left">
-          <span className="text-primary font-semibold tracking-wider uppercase text-sm">
+          <span className="text-primary font-semibold tracking-wider uppercase text-2xl md:text-4xl">
             Gallery
           </span>
-          <p className="text-2xl text-[#5C6155] font-medium leading-relaxed">
-            Lorem ipsum dolor sit amet.
+          <p className="text-sm md:text-lg text-[#5C6155] font-medium leading-relaxed">
+            A glimpse into our vibrant community and the beautiful space we
+            share.
           </p>
         </div>
 
@@ -93,7 +94,7 @@ export default function PortfolioGallery() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+          className="columns-2 sm:columns-2 lg:columns-3 gap-6 space-y-6"
         >
           {images.map((item, index) => (
             <motion.div

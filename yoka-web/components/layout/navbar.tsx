@@ -14,9 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authService } from "@/service/auth.service";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+// import { authService } from "@/service/auth.service";
+// import { toast } from "sonner";
+// import { Loader2 } from "lucide-react";
 
 interface UserProps {
   user: {
@@ -53,11 +53,19 @@ const Navbar = () => {
   }, [checkAuth]);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/instructors", label: "Instructors" },
-    { href: "/yoga-time", label: "Yoga Timetable" },
-    { href: "/about", label: "About Us" },
-    { href: "/contact", label: "Contact Us" },
+    { href: "/", label: "Home", icon: "mdi:home" },
+    {
+      href: "/instructors",
+      label: "Instructors",
+      icon: "mdi:account-multiple",
+    },
+    {
+      href: "/yoga-time",
+      label: "Yoga Timetable",
+      icon: "mdi:calendar-blank-outline",
+    },
+    { href: "/about", label: "About Us", icon: "mdi:information-outline" },
+    { href: "/contact", label: "Contact Us", icon: "mdi:phone-outline" },
   ];
 
   // Component ย่อยสำหรับ Link
@@ -65,7 +73,7 @@ const Navbar = () => {
     link,
     mobile = false,
   }: {
-    link: LinkProps & { label: string };
+    link: LinkProps & { label: string; icon: string };
     mobile?: boolean;
   }) => {
     const isActive = pathname === link.href;
@@ -73,11 +81,12 @@ const Navbar = () => {
       <Link
         href={link.href}
         onClick={() => mobile && setIsMobileMenuOpen(false)}
-        className={`relative transition-colors hover:text-primary font-medium
-          ${mobile ? "text-lg py-2 block w-full" : "text-sm lg:text-base"}
+        className={`relative transition-colors flex items-center gap-2 hover:text-primary font-medium
+          ${mobile ? "text-base block w-full" : "text-sm lg:text-base"}
           ${isActive ? "text-primary font-semibold" : "text-foreground/60"}
         `}
       >
+        <Icon icon={link.icon} width={20} height={20} />
         {link.label}
         {!mobile && (
           <span
@@ -92,11 +101,11 @@ const Navbar = () => {
 
   return (
     <header
-      className={`relative top-0 left-0 right-0 z-999 transition-all duration-300 ease-in-out border-b border-transparent
+      className={`relative top-0 left-0 right-0 z-999 transition-all duration-300 ease-in-out border-b border-transparent shadow-sm
       ${
         isScrolled
           ? "bg-secondary/80 backdrop-blur-md shadow-sm py-3 border-gray-200/20"
-          : "bg-secondary py-5"
+          : "bg-secondary py-2 md:py-5"
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -120,7 +129,7 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           <div className="hidden md:block">
             {!user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center  gap-3">
                 <Button
                   asChild
                   variant="ghost"
@@ -162,7 +171,7 @@ const Navbar = () => {
           isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="container mx-auto px-6 py-6 flex flex-col gap-4">
+        <div className="container mx-auto px-6 py-6 flex flex-col gap-6">
           {navLinks.map((link) => (
             <NavItem key={link.href} link={link} mobile />
           ))}
@@ -170,11 +179,11 @@ const Navbar = () => {
           {!user && (
             <>
               <div className="h-px bg-foreground/10" />
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-row max-w-full gap-3">
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full justify-center text-lg font-semibold rounded-md h-[54px] border-primary/20"
+                  className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] border-primary/20"
                 >
                   <Link
                     href="/signin"
@@ -185,7 +194,7 @@ const Navbar = () => {
                 </Button>
                 <Button
                   asChild
-                  className="w-full justify-center text-lg font-semibold rounded-md h-[54px] bg-[#3D552F] hover:bg-[#3D552F]/90 text-white"
+                  className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] bg-[#3D552F] hover:bg-[#3D552F]/90 text-white"
                 >
                   <Link
                     href="/signup"
