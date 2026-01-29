@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Users, Calendar, Wallet, Activity, Clock } from "lucide-react";
 import { adminService } from "@/service/admin.service";
 import type { BookingType } from "@/types/booking.type";
+import { Link } from "react-router-dom";
 
 interface StatusType {
   users: {
@@ -258,7 +259,7 @@ const HomePage = () => {
         </div>
 
         {/* Right Column: Recent Bookings (Takes up 1/3 space) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white w-full flex flex-col rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold text-gray-800">การจองล่าสุด</h2>
           </div>
@@ -295,9 +296,12 @@ const HomePage = () => {
             ))}
           </div>
 
-          <button className="w-full mt-6 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all">
+          <Link
+            to="/bookings"
+            className="w-full flex justify-center items-center cursor-pointer mt-6 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all"
+          >
             ดูประวัติทั้งหมด
-          </button>
+          </Link>
         </div>
       </div>
     </div>

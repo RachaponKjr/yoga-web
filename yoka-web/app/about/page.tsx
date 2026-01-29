@@ -28,25 +28,37 @@ const Page = () => {
               <div className="flex items-center gap-3 mb-4">
                 <span className="h-px w-12 bg-tertiary/60"></span>
                 <span className="text-tertiary font-bold tracking-[0.2em] uppercase text-xs md:text-sm">
-                  Since 1998
+                  Studio Yoga by Niti
                 </span>
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif font-medium text-[#2A2A2A] leading-[1.1]">
-                A culinary journey <br />
-                <span className="italic text-tertiary">rooted in</span> history.
+                Welcome to <br />
+                <span className="text-tertiary">Yoga by Niti</span>
               </h2>
             </div>
             <p className="text-base md:text-lg text-gray-600 leading-relaxed font-light">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Doloremque soluta recusandae est exercitationem ipsam adipisci
-              nesciunt cum, expedita obcaecati?
+              Founded and owned by Nitikarn Thachina , Yoga by Neeti has been
+              open for over 10 years in Rawai, Phuket.Niti is not only the
+              owner, but also a yoga teacher who lives and breathes the
+              practice. Her journey with Go vegan Cafe as a personal path and
+              slowly grew into a space where people from all over the world come
+              to move, breathe, heal, and reconnect with themselves.
+              <br />
+              <br /> Over the past decade, Yoga by Niti has grown into a warm,
+              small, and welcoming community, known for its sincere atmosphere,
+              grounded spirituality, and natural way of teaching. Here, yoga is
+              not about perfection — it is about presence, balance, and real
+              life. Classes are open to all levels, guided with care,
+              experience, and heart.
             </p>
             <div className="flex flex-col gap-2 border-l-4 border-tertiary/30 pl-6 py-2">
               <p className="text-xl text-gray-800 italic font-serif">
-                &quot;Food is not just eating energy. It&apos;s an
-                experience.&quot;
+                &quot;Yoga by Niti is more than a yoga studio — it is a living
+                story of dedication, community, and heart.&quot;
               </p>
-              <p className="text-sm text-gray-500">- Head Chef, Giovanni</p>
+              <p className="text-sm text-gray-500">
+                - Nitikarn Thachina, Owner
+              </p>
             </div>
           </div>
 
@@ -128,19 +140,23 @@ const Page = () => {
                   Restaurant
                 </span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-[#2A2A2A] leading-[1.1]">
-                Designed for <br />
-                <span className="italic text-tertiary">unforgettable</span>{" "}
-                moments.
+              <h2 className="text-4xl md:text-5xl font-serif font-medium text-[#2A2A2A] leading-[1.1]">
+                The Story of Go Vegan &
+                <span className="italic text-tertiary"> Yoga by Niti</span>
               </h2>
             </div>
             <p className="text-base md:text-lg text-gray-600 leading-relaxed font-light">
-              We believe that the environment is just as important as the
-              cuisine. Our space is designed to be a sanctuary.
-            </p>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed font-light">
-              From the handcrafted furniture to the carefully curated lighting,
-              every detail whispers elegance.
+              After more than 10 years of teaching yoga,Niti naturally expanded
+              her vision into another form of healing — food.
+              <br /> <br />
+              Go Vegan was created from the same values as Yoga by Niti:
+              mindfulness, compassion, and respect for the body and nature.
+              <br />
+              <br /> Go Vegan and Yoga by Niti are located in the same building
+              and share the same owner, the same heart, and the same philosophy.
+              Together, they form a unique space in Rawai, Phuket — where yoga
+              practice and plant-based food support each other in a simple,
+              natural way.
             </p>
           </div>
         </div>

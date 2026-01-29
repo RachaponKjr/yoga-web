@@ -377,6 +377,19 @@ const deleteCourseService = async ({
   }
 };
 
+const adminDeleteCourseService = async ({ id }: { id: string }) => {
+  try {
+    const course = await prisma.courseYoga.delete({
+      where: {
+        id,
+      },
+    });
+    return course;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getMyRoundService = async ({ userId }: { userId: string }) => {
   try {
     // เปลี่ยนจาก findMany ที่ courseYoga เป็น findMany ที่ courseRound
@@ -406,6 +419,48 @@ const getMyRoundService = async ({ userId }: { userId: string }) => {
   }
 };
 
+const updateCourseStatusService = async ({
+  id,
+  isShow,
+}: {
+  id: string;
+  isShow: boolean;
+}) => {
+  try {
+    const course = await prisma.courseYoga.update({
+      where: {
+        id,
+      },
+      data: {
+        isShow: isShow,
+      },
+    });
+    return course;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateCourseService = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: CourseYogaType;
+}) => {
+  try {
+    const course = await prisma.courseYoga.update({
+      where: {
+        id,
+      },
+      data,
+    });
+    return course;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   createCourseService,
   getCourseService,
@@ -419,4 +474,7 @@ export {
   deleteCourseService,
   getMyRoundService,
   getCourseActiveService,
+  adminDeleteCourseService,
+  updateCourseStatusService,
+  updateCourseService,
 };

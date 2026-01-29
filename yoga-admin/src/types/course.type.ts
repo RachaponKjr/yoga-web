@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const TeacherSchema = z.object({
+  id: z.string(),
   userInfo: z.object({
     avatar: z.string().nullable(),
     experience: z.string().nullable(),
@@ -18,8 +19,10 @@ export const CourseSchema = z.object({
   description: z.string(),
   images: z.array(z.string()),
   price: z.number(),
+  isShow: z.boolean(),
   title: z.string(),
   status: z.string(),
+  teacherId: z.string(),
   teacher: TeacherSchema,
 });
 

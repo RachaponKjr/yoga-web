@@ -60,6 +60,7 @@ export const CourseSchema = z.object({
   price: z.number().min(0),
   discount_price: z.number().min(0).optional().nullable(),
   cover_image: z.string().nullable().optional(),
+  about: z.string().optional().nullable(),
   images: z.array(z.string()).default([]), // Array ของรูปภาพ
   status: CourseStatusEnum.or(z.string()),
   teacherId: z.string(),

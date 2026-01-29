@@ -14,6 +14,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import EditCourse from "./EditCourse";
+import RoundEdit from "./RoundEdit";
 
 // Helper: จัด Format วันที่และเวลา
 const formatDate = (date: Date) => {
@@ -33,10 +36,29 @@ const formatTime = (date: Date) => {
 
 const CoursePage = () => {
   const [courses, setCourses] = useState<CourseType[]>([]);
-
+  console.log(courses);
   const getCourses = async () => {
     const res = await courseService.getCourseAll();
     setCourses(res.data.courses);
+  };
+
+  const deleteCourse = async (id: string) => {
+    await courseService.deleteCourse(id);
+    getCourses();
+  };
+
+  const updateCourseStatus = async (id: string, isShow: boolean) => {
+    try {
+      const res = await courseService.updateCourseStatus(id, isShow);
+      if (res.success) {
+        toast.success("Update course status successfully");
+        getCourses();
+      } else {
+        toast.error("Update course status failed");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -66,7 +88,7 @@ const CoursePage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {courses.map((course) => (
+              {courses.map((course: CourseType) => (
                 <tr
                   key={course.id}
                   className="hover:bg-gray-50 transition duration-150"
@@ -132,7 +154,14 @@ const CoursePage = () => {
                   {/* 4. รอบเรียน (Loop แสดงรายการรอบ) */}
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-2 max-h-28 overflow-y-auto custom-scrollbar">
-                      <Switch />
+                      <Switch
+                        id={course.id}
+                        value={course.isShow ? "true" : "false"}
+                        checked={course.isShow}
+                        onCheckedChange={(value) =>
+                          updateCourseStatus(course.id, value)
+                        }
+                      />
                     </div>
                   </td>
 
@@ -152,12 +181,14 @@ const CoursePage = () => {
                   {/* 6. ปุ่ม Action */}
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 cursor-pointer text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-full transition">
-                        <Calendar size={18} />
-                      </button>
-                      <button className="p-2 cursor-pointer text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition">
-                        <Edit size={18} />
-                      </button>
+                      <RoundEdit
+                        courseId={course.id}
+                        teacherId={course.teacherId}
+                      />
+                      <EditCourse
+                        getCourses={getCourses}
+                        courseData={course as CourseType}
+                      />
                       <Dialog>
                         <DialogTrigger asChild>
                           <button className="p-2 cursor-pointer text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition">
@@ -171,12 +202,15 @@ const CoursePage = () => {
                               คุณต้องการลบคอร์สนี้หรือไม่?
                             </DialogDescription>
                           </DialogHeader>
-                          <DialogFooter>
+                          <DialogFooter className="flex flex-row gap-4">
                             <DialogClose className="cursor-pointer">
                               ยกเลิก
                             </DialogClose>
                             <DialogClose asChild>
-                              <button className="bg-red-500 text-white px-4 py-2 cursor-pointer rounded">
+                              <button
+                                onClick={() => deleteCourse(course.id)}
+                                className="bg-red-500! text-white! px-4 py-2 cursor-pointer rounded"
+                              >
                                 ลบ
                               </button>
                             </DialogClose>

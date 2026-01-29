@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware, restrictTo } from "../middlewares/auth.middleware";
 import {
+  adminDeleteCourseController,
   createCourseController,
   createCourseRoundController,
   deleteCourseController,
@@ -13,6 +14,8 @@ import {
   getCourseRoundTodayOrMonthController,
   getMyCourseController,
   getMyRoundController,
+  updateCourseController,
+  updateCourseStatusController,
 } from "../controllers/course.controller";
 import { createUploader } from "../middlewares/upload.middleware";
 
@@ -53,7 +56,27 @@ router.get("/round-today-or-month", getCourseRoundTodayOrMonthController);
 router.get("/round-my-round", authMiddleware, getMyRoundController);
 
 router.get("/round/:id", getCourseRoundByIdController);
-router.put("/update/:id", () => {});
-router.delete("/delete/:id", () => {});
+router.patch(
+  "/status/:id",
+  authMiddleware,
+  restrictTo("Admin", "Instructor"),
+  updateCourseStatusController,
+);
+router.patch(
+  "/update/:id",
+  authMiddleware,
+  restrictTo("Admin", "Instructor"),
+  updateCourseController,
+);
+router.delete(
+  "/adminDelete/:id",
+  authMiddleware,
+  restrictTo("Admin", "Instructor"),
+  createUploader("courses").fields([
+    { name: "course_poster", maxCount: 1 }, // รับ 1 รูป
+    { name: "image_course", maxCount: 10 }, // รับได้สูงสุด 10 รูป
+  ]),
+  adminDeleteCourseController,
+);
 
 export default router;

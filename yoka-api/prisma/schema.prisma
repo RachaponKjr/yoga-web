@@ -23,6 +23,8 @@ model User {
   createdCourses CourseYoga[]  @relation("CourseOwner") // คอร์สที่เป็นเจ้าของ/คนสร้าง
   teachingRounds CourseRound[] @relation("RoundTeacher") // รอบที่ต้องไปสอน (Instructor)
   bookings       Booking[]     @relation("StudentBookings") // การจองเรียน (Student)
+  courseRounds   CourseRound[]
+  courseRounds   CourseRound[]
 }
 
 model UserInfo {
@@ -76,12 +78,14 @@ model CourseRound {
   startDateTime DateTime
   endDateTime   DateTime
 
-  max_online  Int @default(0)
-  max_walk_in Int @default(0)
-
+  max_online   Int     @default(0)
+  max_walk_in  Int     @default(0)
+  // เพิ่มครูมาสอนเเทน
+  subTeacherId String?
+  subTeacher   User?   @relation("SubRoundTeacher", fields: [subTeacherId], references: [id], onDelete: SetNull)
   // แก้ไข 3: แมทช์ชื่อ Relation กับ User ("RoundTeacher")
-  teacherId String?
-  teacher   User?   @relation("RoundTeacher", fields: [teacherId], references: [id], onDelete: SetNull)
+  teacherId    String?
+  teacher      User?   @relation("RoundTeacher", fields: [teacherId], references: [id], onDelete: SetNull)
 
   current_online  Int @default(0)
   current_walk_in Int @default(0)
@@ -95,6 +99,8 @@ model CourseRound {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Booking {

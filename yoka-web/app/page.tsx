@@ -21,13 +21,13 @@ export default async function Home() {
       <Social />
       <Hero />
       <div className="bg-[#283618] py-4 flex flex-col gap-8 relative">
-        <ProductCourse />
-        <Banner />
+        <Story />
+        <DetailRestaurant />
         <Instructors data={data} />
       </div>
       <StepService />
-      <DetailRestaurant />
-      <Story />
+      <Banner />
+      <ProductCourse />
       <PortfolioGallery />
     </main>
   );

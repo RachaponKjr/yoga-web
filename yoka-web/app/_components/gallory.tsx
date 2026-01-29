@@ -94,7 +94,7 @@ export default function PortfolioGallery() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="columns-2 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+          className="columns-2 sm:columns-2 lg:columns-3 gap-3 md:gap-6 space-y-3 md:space-y-6"
         >
           {images.map((item, index) => (
             <motion.div

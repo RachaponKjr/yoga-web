@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 
 import wane from "@/assets/images/banner/wavn1.png";
-import yogaBanner from "@/assets/images/yoga/yoga-banner.jpg";
+import yogaBanner from "@/assets/images/CC__2175.jpg";
 import polygrid from "@/assets/svg/polygrid.svg";
 
 const Hero = () => {
@@ -17,14 +17,14 @@ const Hero = () => {
         fill
         className="object-cover opacity-70"
       />
-      <div className="h-[calc(100dvh-10rem)] container mx-auto mb-8 md:mb-0 px-4 md:px-6 flex flex-col md:flex-row items-center justify-center gap-0 md:gap-16 2xl:relative">
+      <div className="h-max md:h-[calc(100dvh-10rem)] container mx-auto mb-8 md:mb-0 px-4 md:px-6 flex flex-col md:flex-row items-center justify-center gap-0 md:gap-16 2xl:relative">
         <div className="max-w-2xl 2xl:max-w-3xl flex flex-col gap-4 md:gap-8 z-50">
           <h1 className="text-[clamp(4rem,12vw,6rem)] font-serif leading-none font-bold bg-linear-to-r from-tertiary via-primary to-secondary bg-clip-text text-transparent">
             Yoga by Niti
           </h1>
           <div className="flex flex-col gap-2 md:gap-4">
             <span className="text-lg md:text-2xl text-[#132B28]">
-              Studio & Clean Food Kitchen
+              Studio & Restaurant Clean
             </span>
             <p className="text-[#666666] text-sm md:text-lg max-w-2xl">
               Experience a complete wellness journey. Join Niti for expert-led

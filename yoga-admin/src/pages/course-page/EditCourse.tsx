@@ -1,5 +1,4 @@
 import MultiImageUpload from "@/components/share/MultiImageUpload";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -11,6 +10,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Edit } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { CourseFormState } from "./AddCourse";
 import {
   Select,
   SelectContent,
@@ -18,41 +21,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, Loader2 } from "lucide-react"; // เพิ่ม Loader icon
-import { useCallback, useEffect, useState } from "react";
 import { authService } from "@/service/auth.service";
 import type { UserType } from "@/types/auth.type";
+import type { CourseType } from "@/types/booking.type";
 import { courseService } from "@/service/course.service";
+import { toast } from "sonner";
 
-// 1. กำหนด Interface ให้ชัดเจน
-export interface CourseFormState {
-  title: string;
-  description: string;
-  about: string;
-  price: string; // ใช้ string ก่อนใน input เพื่อกันปัญหาเรื่องเลข 0
-  discount_price: string;
-  teacherId: string;
-}
-
-const initialFormState: CourseFormState = {
-  title: "",
-  description: "",
-  about: "",
-  price: "",
-  discount_price: "",
-  teacherId: "",
-};
-
-const AddCourse = ({ getCourses }: { getCourses: () => void }) => {
-  const [teachers, setTeachers] = useState<UserType[]>([]);
+const EditCourse = ({
+  courseData,
+  getCourses,
+}: {
+  courseData: CourseType;
+  getCourses: () => void;
+}) => {
+  const [course, setCourse] = useState<CourseFormState>({
+    title: courseData.title,
+    description: courseData.description || "",
+    about: courseData.about || "",
+    price: String(courseData.price) || "",
+    discount_price: String(courseData.discount_price) || "",
+    teacherId: courseData.teacherId,
+  });
   const [images, setImages] = useState<File[]>([]); // ระบุ Type เป็น File[]
+  const [teachers, setTeachers] = useState<UserType[]>([]);
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // เพิ่ม Loading State
-  // State สำหรับเก็บข้อมูล Form
-  const [course, setCourse] = useState<CourseFormState>(initialFormState);
 
-  // ดึงข้อมูลครูผู้สอน
   const getInstructor = useCallback(async () => {
     try {
       const response = await authService.getInstructor();
@@ -64,20 +58,6 @@ const AddCourse = ({ getCourses }: { getCourses: () => void }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (open) {
-      void getInstructor(); // ดึงข้อมูลเมื่อเปิด Dialog
-    }
-  }, [getInstructor, open]);
-
-  // ฟังก์ชันรีเซ็ตฟอร์ม
-  const resetForm = () => {
-    setCourse(initialFormState);
-    setImages([]);
-    setOpen(false);
-  };
-
-  // ฟังก์ชันบันทึกข้อมูล
   const handleSubmit = async () => {
     // Validation เบื้องต้น
     if (!course.title || !course.teacherId || !course.price) {
@@ -97,40 +77,56 @@ const AddCourse = ({ getCourses }: { getCourses: () => void }) => {
       formData.append("teacherId", course.teacherId);
 
       // ใส่รูปภาพเข้าไปใน FormData
+
       if (images.length !== 0) {
         formData.append("course_poster", images[0]);
         images.slice(1).forEach((image) => {
           formData.append("image_course", image);
         });
       }
-      await courseService.createCourse(formData);
-      resetForm(); // ปิดและล้างค่า
+      await courseService
+        .updateCourse(formData, courseData.id)
+        .then(() => {
+          toast.success("อัปเดตคอร์สเรียนสำเร็จ");
+          setOpen(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error("เกิดข้อผิดพลาดในการอัปเดตคอร์สเรียน");
+        })
+        .finally(() => {
+          setIsLoading(false);
+          getCourses();
+        });
     } catch (error) {
       console.error(error);
-      alert("เกิดข้อผิดพลาดในการสร้างคอร์ส");
+      toast.error("เกิดข้อผิดพลาดในการอัปเดตคอร์สเรียน");
     } finally {
       setIsLoading(false);
       getCourses();
     }
   };
 
+  console.log(course);
+
+  useEffect(() => {
+    if (open) {
+      void getInstructor(); // ดึงข้อมูลเมื่อเปิด Dialog
+    }
+  }, [getInstructor, open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"outline"} className="capitalize cursor-pointer">
-          <Plus size={16} className="mr-2" /> สร้างคอร์สใหม่
-        </Button>
+        <button className="p-2 cursor-pointer text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition">
+          <Edit size={18} />
+        </button>
       </DialogTrigger>
-
-      {/* เพิ่ม overflow-y-auto เพื่อให้ scroll ได้ถ้าจอเล็ก */}
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl! max-h-[calc(100vh-10rem)] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>สร้างคอร์สใหม่</DialogTitle>
-          <DialogDescription>
-            กรุณากรอกรายละเอียดของคอร์สใหม่ให้ครบถ้วน
-          </DialogDescription>
+          <DialogTitle>แก้ไขคอร์สเรียน</DialogTitle>
+          <DialogDescription>แก้ไขข้อมูลคอร์สเรียน</DialogDescription>
         </DialogHeader>
-
         <div className="flex flex-col gap-4 py-4">
           {/* ชื่อคอร์ส */}
           <div className="flex flex-col gap-2">
@@ -236,31 +232,20 @@ const AddCourse = ({ getCourses }: { getCourses: () => void }) => {
             />
           </div>
         </div>
-
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" type="button" disabled={isLoading}>
-              ยกเลิก
-            </Button>
+            <button
+              disabled={isLoading}
+              onClick={handleSubmit}
+              className="bg-blue-500! text-white px-4 py-2 cursor-pointer rounded"
+            >
+              {isLoading ? "กำลังอัปเดต..." : "บันทึก"}
+            </button>
           </DialogClose>
-          <Button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            variant={"outline"}
-            className="cursor-pointer"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> กำลังสร้าง...
-              </>
-            ) : (
-              "สร้างคอร์ส"
-            )}
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default AddCourse;
+export default EditCourse;

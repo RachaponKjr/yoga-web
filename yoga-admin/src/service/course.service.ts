@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import type { RoundType } from "@/types/booking.type";
+import type { Round } from "@/types/round.type";
 
 export const courseService = {
   // รับ config เพิ่มเติม (เผื่อส่ง Cookie จาก Server)
@@ -65,7 +65,7 @@ export const courseService = {
     return response.data;
   },
 
-  createRound: async (round: RoundType) => {
+  createRound: async (round: Round) => {
     const response = await http.post("/course/set-round", round);
     return response.data;
   },
@@ -76,7 +76,24 @@ export const courseService = {
   },
 
   deleteCourse: async (courseId: string) => {
-    const response = await http.delete(`/course/delete/${courseId}`);
+    const response = await http.delete(`/course/adminDelete/${courseId}`);
+    return response.data;
+  },
+
+  updateCourseStatus: async (courseId: string, isShow: boolean) => {
+    const response = await http.patch(`/course/status/${courseId}`, {
+      isShow,
+    });
+    return response.data;
+  },
+
+  updateCourse: async (course: FormData, id: string) => {
+    const response = await http.patch(`/course/update/${id}`, course);
+    return response.data;
+  },
+
+  getRoundByCourseId: async (courseId: string) => {
+    const response = await http.get(`/course/round-coursesId/${courseId}`);
     return response.data;
   },
 };
