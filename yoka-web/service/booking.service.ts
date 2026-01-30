@@ -7,6 +7,8 @@ type BookingProps = {
   price: number;
   agreeToPrivacyPolicy: boolean;
   quantity?: number;
+  isAgree: boolean;
+  note?: string;
 };
 
 export const bookingService = {

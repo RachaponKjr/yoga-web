@@ -45,13 +45,30 @@ const CourseDetailPage = ({
     selectRound.endDateTime,
   );
 
+  // --- แก้ไข Logic ส่วนที่ 1: การคำนวณราคาและส่วนลด ---
+
+  // เช็คว่ามีส่วนลดจริงๆ หรือไม่ (ต้องมากกว่า 0 และน้อยกว่าราคาเต็ม)
+  const hasDiscount =
+    course.discount_price !== null &&
+    course.discount_price > 0 &&
+    course.discount_price < course.price;
+
+  // ราคาที่จะนำไปแสดงผล (ถ้ามีส่วนลดใช้ discount_price, ถ้าไม่มีใช้ price ปกติ)
+  const displayPrice = hasDiscount ? course.discount_price : course.price;
+
+  // คำนวณ % ส่วนลด (เฉพาะเมื่อมีส่วนลดจริง)
+  const discountPercentage = hasDiscount
+    ? Math.round(((course.price - course.discount_price) / course.price) * 100)
+    : 0;
+  // ----------------------------------------------------
+
   const handleBooking = useCallback(() => {
     setBooking({
       ...selectRound,
       quantity: 1,
       title: course.title,
       price: course.price,
-      discount_price: course.discount_price,
+      discount_price: course.discount_price, // ส่งค่าเดิมไป (store น่าจะจัดการต่อเอง)
       cover_image: course.cover_image,
     });
   }, [
@@ -62,14 +79,6 @@ const CourseDetailPage = ({
     selectRound,
     setBooking,
   ]);
-
-  // Calculate Discount Percentage
-  const discountPercentage =
-    course.discount_price < course.price
-      ? Math.round(
-          ((course.price - course.discount_price) / course.price) * 100,
-        )
-      : 0;
 
   const availableSeats = selectRound.max_online - selectRound.current_online;
 
@@ -83,7 +92,8 @@ const CourseDetailPage = ({
               <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full flex items-center gap-1">
                 <Sparkles size={14} /> Yoga Class
               </span>
-              {discountPercentage > 0 && (
+              {/* แสดงป้ายส่วนลดเมื่อมีส่วนลดจริงเท่านั้น */}
+              {hasDiscount && (
                 <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
                   Discount {discountPercentage}%
                 </span>
@@ -148,7 +158,6 @@ const CourseDetailPage = ({
                     </div>
                   ))
                 ) : (
-                  // Placeholder ถ้าไม่มีรูปอื่น
                   <div className="h-full bg-slate-100 flex items-center justify-center text-slate-400 font-medium">
                     No extra photos
                   </div>
@@ -166,17 +175,11 @@ const CourseDetailPage = ({
                 <p className="text-slate-600 whitespace-pre-wrap font-medium">
                   {course.about || "ไม่พบข้อมูล"}
                 </p>
-                {/* ตัวอย่างการเพิ่ม List (ถ้ามีข้อมูล) */}
-                {/* <ul>
-                    <li>Suitable for all levels</li>
-                    <li>Mats and towels provided</li>
-                </ul> */}
               </div>
             </div>
 
-            {/* Instructor Section (Enhanced) */}
+            {/* Instructor Section */}
             <div className="bg-linear-to-br from-emerald-50 to-white rounded-3xl p-8 border border-emerald-100 flex flex-col sm:flex-row items-center sm:items-start gap-8 shadow-sm relative overflow-hidden">
-              {/* Background Pattern Decor */}
               <div className="absolute right-0 top-0 -mt-10 -mr-10 text-emerald-100 opacity-50">
                 <svg
                   width="200"
@@ -215,7 +218,7 @@ const CourseDetailPage = ({
                 </h4>
                 <p className="text-slate-600 text-base mt-3 leading-relaxed">
                   {course.teacher?.userInfo?.experience ||
-                    "Certified yoga instructor with over 5 years of experience specializing in Hatha and Vinyasa flow. Passionate about helping students find balance and strength."}
+                    "Certified yoga instructor with over 5 years of experience specializing in Hatha and Vinyasa flow."}
                 </p>
                 <div className="mt-6 flex justify-center sm:justify-start gap-4">
                   <button
@@ -234,16 +237,19 @@ const CourseDetailPage = ({
             <div className="sticky flex flex-col-reverse gap-4 md:flex-col top-8">
               {/* Booking Card (Elevated) */}
               <div className="bg-white shadow-md flex flex-col gap-4 shadow-emerald-100/50 border border-slate-100 rounded-3xl p-6 lg:p-8 overflow-hidden relative">
-                {/* Price Section */}
+                {/* --- แก้ไข Logic ส่วนที่ 2: การแสดงผลราคา --- */}
                 <div className="">
                   <p className="text-slate-500 font-medium text-sm mb-1">
                     Total Price (per person)
                   </p>
                   <div className="flex items-end gap-3 flex-wrap">
+                    {/* ใช้ displayPrice แทน course.discount_price ตรงๆ */}
                     <div className="text-4xl font-extrabold text-slate-900">
-                      ฿{course.discount_price.toLocaleString()}
+                      ฿{displayPrice.toLocaleString()}
                     </div>
-                    {discountPercentage > 0 && (
+
+                    {/* แสดงราคาเต็มขีดฆ่า เฉพาะเมื่อมีส่วนลดจริงๆ (hasDiscount = true) */}
+                    {hasDiscount && (
                       <>
                         <span className="text-slate-400 text-lg line-through font-medium mb-1.5">
                           ฿{course.price.toLocaleString()}
@@ -255,6 +261,7 @@ const CourseDetailPage = ({
                     )}
                   </div>
                 </div>
+                {/* ------------------------------------------- */}
 
                 {/* Details Info */}
                 <div className="space-y-4 bg-slate-50/80 p-5 rounded-2xl border border-slate-100/80">
@@ -271,8 +278,7 @@ const CourseDetailPage = ({
                       </span>
                     </div>
                   </div>
-                  <div className="w-full h-px bg-slate-200/60"></div>{" "}
-                  {/* Divider */}
+                  <div className="w-full h-px bg-slate-200/60"></div>
                   <div className="flex items-start gap-4">
                     <div className="bg-white p-2 rounded-lg shadow-sm text-emerald-600">
                       <Clock size={20} strokeWidth={2.5} />
@@ -286,8 +292,7 @@ const CourseDetailPage = ({
                       </span>
                     </div>
                   </div>
-                  <div className="w-full h-px bg-slate-200/60"></div>{" "}
-                  {/* Divider */}
+                  <div className="w-full h-px bg-slate-200/60"></div>
                   <div className="flex items-start gap-4">
                     <div className="bg-white p-2 rounded-lg shadow-sm text-emerald-600">
                       <User size={20} strokeWidth={2.5} />
@@ -314,7 +319,6 @@ const CourseDetailPage = ({
                   </p>
                 </div>
 
-                {/* CTA Button (Gradient) */}
                 <Link
                   href={`/course/booking?roundId=${selectRound.id}`}
                   onClick={handleBooking}
@@ -343,7 +347,6 @@ const CourseDetailPage = ({
                 </p>
               </div>
 
-              {/* Calendar Widget (Separate Card) */}
               <div className="mt-0">
                 <h4 className="text-lg font-semibold mb-4">ตารางวันการเรียน</h4>
                 <CourseCalendar

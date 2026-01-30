@@ -21,12 +21,16 @@ import {
   X,
   Camera,
   FileText,
+  HeartPulse,
+  MessageSquarePlus,
 } from "lucide-react";
 import { bookingService } from "@/service/booking.service";
 import { toast } from "sonner";
 import { paymentService } from "@/service/payment.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { CouponService, VerifyCouponPayload } from "@/service/coupon.service";
+import { Textarea } from "@/components/ui/textarea";
+import Policy from "./policy";
 
 const PaymentPage = () => {
   const { booking, decrementQuantity, incrementQuantity } = useBooking();
@@ -35,7 +39,8 @@ const PaymentPage = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
-
+  const [isAgree, setIsAgree] = useState(false);
+  console.log(isAgree);
   // State สำหรับ Checkbox ยินยอม
   const [isConsentAccepted, setIsConsentAccepted] = useState(false);
 
@@ -47,6 +52,7 @@ const PaymentPage = () => {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [appliedCode, setAppliedCode] = useState("");
   const [couponId, setCouponId] = useState("");
+  const [note, setNote] = useState("");
 
   // Price States
   const [finalPrice, setFinalPrice] = useState(0);
@@ -146,6 +152,8 @@ const PaymentPage = () => {
         quantity: quantity || 1,
         agreeToPrivacyPolicy: isConsentAccepted, // ส่งค่า consent ไปบันทึก
         price: amountToPay,
+        isAgree: isAgree,
+        note: note,
       });
 
       const paymentRes = await paymentService.payment({
@@ -264,7 +272,7 @@ const PaymentPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white flex justify-center items-start pt-20 pb-20">
+    <div className="min-h-screen bg-white flex justify-center items-start py-10 md:pt-20 md:pb-20">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex flex-col-reverse lg:flex-row gap-8 max-w-7xl mx-auto relative">
           {/* --- Left Column: Payment Form --- */}
@@ -452,6 +460,58 @@ const PaymentPage = () => {
                     </div>
                   </div>
                 </label>
+              </div>
+
+              {/* Note / Health Condition Section */}
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 transition-all focus-within:border-emerald-300 focus-within:ring-4 focus-within:ring-emerald-50/50">
+                <label htmlFor="user-note" className="block cursor-pointer">
+                  {/* Header with Icon */}
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="bg-white p-1.5 rounded-md border border-slate-200 shadow-sm text-rose-500">
+                      <HeartPulse size={16} />
+                    </div>
+                    <span className="font-semibold text-slate-800 text-sm">
+                      Health Condition & Goals (ข้อมูลสุขภาพ & ความต้องการ)
+                    </span>
+                  </div>
+
+                  {/* Description / Helper Text */}
+                  <p className="text-xs text-slate-500 ml-9 mb-3 leading-relaxed">
+                    Please let the instructor know about any{" "}
+                    <span className="text-rose-500 font-medium">
+                      medical conditions, injuries
+                    </span>{" "}
+                    or{" "}
+                    <span className="text-emerald-600 font-medium">
+                      specific goals
+                    </span>{" "}
+                    for this session to help us provide the best care.
+                  </p>
+                </label>
+
+                {/* Textarea */}
+                <div className="relative ml-0 md:ml-9">
+                  <Textarea
+                    id="user-note"
+                    placeholder="e.g. Chronic back pain, knee issues, recovering from surgery, or want to focus on flexibility..."
+                    className="w-full min-h-[100px] bg-white border-slate-200 text-slate-700 text-sm placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-lg resize-none p-3 shadow-sm"
+                    // อย่าลืมผูก State ตรงนี้
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                  />
+
+                  {/* Small decorative icon inside textarea (Optional) */}
+                  <div className="absolute bottom-3 right-3 text-slate-300 pointer-events-none">
+                    <MessageSquarePlus size={16} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 text-xs">
+                  Please read and agree to our
+                </span>
+                <Policy setIsAgree={(value) => setIsAgree(value)} />
               </div>
 
               {/* Pay Button */}

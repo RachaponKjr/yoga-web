@@ -163,8 +163,26 @@ const getCourseController = async (req: Request, res: Response) => {
       offset: parsedOffset,
       search: searchTerm,
     });
+    console.log(courses);
 
     if (!courses || courses.length === 0) {
+      sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: "Courses fetched successfully",
+        data: {
+          courses: [],
+          pagination: {
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: 0,
+            itemsPerPage: parsedLimit,
+            hasNextPage: false,
+            hasPrevPage: false,
+          },
+        },
+      });
+      return;
     }
 
     const totalPages = Math.ceil(total / parsedLimit);

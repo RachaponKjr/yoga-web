@@ -42,7 +42,7 @@ const getCourseService = async ({
   try {
     // สร้างเงื่อนไขการค้นหา (Where Clause)
     const whereCondition: Prisma.CourseYogaWhereInput = {
-      status: "Draft", // หรือ "Open" ตาม Business Logic ว่าอยากให้เห็นคอร์สสถานะไหนบ้าง
+      status: "Open", // หรือ "Open" ตาม Business Logic ว่าอยากให้เห็นคอร์สสถานะไหนบ้าง
       ...(search && {
         title: {
           contains: search,

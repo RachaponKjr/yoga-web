@@ -112,12 +112,14 @@ model Booking {
   quantity             Int     @default(1)
   agreeToPrivacyPolicy Boolean @default(false)
   price                Float
+  note                 String?
 
+  isAgree Boolean      @default(false)
   // แก้ไข 4: เปลี่ยน onDelete เป็น Cascade
   // เพราะ roundId เป็น String (ห้าม Null) ดังนั้นถ้า Round หาย Booking นี้ควรหายไปด้วย
   // ถ้าอยากใช้ SetNull ตัว roundId ต้องเป็น String? (Optional)
-  roundId String
-  round   CourseRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  roundId String?
+  round   CourseRound? @relation(fields: [roundId], references: [id], onDelete: SetNull)
 
   type      BookingType
   status    PaymentStatus @default(PENDING)
