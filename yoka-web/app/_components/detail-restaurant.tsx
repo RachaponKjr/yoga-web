@@ -9,7 +9,7 @@ import Image from "next/image";
 
 const DetailRestaurant = () => {
   return (
-    <section className="py-8 md:py-24 bg-[#FDFCF8] text-[#1A1A1A] relative overflow-hidden">
+    <section className=" bg-[#FDFCF8] text-[#1A1A1A] relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
           {/* Left Content: Storytelling */}
@@ -44,7 +44,8 @@ const DetailRestaurant = () => {
 
               {/* Minimal Quote */}
               <blockquote className="border-l-2 border-primary/30 pl-4 italic text-neutral-400 text-sm">
-                "Real food doesn't have ingredients, real food is ingredients."
+                &quot;Real food doesn&apos;t have ingredients, real food is
+                ingredients.&quot;
               </blockquote>
             </div>
 

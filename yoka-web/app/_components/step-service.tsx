@@ -56,7 +56,7 @@ const StepService = () => {
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-tertiary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 -z-10" />
 
-      <div className="container mx-auto px-4 md:px-6 py-12 md:pt-24">
+      <div className="container mx-auto px-4 md:px-6 py-12">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 justify-center items-center">
           {/* --- Image Section (Highlights) --- */}
           <div className="w-full lg:w-1/3 relative px-4 sm:px-0">
@@ -139,7 +139,7 @@ const StepService = () => {
                 <span className="relative inline-block">
                   <span className="relative z-10">Movement & Nutrition.</span>
                   {/* ขีดเส้นใต้แบบปากกาไฮไลท์ */}
-                  <span className="absolute bottom-2 left-0 w-full h-3 bg-yellow-200/60 z-0 -rotate-1 rounded-full"></span>
+                  <span className="absolute bottom-2 left-0 w-[40%] md:w-full h-3 bg-yellow-200/60 z-0 -rotate-1 rounded-full"></span>
                 </span>
               </h2>
               <p className="text-sm md:text-lg text-[#5C6155] leading-relaxed max-w-xl">

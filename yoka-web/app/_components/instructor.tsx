@@ -24,9 +24,9 @@ const Instructors = ({ data }: { data: InstructorProps[] }) => {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
-    <section className="relative bg-[#283618] overflow-hidden">
+    <section className="relative bg-[#283618] md:mt-12 overflow-hidden">
       {/* Background Decor (Optional: ทำให้ดูมีมิติขึ้นแบบ Minimal) */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/5 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-white/5 to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* --- Header Section: Title Left / Arrows Right --- */}

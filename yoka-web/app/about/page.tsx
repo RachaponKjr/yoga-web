@@ -19,7 +19,7 @@ const Page = () => {
       description="Discover the passion behind Yoga by Niti. Where mindful movement meets wholesome nutrition for a balanced life."
     >
       {/* เพิ่ม gap ให้ห่างขึ้นเพื่อให้ดูโปร่งแม้ภาพจะใหญ่ */}
-      <div className="flex flex-col gap-8 md:gap-48 px-4 md:px-6 my-4 md:my-24 overflow-hidden">
+      <div className="flex flex-col gap-8 md:gap-24 px-4 md:px-6 my-4 md:my-24 overflow-hidden">
         {/* --- Section 1: Our Story (Big Overlap) --- */}
         <div className="flex flex-col-reverse lg:flex-row items-center gap-4 lg:gap-20 relative">
           {/* Text Content (ย่อลงเหลือ 40% เพื่อให้ที่รูปภาพเยอะขึ้น) */}

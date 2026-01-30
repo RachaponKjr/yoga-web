@@ -53,29 +53,29 @@ export default function PortfolioGallery() {
   // State สำหรับเก็บรูปที่กำลังเปิดอยู่
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const images = [
-    image1,
-    image2,
-    image3,
-    image4,
-    image5,
-    image6,
-    image7,
-    image8,
-    image9,
-    image10,
-    image11,
-    image12,
-    image13,
-    image14,
-    image15,
-    image16,
-    image17,
-    // image18,
-    // image19,
+    "/gallory/CC__2033.jpg",
+    "/gallory/CC__2039.jpg",
+    "/gallory/CC__2048.jpg",
+    "/gallory/CC__2063.jpg",
+    "/gallory/CC__2066.jpg",
+    "/gallory/CC__2070.jpg",
+    "/gallory/CC__2091.jpg",
+    "/gallory/CC__2096.jpg",
+    "/gallory/CC__2117.jpg",
+    "/gallory/CC__2137.jpg",
+    "/gallory/CC__2145.jpg",
+    "/gallory/CC__2152.jpg",
+    "/gallory/CC__2195.jpg",
+    "/gallory/CC__2231.jpg",
+    "/gallory/CC__2244.jpg",
+    "/gallory/CC__2245.jpg",
+    "/gallory/CC__2346.jpg",
+    "/gallory/CC__2427.jpg",
+    "/gallory/CC__2467.jpg",
   ];
 
   return (
-    <section className="relative my-24">
+    <section className="relative mt-12 mb-24">
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <div className="space-y-2 mb-8 text-center sm:text-left">
@@ -109,7 +109,7 @@ export default function PortfolioGallery() {
                 className="relative w-full"
               >
                 <Image
-                  src={item.src}
+                  src={item}
                   alt={"image"}
                   width={800}
                   height={600}
