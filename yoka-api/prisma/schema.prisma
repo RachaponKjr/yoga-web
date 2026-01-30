@@ -20,11 +20,11 @@ model User {
   userInfo UserInfo?
 
   // แก้ไข 1: เปลี่ยนชื่อ Relation ไม่ให้ซ้ำกัน
-  createdCourses CourseYoga[]  @relation("CourseOwner") // คอร์สที่เป็นเจ้าของ/คนสร้าง
-  teachingRounds CourseRound[] @relation("RoundTeacher") // รอบที่ต้องไปสอน (Instructor)
-  bookings       Booking[]     @relation("StudentBookings") // การจองเรียน (Student)
-  courseRounds   CourseRound[]
-  courseRounds   CourseRound[]
+  createdCourses    CourseYoga[]  @relation("CourseOwner") // เจ้าของคอร์ส
+  teachingRounds    CourseRound[] @relation("RoundTeacher") // รอบที่สอนหลัก
+  subTeachingRounds CourseRound[] @relation("SubRoundTeacher") // รอบที่ไปสอนแทน (เพิ่มอันนี้)
+  bookings          Booking[]     @relation("StudentBookings")
+  courseRounds      CourseRound[]
 }
 
 model UserInfo {
