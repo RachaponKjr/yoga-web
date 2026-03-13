@@ -35,6 +35,8 @@ services:
       context: ./yoka-api
       dockerfile: Dockerfile
     restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
     ports:
       - "4001:3000"
     env_file: .env

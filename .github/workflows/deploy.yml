@@ -20,11 +20,12 @@ jobs:
             # 1. เข้าไปที่โฟลเดอร์โปรเจกต์ (แก้ path ให้ตรงกับเครื่องจริง)
             cd ~/yoga-web
 
-            echo "$DOT_ENV_FILE" > .env
 
             # 2. ดึง Code ล่าสุด
             git fetch origin main
             git reset --hard origin/main
+
+            printf "%s" "$DOT_ENV_FILE" > .env
 
             docker compose down --remove-orphans
 
