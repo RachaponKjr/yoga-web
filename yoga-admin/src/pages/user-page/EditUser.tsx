@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ import React, { useState } from "react";
 import type { UserInfoType, UserType } from "@/types/auth.type";
 import { authService } from "../../service/auth.service"; // อย่าลืม Import Service
 import { Button } from "@/components/ui/button";
+import CountrySelect from "@/components/CountrySelect";
 
 const BASE_IMG_URL = "http://119.59.99.141:4001/";
 
@@ -61,7 +63,7 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setUserEdit((prev) => ({
@@ -232,19 +234,15 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
                 <label className="text-xs font-semibold text-gray-600">
                   ประเทศ
                 </label>
-                <div className="relative">
-                  <MapPin
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  />
-                  <input
-                    type="text"
-                    name="country"
-                    value={userEdit.country}
-                    onChange={handleChange}
-                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  />
-                </div>
+                <CountrySelect
+                  value={userEdit?.country || ""}
+                  onChange={(val) =>
+                    setUserEdit((prev: any) => ({
+                      ...prev,
+                      country: val,
+                    }))
+                  }
+                />
               </div>
             </div>
 

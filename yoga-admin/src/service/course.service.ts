@@ -96,4 +96,14 @@ export const courseService = {
     const response = await http.get(`/course/round-coursesId/${courseId}`);
     return response.data;
   },
+
+  updateRound: async (id: string, round: Round) => {
+    const response = await http.patch(`/course/round/${id}`, round);
+    return response.data;
+  },
+
+  deleteRound: async (id: string) => {
+    const response = await http.delete(`/course/round/${id}`);
+    return response.data;
+  },
 };

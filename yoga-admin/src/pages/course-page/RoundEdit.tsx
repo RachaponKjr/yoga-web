@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Dialog,
   DialogContent,
@@ -15,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Calendar,
   Clock,
@@ -25,6 +28,9 @@ import {
   Save,
   Plus,
   Loader2,
+  Info,
+  AlignLeft,
+  Trash2, // เพิ่มไอคอนถังขยะ
 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { format, addDays, setHours, setMinutes } from "date-fns";
@@ -36,19 +42,20 @@ import { authService } from "@/service/auth.service";
 
 const RoundEdit = ({
   courseId,
-  teacherId,
+  teacherId: defaultTeacherId,
 }: {
   courseId: string;
   teacherId: string;
 }) => {
   const [rounds, setRounds] = useState<Round[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isAdding, setIsAdding] = useState(false); // ✅ State สำหรับโหมดเพิ่ม
+  const [isAdding, setIsAdding] = useState(false);
   const [teachers, setTeachers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null); // State สำหรับสถานะการลบ
 
-  console.log(rounds);
-  // Fetch Data
   const getRoundByCourseId = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await courseService.getRoundByCourseId(courseId);
       if (res.success) {
@@ -56,47 +63,52 @@ const RoundEdit = ({
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   }, [courseId]);
 
   const getInstructor = useCallback(async () => {
     try {
       const response = await authService.getInstructor();
-      if (response) {
-        setTeachers(response);
-      }
+      if (response) setTeachers(response);
     } catch (error) {
       console.error("Error fetching instructors:", error);
     }
   }, []);
 
-  useEffect(() => {
-    void getInstructor(); // ดึงข้อมูลเมื่อเปิด Dialog
-  }, [getInstructor]);
+  // ✅ ฟังก์ชันลบรอบเรียน
+  const handleDelete = async (id: string) => {
+    if (
+      !window.confirm(
+        "คุณแน่ใจหรือไม่ที่จะลบรอบเรียนนี้? ข้อมูลการจองอาจได้รับผลกระทบ",
+      )
+    )
+      return;
 
-  useEffect(() => {
-    getRoundByCourseId();
-  }, [courseId, getRoundByCourseId]);
-
-  // ✅ Handle Create
-  const handleCreate = async (data: any) => {
-    console.log("Creating new round:", data);
-    // TODO: ต่อ API createRound ตรงนี้
-    // await courseService.createRound(data);
-
-    setIsAdding(false);
-    toast.success("เพิ่มรอบเรียนเรียบร้อย");
-    // getRoundByCourseId(); // Refresh list
+    setDeletingId(id);
+    try {
+      const res = await courseService.deleteRound(id); // มั่นใจว่าใน courseService มี method นี้
+      if (res.success) {
+        toast.success("ลบรอบเรียนเรียบร้อยแล้ว");
+        getRoundByCourseId(); // โหลดข้อมูลใหม่
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "ลบไม่สำเร็จ");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
-  // ✅ Handle Update
-  const handleUpdate = async (id: string, data: any) => {
-    console.log("Updating round:", id, data);
-    // TODO: ต่อ API updateRound ตรงนี้
+  useEffect(() => {
+    void getInstructor();
+    void getRoundByCourseId();
+  }, [getInstructor, getRoundByCourseId]);
 
+  const handleSuccess = () => {
+    setIsAdding(false);
     setEditingId(null);
-    toast.success("บันทึกการแก้ไขเรียบร้อย");
-    // getRoundByCourseId(); // Refresh list
+    getRoundByCourseId();
   };
 
   return (
@@ -107,85 +119,74 @@ const RoundEdit = ({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-4xl! max-h-[calc(100vh-10rem)] overflow-y-auto flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl! max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex flex-row items-center justify-between border-b pb-4">
           <DialogTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
+            <Calendar className="w-5 h-5 text-green-600" />
             จัดการรอบเรียน (Course Rounds)
           </DialogTitle>
-
-          {/* ปุ่มเพิ่มรอบเรียน */}
           {!isAdding && (
             <Button
-              onClick={() => {
-                setEditingId(null); // ปิดการแก้ไขอื่นก่อน
-                setIsAdding(true);
-              }}
-              className="ml-auto bg-green-600 hover:bg-green-700 text-white gap-2"
+              onClick={() => setIsAdding(true)}
+              className="bg-green-600 hover:bg-green-700 text-white"
               size="sm"
             >
-              <Plus className="w-4 h-4" />
-              เพิ่มรอบเรียน
+              <Plus className="w-4 h-4 mr-1" /> เพิ่มรอบใหม่
             </Button>
           )}
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-2 pr-4 space-y-4 mt-2">
-          {/* ✅ ส่วนฟอร์มเพิ่มรอบเรียน (แสดงเมื่อ isAdding = true) */}
-          {isAdding && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="mb-2 flex items-center gap-2 text-green-700 font-semibold">
-                <Plus size={18} /> สร้างรอบเรียนใหม่
-              </div>
-              <RoundForm
-                teachers={teachers}
-                courseId={courseId}
-                teacherId={teacherId}
-                mode="create"
-                initialData={null}
-                onCancel={() => setIsAdding(false)}
-                onSave={handleCreate}
-              />
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
+          {loading && rounds.length === 0 && (
+            <div className="flex justify-center py-10">
+              <Loader2 className="animate-spin text-green-600" />
             </div>
           )}
 
-          {/* รายการรอบเรียนเดิม */}
-          {rounds.map((round, index) => (
-            <div key={index}>
+          {isAdding && (
+            <RoundForm
+              teachers={teachers}
+              courseId={courseId}
+              teacherId={defaultTeacherId}
+              mode="create"
+              onCancel={() => setIsAdding(false)}
+              onSaveSuccess={handleSuccess}
+            />
+          )}
+
+          {rounds.map((round) => (
+            <div
+              key={round.id}
+              className={
+                deletingId === round.id ? "opacity-50 pointer-events-none" : ""
+              }
+            >
               {editingId === round.id ? (
                 <RoundForm
                   mode="edit"
-                  teacherId={teacherId}
-                  teachers={teachers as UserType[]}
+                  teacherId={defaultTeacherId}
+                  teachers={teachers}
                   initialData={round}
                   courseId={courseId}
                   onCancel={() => setEditingId(null)}
-                  onSave={(data) => handleUpdate(round.id || "", data)}
+                  onSaveSuccess={handleSuccess}
                 />
               ) : (
                 <RoundCard
                   round={round}
-                  teacherId={teacherId}
                   teachers={teachers}
-                  onEdit={() => {
-                    setIsAdding(false); // ปิดโหมดเพิ่มก่อน
-                    setEditingId(round.id || "");
-                  }}
+                  isDeleting={deletingId === round.id}
+                  onEdit={() => setEditingId(round.id || null)}
+                  onDelete={() => handleDelete(round.id || "")}
                 />
               )}
             </div>
           ))}
 
-          {!isAdding && rounds.length === 0 && (
-            <div className="text-center text-gray-500 py-10 border-2 border-dashed rounded-xl">
-              <p>ยังไม่มีรอบเรียนสำหรับคอร์สนี้</p>
-              <Button
-                variant="link"
-                onClick={() => setIsAdding(true)}
-                className="text-indigo-600"
-              >
-                + เพิ่มรอบแรกเลย
-              </Button>
+          {!isAdding && rounds.length === 0 && !loading && (
+            <div className="text-center text-gray-400 py-16 border-2 border-dashed rounded-2xl bg-white">
+              <Calendar className="w-12 h-12 mx-auto mb-3 opacity-20" />
+              <p>ยังไม่มีการสร้างรอบเรียนสำหรับคอร์สนี้</p>
             </div>
           )}
         </div>
@@ -194,334 +195,211 @@ const RoundEdit = ({
   );
 };
 
-// --- Component แสดงผลการ์ด (Read Only) ---
-const RoundCard = ({
-  round,
-  onEdit,
-  teachers,
-  teacherId,
-}: {
-  round: Round;
-  onEdit: () => void;
-  teachers: UserType[];
-  teacherId: string;
-}) => {
-  const hasSub = !!round.subTeacher;
-
-  return (
-    <div
-      className={`border rounded-xl p-4 shadow-sm bg-white hover:shadow-md transition-all relative overflow-hidden ${round.status === "Cancelled" ? "opacity-60 bg-gray-50" : ""}`}
-    >
-      {/* Status Strip */}
-      <div
-        className={`absolute left-0 top-0 bottom-0 w-1.5 ${
-          round.status === "Open"
-            ? "bg-green-500"
-            : round.status === "Full"
-              ? "bg-red-500"
-              : round.status === "Cancelled"
-                ? "bg-gray-400"
-                : "bg-orange-400"
-        }`}
-      />
-
-      <div className="flex flex-col md:flex-row justify-between gap-4 pl-3">
-        {/* Time */}
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <Badge
-              variant={round.status === "Open" ? "default" : "secondary"}
-              className={round.status === "Open" ? "bg-green-600" : ""}
-            >
-              {round.status}
-            </Badge>
-            <span className="text-sm font-semibold text-gray-700">
-              {format(new Date(round.startDateTime), "EEE, dd MMM yyyy")}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-xl font-bold text-gray-800">
-            <Clock className="w-5 h-5 text-gray-400" />
-            {format(new Date(round.startDateTime), "HH:mm")} -{" "}
-            {format(new Date(round.endDateTime), "HH:mm")}
-          </div>
-        </div>
-
-        {/* Teacher */}
-        <div className="flex-1 flex flex-col justify-center md:border-l md:pl-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-            <UserIcon size={16} />
-            <span
-              className={hasSub ? "line-through text-gray-400" : "font-medium"}
-            >
-              {teachers.find((teacher) => teacher.id === teacherId)?.userInfo
-                .firstName +
-                " " +
-                teachers.find((teacher) => teacher.id === teacherId)?.userInfo
-                  .lastName || "No Teacher"}
-            </span>
-          </div>
-          {hasSub && (
-            <div className="flex items-center gap-2 text-sm text-indigo-600 font-semibold bg-indigo-50 w-fit px-2 py-1 rounded">
-              <UserCheck size={16} />
-              <span>Sub: {round.subTeacher?.name}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Stats & Edit */}
-        <div className="flex-1 flex flex-col items-end justify-between gap-2">
-          <div className="flex gap-4 text-sm">
-            <div className="flex flex-col items-end">
-              <span className="text-gray-500 text-xs">Online</span>
-              <span className="font-mono font-medium">
-                {round.current_online}/{round.max_online}
-              </span>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-gray-500 text-xs">Walk-in</span>
-              <span className="font-mono font-medium">
-                {round.current_walk_in}/{round.max_walk_in}
-              </span>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onEdit}
-            className="gap-2 h-8"
-          >
-            <Pencil size={14} /> แก้ไข
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// --- ✅ Reusable Form (ใช้ทั้ง Add และ Edit) ---
-interface RoundFormProps {
-  mode: "create" | "edit";
-  initialData?: Round | null;
-  courseId: string;
-  teacherId: string;
-  teachers: UserType[];
-  onCancel: () => void;
-  onSave: (data: any) => void;
-}
-
+// --- Form Component (เหมือนเดิม) ---
 const RoundForm = ({
   mode,
-  teacherId,
   initialData,
   courseId,
+  teacherId,
   teachers,
   onCancel,
-  onSave,
-}: RoundFormProps) => {
-  // สร้างค่า Default สำหรับโหมด Create (เช่น พรุ่งนี้ 09:00 - 10:30)
-  const defaultDate = addDays(new Date(), 1);
-  const defaultStart = setMinutes(setHours(defaultDate, 9), 0);
-  const defaultEnd = setMinutes(setHours(defaultDate, 10), 30);
-
-  // State สำหรับ Form (แบบบ้านๆ ไม่ใช้ Library เพื่อความง่ายในการ demo)
-  const [formData, setFormData] = useState<Round>({
+  onSaveSuccess,
+}: any) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    courseId: courseId,
+    teacherId: initialData?.teacherId || teacherId,
+    subTeacherId: initialData?.subTeacherId || "none",
     startDateTime: initialData
-      ? String(new Date(initialData.startDateTime))
-      : String(defaultStart),
+      ? format(new Date(initialData.startDateTime), "yyyy-MM-dd'T'HH:mm")
+      : format(addDays(setHours(new Date(), 9), 1), "yyyy-MM-dd'T'HH:mm"),
     endDateTime: initialData
-      ? String(new Date(initialData.endDateTime))
-      : String(defaultEnd),
+      ? format(new Date(initialData.endDateTime), "yyyy-MM-dd'T'HH:mm")
+      : format(addDays(setHours(new Date(), 10), 30), "yyyy-MM-dd'T'HH:mm"),
     max_online: initialData?.max_online || 10,
     max_walk_in: initialData?.max_walk_in || 5,
     current_online: initialData?.current_online || 0,
     current_walk_in: initialData?.current_walk_in || 0,
-    teacherId: teacherId || "", // Default teacher
-    subTeacherId: initialData?.subTeacherId || "none",
+    description: initialData?.description || "",
+    about: initialData?.about || "",
     status: initialData?.status || "Open",
-    courseId: courseId || "c1",
   });
 
   const handleSubmit = async () => {
     if (formData.startDateTime >= formData.endDateTime) {
-      toast.error("เวลาจบต้องอยู่หลังเวลาเริ่ม");
-      return;
+      return toast.error("เวลาจบต้องอยู่หลังเวลาเริ่ม");
     }
-    await courseService
-      .createRound(formData)
-      .then(() => {
-        toast.success("เพิ่มรอบเรียนสำเร็จ");
-      })
-      .catch((error) => {
-        toast.error("เพิ่มรอบเรียนไม่สำเร็จ");
-      });
-    onSave(formData);
+
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...formData,
+        startDateTime: new Date(formData.startDateTime).toISOString(),
+        endDateTime: new Date(formData.endDateTime).toISOString(),
+        subTeacherId:
+          formData.subTeacherId === "none" ? null : formData.subTeacherId,
+        description: formData.description || null,
+        about: formData.about || null,
+        max_online: Number(formData.max_online),
+        max_walk_in: Number(formData.max_walk_in),
+      };
+
+      if (mode === "create") {
+        await courseService.createRound(payload);
+        toast.success("สร้างรอบเรียนเรียบร้อย");
+      } else {
+        await courseService.updateRound(initialData.id, payload);
+        toast.success("แก้ไขข้อมูลเรียบร้อย");
+      }
+      onSaveSuccess();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "บันทึกไม่สำเร็จ");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const borderClass =
-    mode === "create"
-      ? "border-green-200 bg-green-50/30"
-      : "border-indigo-200 bg-indigo-50/30";
-
   return (
-    <div className={`border rounded-xl p-4 ${borderClass}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h3
-          className={`font-semibold ${mode === "create" ? "text-green-900" : "text-indigo-900"}`}
-        >
-          {mode === "create" ? "รายละเอียดรอบใหม่" : "แก้ไขข้อมูล"}
+    <div
+      className={`p-6 border-2 rounded-2xl mb-6 shadow-sm animate-in fade-in slide-in-from-top-2 ${mode === "create" ? "border-green-200 bg-white" : "border-blue-200 bg-white"}`}
+    >
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-bold text-lg flex items-center gap-2">
+          {mode === "create" ? (
+            <Badge className="bg-green-600">NEW ROUND</Badge>
+          ) : (
+            <Badge className="bg-blue-600">EDIT ROUND</Badge>
+          )}
         </h3>
         <Button
           variant="ghost"
           size="icon"
           onClick={onCancel}
-          className="h-8 w-8 text-gray-400 hover:text-red-500"
+          className="h-8 w-8 text-gray-400"
         >
-          <X size={16} />
+          <X size={18} />
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Time */}
-        <div className="space-y-2">
-          <label className="text-xs font-medium text-gray-500">
-            เวลาเริ่ม - จบ
-          </label>
-          <div className="flex gap-2">
-            <Input
-              type="datetime-local"
-              value={format(formData.startDateTime, "yyyy-MM-dd'T'HH:mm")}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  startDateTime: String(new Date(e.target.value)),
-                })
-              }
-            />
-            <Input
-              type="datetime-local"
-              value={format(formData.endDateTime, "yyyy-MM-dd'T'HH:mm")}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  endDateTime: String(new Date(e.target.value)),
-                })
-              }
-            />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase text-gray-400 flex items-center gap-1">
+                <Clock size={12} /> เวลาเริ่ม
+              </label>
+              <Input
+                type="datetime-local"
+                value={formData.startDateTime}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDateTime: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase text-gray-400 flex items-center gap-1">
+                <Clock size={12} /> เวลาจบ
+              </label>
+              <Input
+                type="datetime-local"
+                value={formData.endDateTime}
+                onChange={(e) =>
+                  setFormData({ ...formData, endDateTime: e.target.value })
+                }
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase text-gray-400">
+                สถานะ
+              </label>
+              <Select
+                value={formData.status}
+                onValueChange={(v) => setFormData({ ...formData, status: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Open", "Full", "Closed", "Cancelled"].map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase text-gray-400">
+                ผู้สอนหลัก
+              </label>
+              <Select
+                value={formData.teacherId}
+                onValueChange={(v) =>
+                  setFormData({ ...formData, teacherId: v })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {teachers.map((t: any) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      {t.userInfo.firstName} {t.userInfo.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
-        {/* Capacity */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">
-              Max Online
-            </label>
-            <Input
-              type="number"
-              value={formData.max_online}
-              onChange={(e) =>
-                setFormData({ ...formData, max_online: Number(e.target.value) })
-              }
-            />
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase text-blue-500">
+                Max Online
+              </label>
+              <Input
+                type="number"
+                value={formData.max_online}
+                onChange={(e) =>
+                  setFormData({ ...formData, max_online: +e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold uppercase text-orange-500">
+                Max Walk-in
+              </label>
+              <Input
+                type="number"
+                value={formData.max_walk_in}
+                onChange={(e) =>
+                  setFormData({ ...formData, max_walk_in: +e.target.value })
+                }
+              />
+            </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">
-              Max Walk-in
-            </label>
-            <Input
-              type="number"
-              value={formData.max_walk_in}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  max_walk_in: Number(e.target.value),
-                })
-              }
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">
-              Current Online
-            </label>
-            <Input
-              type="number"
-              value={formData.current_online}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  current_online: Number(e.target.value),
-                })
-              }
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">
-              Current Walk-in
-            </label>
-            <Input
-              type="number"
-              value={formData.current_walk_in}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  current_walk_in: Number(e.target.value),
-                })
-              }
-            />
-          </div>
-        </div>
-
-        {/* Teacher */}
-        <div className="flex gap-2">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">
-              ครูประจำคอร์ส
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase text-indigo-500 flex items-center gap-1">
+              <UserCheck size={12} /> ครูสอนแทน (Substitute)
             </label>
             <Select
-              value={formData.teacherId}
-              onValueChange={(val) =>
-                setFormData({ ...formData, teacherId: val })
+              value={formData.subTeacherId || "none"}
+              onValueChange={(v) =>
+                setFormData({ ...formData, subTeacherId: v })
               }
             >
-              <SelectTrigger disabled={true} className="bg-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">
-                  กรุณาเลือกครูประจำคอร์สก่อน
-                </SelectItem>
-                {teachers.map((teacher) => (
-                  <SelectItem key={teacher.id} value={teacher.id}>
-                    {teacher.userInfo.firstName} {teacher.userInfo.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Sub Teacher */}
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-indigo-600">
-              ครูสอนแทน (Substitute)
-            </label>
-            <Select
-              value={formData.subTeacherId}
-              onValueChange={(val) =>
-                setFormData({ ...formData, subTeacherId: val })
-              }
-            >
-              <SelectTrigger className="bg-white border-indigo-200">
+              <SelectTrigger className="border-indigo-100 bg-indigo-50/30">
                 <SelectValue placeholder="เลือกครูสอนแทน" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">
-                  กรุณาเลือกครูประจำคอร์สก่อน
-                </SelectItem>
-                {teachers.map((teacher) => (
-                  <SelectItem key={teacher.id} value={teacher.id}>
-                    {teacher.userInfo.firstName} {teacher.userInfo.lastName}
+                <SelectItem value="none">-- ไม่มีครูสอนแทน --</SelectItem>
+                {teachers.map((t: any) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.userInfo.firstName} {t.userInfo.lastName}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -529,38 +407,159 @@ const RoundForm = ({
           </div>
         </div>
 
-        {/* Status */}
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-gray-500">สถานะ</label>
-          <Select
-            value={formData.status}
-            onValueChange={(val: any) =>
-              setFormData({ ...formData, status: val })
-            }
-          >
-            <SelectTrigger className="bg-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Open">เปิดรับสมัคร (Open)</SelectItem>
-              <SelectItem value="Full">เต็ม (Full)</SelectItem>
-              <SelectItem value="Closed">ปิด (Closed)</SelectItem>
-              <SelectItem value="Cancelled">ยกเลิก (Cancelled)</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="md:col-span-2 space-y-4 border-t pt-4 mt-2">
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase text-gray-400 flex items-center gap-1">
+              <AlignLeft size={12} /> รายละเอียดสั้น
+            </label>
+            <Input
+              placeholder="เช่น ปรับพื้นฐานสำหรับผู้เริ่มต้น..."
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase text-gray-400 flex items-center gap-1">
+              <Info size={12} /> ข้อมูลเพิ่มเติม
+            </label>
+            <Textarea
+              placeholder="เช่น สิ่งที่ต้องเตรียมมา..."
+              value={formData.about}
+              onChange={(e) =>
+                setFormData({ ...formData, about: e.target.value })
+              }
+              className="h-24 resize-none"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
-        <Button variant="ghost" onClick={onCancel}>
+      <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
           ยกเลิก
         </Button>
         <Button
+          size="sm"
           onClick={handleSubmit}
-          className={`text-white gap-2 ${mode === "create" ? "bg-green-600! hover:bg-green-70!" : "bg-indigo-600! hover:bg-indigo-70!"}`}
+          disabled={isSubmitting}
+          className={
+            mode === "create"
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-blue-600 hover:bg-blue-700"
+          }
         >
-          <Save size={16} />{" "}
-          {mode === "create" ? "ยืนยันสร้างรอบเรียน" : "บันทึกการเปลี่ยนแปลง"}
+          {isSubmitting ? (
+            <Loader2 className="animate-spin w-4 h-4 mr-2" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
+          {mode === "create" ? "ยืนยันสร้างรอบเรียน" : "บันทึกการแก้ไข"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+// --- Card Component (เพิ่มปุ่มลบ) ---
+const RoundCard = ({ round, onEdit, onDelete, teachers, isDeleting }: any) => {
+  const teacher = teachers.find((t: any) => t.id === round.teacherId);
+  const subTeacher = teachers.find((t: any) => t.id === round.subTeacherId);
+
+  return (
+    <div className="border rounded-2xl p-4 bg-white flex justify-between items-center shadow-sm hover:shadow-md transition-all border-l-4 border-l-green-500">
+      <div className="flex gap-5 items-center">
+        <div className="text-center min-w-[60px] py-2 bg-gray-50 rounded-xl border">
+          <div className="text-[10px] font-bold text-gray-400 uppercase">
+            {format(new Date(round.startDateTime), "MMM")}
+          </div>
+          <div className="text-2xl font-black text-gray-800">
+            {format(new Date(round.startDateTime), "dd")}
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-lg text-gray-800">
+              {format(new Date(round.startDateTime), "HH:mm")} -{" "}
+              {format(new Date(round.endDateTime), "HH:mm")}
+            </span>
+            <Badge
+              className={
+                round.status === "Open" ? "bg-green-500" : "bg-gray-400"
+              }
+            >
+              {round.status}
+            </Badge>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+            <div className="flex items-center gap-1">
+              <UserIcon size={12} /> {teacher?.userInfo?.firstName || "Unknown"}{" "}
+              (Main)
+            </div>
+            {subTeacher && (
+              <div className="text-indigo-600 font-bold flex items-center gap-1 bg-indigo-50 px-2 py-0.5 rounded-md">
+                <UserCheck size={12} /> Sub: {subTeacher.userInfo.firstName}
+              </div>
+            )}
+          </div>
+          {round.description && (
+            <p className="text-xs text-gray-400 italic line-clamp-1 max-w-[300px]">
+              {round.description}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="text-right hidden md:block mr-3">
+          <p className="text-[10px] text-gray-400 uppercase font-bold mb-1">
+            Capacity
+          </p>
+          <div className="flex gap-2">
+            <Badge
+              variant="outline"
+              className="font-mono text-[10px] border-blue-200 text-blue-600"
+            >
+              ON: {round.current_online}/{round.max_online}
+            </Badge>
+            <Badge
+              variant="outline"
+              className="font-mono text-[10px] border-orange-200 text-orange-600"
+            >
+              WK: {round.current_walk_in}/{round.max_walk_in}
+            </Badge>
+          </div>
+        </div>
+
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onEdit}
+          className="h-9 w-9 p-0 md:w-auto md:px-4 rounded-xl"
+        >
+          <Pencil size={14} className="md:mr-2" />{" "}
+          <span className="hidden md:inline">แก้ไข</span>
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDelete}
+          disabled={isDeleting}
+          className="h-9 w-9 p-0 rounded-xl text-red-500 hover:text-red-700 hover:bg-red-50"
+        >
+          {isDeleting ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Trash2 size={16} />
+          )}
         </Button>
       </div>
     </div>

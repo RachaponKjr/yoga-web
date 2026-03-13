@@ -3,6 +3,7 @@ import { authMiddleware, restrictTo } from "../middlewares/auth.middleware";
 import {
   getBookingList,
   getDashboardStats,
+  getMonitorCountryStats,
 } from "../controllers/admin.controller";
 import { createUploader } from "../middlewares/upload.middleware";
 import { updateProfileController } from "../controllers/auth.controller";
@@ -14,7 +15,7 @@ router.get(
   "/booking-last",
   authMiddleware,
   restrictTo("Admin"),
-  getBookingList
+  getBookingList,
 );
 
 router.patch(
@@ -22,7 +23,14 @@ router.patch(
   authMiddleware,
   restrictTo("Admin"),
   createUploader("avatar").single("avatar"),
-  updateProfileController
+  updateProfileController,
+);
+
+router.get(
+  "/monitor-country-stats",
+  authMiddleware,
+  restrictTo("Admin"),
+  getMonitorCountryStats,
 );
 
 export default router;

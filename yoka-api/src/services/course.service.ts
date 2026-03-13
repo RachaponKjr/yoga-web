@@ -461,6 +461,76 @@ const updateCourseService = async ({
   }
 };
 
+const getCourseRoundSessionsService = async () => {
+  try {
+    const courseRound = await prisma.courseRound.findMany({
+      where: {
+        startDateTime: {
+          gte: new Date(), // gte ย่อมาจาก Greater Than or Equal
+        },
+      },
+      include: {
+        teacher: {
+          include: {
+            userInfo: true,
+          },
+        },
+        course: {
+          include: {
+            teacher: {
+              include: {
+                userInfo: true,
+              },
+            },
+          },
+        },
+        subTeacher: {
+          include: {
+            userInfo: true,
+          },
+        },
+        bookings: true,
+      },
+      orderBy: {
+        startDateTime: "asc", // เรียงจากวันที่ใกล้ที่สุดมาก่อน
+      },
+    });
+    return courseRound;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const delRoundService = async ({ id }: { id: string }) => {
+  try {
+    const courseRound = await prisma.courseRound.delete({
+      where: {
+        id,
+      },
+    });
+    return courseRound;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateCourseRoundService = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: any;
+}) => {
+  const resUpdate = await prisma.courseRound.update({
+    where: {
+      id,
+    },
+    data,
+  });
+
+  return resUpdate;
+};
+
 export {
   createCourseService,
   getCourseService,
@@ -477,4 +547,7 @@ export {
   adminDeleteCourseService,
   updateCourseStatusService,
   updateCourseService,
+  getCourseRoundSessionsService,
+  delRoundService,
+  updateCourseRoundService,
 };

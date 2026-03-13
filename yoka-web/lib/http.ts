@@ -1,9 +1,10 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const http = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL ?? "http://119.59.99.141:4001/api/v1",
-  // "http://localhost:3001/api/v1",
+    // process.env.NEXT_PUBLIC_API_URL ?? "http://119.59.99.141:4001/api/v1",
+    "http://localhost:3001/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
@@ -17,7 +18,8 @@ http.interceptors.request.use(
   (config) => {
     // ดึง token จาก storage (ต้องเช็คว่ารันบน Browser ไหม)
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

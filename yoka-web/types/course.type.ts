@@ -37,9 +37,13 @@ export const RoundCourseSchema = z.object({
   status: z.string(),
   id: z.string(),
   description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
+  about: z.string().optional(),
   teacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
+  subTeacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  teacher: TeacherSchema,
+  subTeacher: TeacherSchema,
 });
 
 export const PaginationSchema = z.object({

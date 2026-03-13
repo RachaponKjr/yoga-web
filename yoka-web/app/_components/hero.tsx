@@ -53,7 +53,6 @@ const Hero = () => {
         <div className="relative w-full md:w-full md:max-w-3xl">
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              {/* 1. กำหนด ID ให้กับ Clip Path */}
               <clipPath id="blob-shape">
                 <path
                   d="M46.1,-71.7C58.4,-63.8,66,-48.7,70.1,-33.8C74.2,-18.8,74.7,-4,73.5,11.2C72.4,26.5,69.6,42.2,61.8,56.4C54,70.6,41.1,83.2,25.7,87.8C10.4,92.4,-7.3,88.9,-22,81.6C-36.7,74.3,-48.3,63.1,-60.2,51.2C-72,39.2,-84.1,26.5,-86,12.4C-87.9,-1.6,-79.6,-17.1,-72.2,-32.9C-64.9,-48.7,-58.5,-64.9,-46.6,-73C-34.8,-81.1,-17.4,-81.1,-0.2,-80.8C16.9,-80.4,33.8,-79.6,46.1,-71.7Z"
@@ -61,8 +60,6 @@ const Hero = () => {
                 />
               </clipPath>
             </defs>
-
-            {/* 2. ใส่รูปภาพ และอ้างอิง ID จากข้อ 1 */}
             <image
               x="0"
               y="0"
@@ -75,7 +72,7 @@ const Hero = () => {
           </svg>
         </div>
       </div>
-      <div className="w-full hidden md:block h-80 relative bottom-0 left-0">
+      <div className="w-full hidden md:block h-80 relative -bottom-2 left-0">
         <Image src={wane} alt="" quality={100} fill className="object-cover" />
       </div>
       <div>

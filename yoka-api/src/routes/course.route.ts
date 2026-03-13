@@ -5,16 +5,19 @@ import {
   createCourseController,
   createCourseRoundController,
   deleteCourseController,
+  delRoundServiceController,
   getCourseActiveController,
   getCourseByIdController,
   getCourseController,
   getCourseRoundByCourseIdController,
   getCourseRoundByIdController,
   getCourseRoundController,
+  getCourseRoundSessionsController,
   getCourseRoundTodayOrMonthController,
   getMyCourseController,
   getMyRoundController,
   updateCourseController,
+  updateCourseRoundController,
   updateCourseStatusController,
 } from "../controllers/course.controller";
 import { createUploader } from "../middlewares/upload.middleware";
@@ -54,6 +57,27 @@ router.get("/rounds", getCourseRoundController);
 router.get("/round-coursesId/:id", getCourseRoundByCourseIdController);
 router.get("/round-today-or-month", getCourseRoundTodayOrMonthController);
 router.get("/round-my-round", authMiddleware, getMyRoundController);
+
+router.get(
+  "/rounds-all",
+  authMiddleware,
+  restrictTo("Admin"),
+  getCourseRoundSessionsController,
+);
+
+router.patch(
+  "/round/:id",
+  authMiddleware,
+  restrictTo("Admin", "Instructor"),
+  updateCourseRoundController,
+);
+
+router.delete(
+  "/round/:id",
+  authMiddleware,
+  restrictTo("Admin", "Instructor"),
+  delRoundServiceController,
+);
 
 router.get("/round/:id", getCourseRoundByIdController);
 router.patch(

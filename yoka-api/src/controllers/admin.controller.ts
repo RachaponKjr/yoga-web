@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   getBookingListService,
+  getMonitorCountryStatsService,
   getStatsService,
   updateUserService,
 } from "../services/admin.service";
@@ -105,4 +106,27 @@ const updateProfileController = async (req: Request, res: Response) => {
   }
 };
 
-export { getDashboardStats, getBookingList, updateProfileController };
+const getMonitorCountryStats = async (req: Request, res: Response) => {
+  try {
+    const stats = await getMonitorCountryStatsService();
+    return res.status(200).json({
+      success: true,
+      message: "ดึงข้อมูลสถิติสำเร็จ",
+      data: stats,
+    });
+  } catch (error) {
+    console.error("Error fetching monitor country stats:", error);
+    return res.status(500).json({
+      success: false,
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลสถิติ",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export {
+  getDashboardStats,
+  getBookingList,
+  updateProfileController,
+  getMonitorCountryStats,
+};

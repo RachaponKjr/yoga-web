@@ -10,6 +10,7 @@ export const RoundSchema = z.object({
   current_online: z.coerce.number().min(0, "จำนวนต้องไม่ติดลบ"),
   current_walk_in: z.coerce.number().min(0, "จำนวนต้องไม่ติดลบ"),
   subTeacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
+  about: z.string().optional(),
   max_walk_in: z.coerce.number().min(0, "จำนวนต้องไม่ติดลบ"),
   description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
   status: z.string().min(1, "กรุณาเลือกสถานะ").optional(),

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -105,7 +106,7 @@ const Navbar = () => {
       ${
         isScrolled
           ? "bg-secondary/80 backdrop-blur-md shadow-sm py-3 border-gray-200/20"
-          : "bg-secondary py-2 md:py-5"
+          : "bg-secondary py-2 md:py-3"
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -223,7 +224,7 @@ const UserDropdown = ({ user }: UserProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex min-w-max items-center gap-3 pl-4 pr-1.5 py-1.5 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm">
+        <div className="flex min-w-max items-center gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm">
           <div className="flex-col items-end flex w-full">
             <span className="text-sm font-semibold text-foreground/90 max-w-full truncate">
               {displayName || "ไม่พบข้อมูล"}

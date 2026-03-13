@@ -20,7 +20,7 @@ export const createCardChargeService = async ({
   try {
     const charge = await omise.charges.create({
       amount: Math.round(amount * 100), // แปลงบาทเป็นสตางค์
-      currency: "thb",
+      currency: "THB",
       card: token, // ⭐ หัวใจสำคัญ: ส่ง Token แทนเลขบัตร
       description: `Order ID: ${orderId}`,
       metadata: {
@@ -37,7 +37,7 @@ export const createCardChargeService = async ({
   } catch (error: any) {
     throw new AppError(
       `Omise Card Error: ${error.message}`,
-      StatusCodes.BAD_REQUEST
+      StatusCodes.BAD_REQUEST,
     );
   }
 };

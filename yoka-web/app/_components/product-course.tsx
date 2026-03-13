@@ -6,13 +6,13 @@ import leftLeft from "@/assets/images/leaf-left.png";
 const ProductCourse = () => {
   return (
     <div className="md:pt-12 pt-0 px-4 md:px-0">
-      <Image
+      {/* <Image
         width={500}
         height={500}
         src={leftLeft}
         alt="leftLeft"
         className="absolute top-0 left-0 z-0 hidden opacity-80 md:block"
-      />
+      /> */}
       <div className="container mx-auto flex flex-col justify-between gap-6 items-center w-full z-10">
         <div className="flex flex-col justify-center items-center gap-2 w-full">
           <div className="border border-[#1A1A1A]/60 rounded-full p-2">

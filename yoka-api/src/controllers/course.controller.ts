@@ -10,15 +10,18 @@ import {
   createCourseRoundService,
   createCourseService,
   deleteCourseService,
+  delRoundService,
   getCourseActiveService,
   getCourseByIdService,
   getCourseRoundByCourseIdService,
   getCourseRoundByIdService,
   getCourseRoundService,
+  getCourseRoundSessionsService,
   getCourseRoundTodayOrMonthService,
   getCourseService,
   getMyCourseService,
   getMyRoundService,
+  updateCourseRoundService,
   updateCourseService,
   updateCourseStatusService,
 } from "../services/course.service";
@@ -75,6 +78,7 @@ const createCourseRoundController = async (req: Request, res: Response) => {
   try {
     const payload = CourseRoundSchema.safeParse(req.body);
     if (!payload.success) {
+      console.log(payload.error.issues);
       sendResponse(res, {
         success: false,
         statusCode: StatusCodes.BAD_REQUEST,
@@ -664,6 +668,92 @@ const updateCourseController = async (
   }
 };
 
+const getCourseRoundSessionsController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const rounds = await getCourseRoundSessionsService();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Get course round sessions successfully",
+      data: rounds,
+    });
+    return;
+  } catch (error: Error | unknown) {
+    console.error("Get course round sessions Error:", error);
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
+const delRoundServiceController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params as { id: string };
+    const courseRound = await delRoundService({ id });
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Round deleted successfully",
+      data: courseRound,
+    });
+    return;
+  } catch (error: Error | unknown) {
+    console.error("Delete Round Error:", error);
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
+const updateCourseRoundController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params as { id: string };
+    const data = req.body;
+
+    const courseRound = await updateCourseRoundService({
+      id,
+      data,
+    });
+
+    if (!courseRound) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "Course round not found",
+      });
+      return;
+    }
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Course round updated successfully",
+      data: courseRound,
+    });
+    return;
+  } catch (error: Error | unknown) {
+    console.error("Update Course Round Error:", error);
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
+
 export {
   createCourseController,
   getCourseController,
@@ -680,4 +770,7 @@ export {
   adminDeleteCourseController,
   updateCourseStatusController,
   updateCourseController,
+  getCourseRoundSessionsController,
+  delRoundServiceController,
+  updateCourseRoundController,
 };

@@ -9,4 +9,13 @@ export const adminService = {
     const response = await http.get("/admin/booking-last");
     return response.data;
   },
+  getRoundsAll: async () => {
+    const response = await http.get("/course/rounds-all");
+    return response.data;
+  },
+
+  getMonitorCountryStats: async () => {
+    const response = await http.get("/admin/monitor-country-stats");
+    return response.data;
+  },
 };

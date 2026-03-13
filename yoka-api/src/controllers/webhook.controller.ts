@@ -2,15 +2,14 @@ import { Request, Response } from "express";
 import prisma from "../config/prisma";
 import { StatusCodes } from "http-status-codes";
 import { mailService } from "../utils/mail";
-import { generateBookingReceipt } from "../utils/pdfGenerator";
+import { generateBookingPDF } from "../utils/pdfGenerator";
 import { getBookingSuccessTemplate } from "../templates/booking-success";
 
 export const omiseWebhookController = async (req: Request, res: Response) => {
   try {
     // Omise จะส่งข้อมูลมาใน body
     const event = req.body;
-
-    console.log("Webhook Received:", event.key); // Log ดู event ที่เข้ามา
+    console.log("Webhook Received:", event.key);
 
     // เราสนใจแค่ event ที่ชื่อว่า "charge.complete" (การจ่ายเงินสิ้นสุดลง)
     if (event.key === "charge.complete") {
@@ -79,11 +78,6 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
           totalAmount: orderDetail.price,
         };
 
-        const pdfBuffer = await generateBookingReceipt({
-          userDetail,
-          bookingDetail,
-        });
-
         const formatDate = (date: Date) => {
           return date.toLocaleDateString("en-US", {
             // หรือ th-TH ถ้าอยากได้ภาษาไทย
@@ -105,14 +99,22 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
         // ... ตอนเรียกใช้ ...
 
         const startDate = new Date(
-          orderDetail.round?.startDateTime || new Date()
+          orderDetail.round?.startDateTime || new Date(),
         );
         const endDate = new Date(orderDetail.round?.endDateTime || new Date());
+
+        const pdfBuffer = await generateBookingPDF({
+          customerName: `${orderDetail.student?.userInfo?.firstName} ${orderDetail.student?.userInfo?.lastName}`,
+          courseTitle: orderDetail.round?.course?.title || "",
+          roundDate: formatDate(startDate),
+          roundTime: formatTime(startDate) + " - " + formatTime(endDate),
+          bookingId: orderDetail.id,
+        });
 
         await mailService.sendEmail(
           orderDetail.student?.email || "",
           "Thank you for booking with Yoka by Niti!",
-          getBookingSuccessTemplate({
+          await getBookingSuccessTemplate({
             customerName: `${orderDetail.student?.userInfo?.firstName} ${orderDetail.student?.userInfo?.lastName}`,
             courseTitle: orderDetail.round?.course?.title || "",
             roundDate: formatDate(startDate),
@@ -121,11 +123,11 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
           }),
           [
             {
-              filename: `Receipt-${orderDetail.id}.pdf`, // ชื่อไฟล์ที่จะโชว์ในเมล
-              content: pdfBuffer, // ตัวไฟล์ PDF ที่เราสร้าง
+              filename: `Booking-${orderDetail.id}.pdf`,
+              content: pdfBuffer,
               contentType: "application/pdf",
             },
-          ]
+          ],
         );
       } else if (charge.status === "failed") {
         console.log(`Payment Failed for Order: ${orderId}`);

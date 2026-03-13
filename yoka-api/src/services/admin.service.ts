@@ -139,7 +139,7 @@ export const getBookingListService = async () => {
 
 export const updateUserService = async (
   userId: string,
-  profile: UserEditState
+  profile: UserEditState,
 ) => {
   const {
     firstName,
@@ -180,4 +180,31 @@ export const updateUserService = async (
   });
 
   return updatedUser;
+};
+
+export const getMonitorCountryStatsService = async () => {
+  const stats = await prisma.userInfo.groupBy({
+    by: ["country"],
+    _count: {
+      userId: true,
+    },
+    where: {
+      AND: [
+        { country: { not: null } },
+        { country: { not: "" } }, // กรองค่าว่างที่เป็น String เปล่า
+      ],
+    },
+    orderBy: {
+      _count: {
+        userId: "desc",
+      },
+    },
+  });
+
+  const formattedStats = stats.map((item) => ({
+    country: item.country,
+    count: item._count.userId,
+  }));
+
+  return formattedStats;
 };
