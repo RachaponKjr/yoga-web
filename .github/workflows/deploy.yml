@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main # ทำงานเมื่อ push เข้า main (เปลี่ยนชื่อ branch ได้)
+      - main
 
 jobs:
   deploy:
@@ -15,31 +15,34 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          envs: DOT_ENV
+          # แก้ตรงนี้: ต้องชื่อเดียวกับที่ส่งมาจากด้านล่าง (บรรทัดที่ 46)
+          envs: DOT_ENV_FILE
           script: |
-            # 1. เข้าไปที่โฟลเดอร์โปรเจกต์ (แก้ path ให้ตรงกับเครื่องจริง)
+            # 1. เข้าไปที่โฟลเดอร์โปรเจกต์
             cd ~/yoga-web
-
 
             # 2. ดึง Code ล่าสุด
             git fetch origin main
             git reset --hard origin/main
 
-            printf "%s" "$DOT_ENV" > .env
+            # 3. สร้างไฟล์ .env (ใช้เครื่องหมาย ' เพื่อป้องกันการตีความตัวอักษรพิเศษ)
+            cat <<EOF > .env
+            $DOT_ENV_FILE
+            EOF
 
+            # ตรวจสอบทันทีในหน้า GitHub Action Log
+            echo "--- Debug: .env file created ---"
             ls -la .env
-            grep DATABASE_URL .env || echo "DATABASE_URL NOT FOUND IN .env"
+            grep -q "DATABASE_URL" .env && echo "DATABASE_URL is present" || echo "DATABASE_URL MISSING!"
 
+            # 4. จัดการ Docker
             docker compose down --remove-orphans
-
-            # 3. Build ใหม่ (ใส่ --no-cache ตรงนี้ได้!)
             docker compose build --no-cache
-
-            # 4. รันขึ้นมาใหม่
             docker compose up -d --force-recreate
 
             # 5. ลบขยะ
             docker image prune -f
 
+        # ส่งค่าจาก GitHub Secret ไปยัง SSH session
         env:
           DOT_ENV_FILE: ${{ secrets.DOT_ENV }}
