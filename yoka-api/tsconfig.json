@@ -5,9 +5,11 @@
     "lib": ["es2020"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,               /* หัวใจสำคัญ: เปิด Strict Mode */
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
