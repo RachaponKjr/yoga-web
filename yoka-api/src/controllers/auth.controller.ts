@@ -28,7 +28,7 @@ interface AuthenticatedRequest extends Request {
 
 const registerController = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const validateRegisterInput = RegisterInputSchema.safeParse(req.body);
@@ -48,7 +48,7 @@ const registerController = async (
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const payload = { email, password: hashedPassword, role };
-    const loginUrl = "http://localhost:3000/login";
+    const loginUrl = `${process.env.HOST_URL}/login`;
     const registerServiceRes = await registerService({ payload });
 
     if (!registerServiceRes) {
@@ -63,7 +63,7 @@ const registerController = async (
     await mailService.sendEmail(
       email,
       "Welcome to Yoga by Niti! 🎉",
-      getRegisterEmailTemplate(loginUrl)
+      getRegisterEmailTemplate(loginUrl),
     );
 
     sendResponse(res, {
@@ -124,7 +124,7 @@ const loginController = async (req: Request, res: Response): Promise<void> => {
       config.jwtSecret as string,
       {
         expiresIn: config.jwtExpiresIn,
-      } as SignOptions
+      } as SignOptions,
     );
 
     res.cookie("token", token, {
@@ -156,7 +156,7 @@ const loginController = async (req: Request, res: Response): Promise<void> => {
 
 const logoutController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     res.clearCookie("token");
@@ -178,7 +178,7 @@ const logoutController = async (
 
 const getMeController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const user = req.user;
@@ -210,7 +210,7 @@ const getMeController = async (
 
 const updateProfileController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const user = req.user;
@@ -260,7 +260,7 @@ const updateProfileController = async (
 // lnstructor
 const getInstructorController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const instructorRes = await getInstructorService();
@@ -291,7 +291,7 @@ const getInstructorController = async (
 
 const getUserAllController = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const userRes = await getUserAllService();

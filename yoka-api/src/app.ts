@@ -24,18 +24,19 @@ const uploadPath = path.join(process.cwd(), "uploads");
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
+  }),
 ); // Security Headers
 app.use(
   cors({
     origin: [
       "http://119.59.99.141:3001", // IP จริงของ Frontend
+      "http://119.59.99.141:3002", // IP จริงของ Admin
       "http://localhost:3000", // เผื่อเทส Local
       "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
-  })
+  }),
 );
 app.use(express.json()); // Body Parser
 app.use(morgan("dev")); // HTTP Request Logger
