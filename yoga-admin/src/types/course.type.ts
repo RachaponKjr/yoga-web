@@ -37,8 +37,8 @@ export const RoundCourseSchema = z.object({
   max_walk_in: z.number(),
   status: z.string(),
   id: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().or(z.date()).optional(),
+  updatedAt: z.string().or(z.date()).optional(),
   description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
   teacherId: z.string().min(1, "กรุณาเลือกครู").optional(),
 });
