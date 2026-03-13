@@ -15,7 +15,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          envs: DOT_ENV_FILE
+          envs: DOT_ENV
           script: |
             # 1. เข้าไปที่โฟลเดอร์โปรเจกต์ (แก้ path ให้ตรงกับเครื่องจริง)
             cd ~/yoga-web
@@ -25,7 +25,10 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            printf "%s" "$DOT_ENV_FILE" > .env
+            printf "%s" "$DOT_ENV" > .env
+
+            ls -la .env
+            grep DATABASE_URL .env || echo "DATABASE_URL NOT FOUND IN .env"
 
             docker compose down --remove-orphans
 
@@ -39,4 +42,4 @@ jobs:
             docker image prune -f
 
         env:
-          DOT_ENV_FILE: ${{ secrets.DOT_ENV_FILE }}
+          DOT_ENV_FILE: ${{ secrets.DOT_ENV }}
