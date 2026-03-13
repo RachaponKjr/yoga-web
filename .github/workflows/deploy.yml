@@ -36,3 +36,6 @@ jobs:
 
             # 5. ลบขยะ
             docker image prune -f
+
+          env:
+            DOT_ENV_FILE: ${{ secrets.DOT_ENV_FILE }}
