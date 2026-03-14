@@ -19,9 +19,9 @@ export const createCardChargeService = async ({
 }: CreateCardChargeParams) => {
   try {
     const charge = await omise.charges.create({
-      amount: Math.round(amount * 100), // แปลงบาทเป็นสตางค์
+      amount: Math.round(amount),
       currency: "THB",
-      card: token, // ⭐ หัวใจสำคัญ: ส่ง Token แทนเลขบัตร
+      card: token,
       description: `Order ID: ${orderId}`,
       metadata: {
         orderId: orderId,
