@@ -15,6 +15,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
+          command_timeout: 30m
           # แก้ตรงนี้: ต้องชื่อเดียวกับที่ส่งมาจากด้านล่าง (บรรทัดที่ 46)
           envs: DOT_ENV_FILE
           script: |
