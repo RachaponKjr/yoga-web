@@ -69,11 +69,12 @@ const PaymentPage = () => {
 
   // 1. ยอดรวมก่อนหักส่วนลด (Subtotal)
   const subtotal = pricePerUnit * quantity;
-  
+
   // 2. ส่วนลดจากโปรโมชั่นสินค้า (Item Discount)
-  const itemDiscountTotal = discountPricePerUnit > 0 
-    ? (pricePerUnit - discountPricePerUnit) * quantity 
-    : 0;
+  const itemDiscountTotal =
+    discountPricePerUnit > 0
+      ? (pricePerUnit - discountPricePerUnit) * quantity
+      : 0;
 
   // 3. ยอดหลังหักส่วนลดสินค้า (Price after item discount)
   const priceAfterItemDiscount = subtotal - itemDiscountTotal;
@@ -86,7 +87,8 @@ const PaymentPage = () => {
 
   // 6. ยอดที่ต้องชำระจริง (Final Calculation)
   // หมายเหตุ: finalPrice จาก API คูปองควรถูกคำนวณรวมภาษีมาแล้ว แต่ถ้าเป็นยอดดิบ เราจะยึดตาม API
-  const amountToPay = couponUsed && finalPrice > 0 ? finalPrice : grandTotalBeforeCoupon;
+  const amountToPay =
+    couponUsed && finalPrice > 0 ? finalPrice : grandTotalBeforeCoupon;
 
   // --- Handlers ---
   const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,7 +177,8 @@ const PaymentPage = () => {
       }
     } catch (error: any) {
       console.error("❌ Error:", error);
-      const message = error.response?.data?.message || error.message || "Payment failed";
+      const message =
+        error.response?.data?.message || error.message || "Payment failed";
       toast.error(message);
     } finally {
       setIsProcessing(false);
@@ -242,7 +245,13 @@ const PaymentPage = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [quantity, grandTotalBeforeCoupon, couponUsed, appliedCode, verifyCouponLogic]);
+  }, [
+    quantity,
+    grandTotalBeforeCoupon,
+    couponUsed,
+    appliedCode,
+    verifyCouponLogic,
+  ]);
 
   useEffect(() => {
     if (!booking) {
@@ -261,7 +270,6 @@ const PaymentPage = () => {
     <div className="min-h-screen bg-white flex justify-center items-start py-10 md:pt-20 md:pb-20">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex flex-col-reverse lg:flex-row gap-8 max-w-7xl mx-auto relative">
-          
           {/* --- Left Column: Payment Form --- */}
           <div className="flex-1 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-slate-100">
             {/* Payment Header & Card Visual (Same as your original UI) */}
@@ -269,42 +277,57 @@ const PaymentPage = () => {
               <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                 <CreditCard size={24} />
               </div>
-              <h5 className="text-xl font-bold text-slate-800">Payment Details</h5>
+              <h5 className="text-xl font-bold text-slate-800">
+                Payment Details
+              </h5>
             </div>
 
             {/* Visual Card Display */}
             <div className="mb-8 mx-auto w-full max-w-md aspect-[1.586/1] rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white shadow-2xl relative overflow-hidden transition-all duration-300 group hover:scale-[1.02]">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
-                <div className="relative z-10 p-6 h-full flex flex-col justify-between">
-                    <div className="flex justify-between items-start">
-                        <div className="w-12 h-8 bg-white/20 rounded-md backdrop-blur-sm border border-white/10"></div>
-                        <span className="font-mono text-white/50 text-sm tracking-wider">DEBIT/CREDIT</span>
-                    </div>
-                    <div className="space-y-6">
-                        <div className="font-mono text-2xl lg:text-3xl tracking-widest drop-shadow-md">
-                            {cardDetail.cardNumber || "**** **** **** ****"}
-                        </div>
-                        <div className="flex justify-between items-end text-sm">
-                            <div className="space-y-1">
-                                <p className="text-white/40 text-[10px] uppercase tracking-wider">Card Holder</p>
-                                <p className="font-semibold tracking-wide uppercase truncate max-w-[180px]">
-                                    {cardDetail.cardHolder || "YOUR NAME"}
-                                </p>
-                            </div>
-                            <div className="space-y-1">
-                                <p className="text-white/40 text-[10px] uppercase tracking-wider">Expires</p>
-                                <p className="font-semibold tracking-widest">{cardDetail.cardExpiry || "MM/YY"}</p>
-                            </div>
-                        </div>
-                    </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+              <div className="relative z-10 p-6 h-full flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div className="w-12 h-8 bg-white/20 rounded-md backdrop-blur-sm border border-white/10"></div>
+                  <span className="font-mono text-white/50 text-sm tracking-wider">
+                    DEBIT/CREDIT
+                  </span>
                 </div>
+                <div className="space-y-6">
+                  <div className="font-mono text-2xl lg:text-3xl tracking-widest drop-shadow-md">
+                    {cardDetail.cardNumber || "**** **** **** ****"}
+                  </div>
+                  <div className="flex justify-between items-end text-sm">
+                    <div className="space-y-1">
+                      <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                        Card Holder
+                      </p>
+                      <p className="font-semibold tracking-wide uppercase truncate max-w-[180px]">
+                        {cardDetail.cardHolder || "YOUR NAME"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                        Expires
+                      </p>
+                      <p className="font-semibold tracking-widest">
+                        {cardDetail.cardExpiry || "MM/YY"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <form onSubmit={handleConfirmPayment} className="space-y-5 max-w-md mx-auto lg:max-w-none">
+            <form
+              onSubmit={handleConfirmPayment}
+              className="space-y-5 max-w-md mx-auto lg:max-w-none"
+            >
               {/* Card Inputs (Same as your original UI) */}
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">Card Number</label>
+                <label className="text-sm font-semibold text-slate-700">
+                  Card Number
+                </label>
                 <div className="relative group">
                   <div className="absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
                     <CreditCard size={18} />
@@ -322,51 +345,59 @@ const PaymentPage = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">Cardholder Name</label>
+                <label className="text-sm font-semibold text-slate-700">
+                  Cardholder Name
+                </label>
                 <div className="relative group">
-                    <div className="absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
-                        <User size={18} />
-                    </div>
-                    <input
-                        type="text"
-                        name="cardHolder"
-                        value={cardDetail.cardHolder}
-                        onChange={handleCardChange}
-                        placeholder="NAME ON CARD"
-                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all uppercase text-slate-800 placeholder:text-slate-400"
-                    />
+                  <div className="absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                    <User size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    name="cardHolder"
+                    value={cardDetail.cardHolder}
+                    onChange={handleCardChange}
+                    placeholder="NAME ON CARD"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all uppercase text-slate-800 placeholder:text-slate-400"
+                  />
                 </div>
               </div>
 
               <div className="flex gap-4">
-                  <div className="flex-1 space-y-1.5">
-                      <label className="text-sm font-semibold text-slate-700">Expiry Date</label>
-                      <input
-                          type="text"
-                          name="cardExpiry"
-                          value={cardDetail.cardExpiry}
-                          onChange={handleCardChange}
-                          maxLength={5}
-                          placeholder="MM / YY"
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-center"
-                      />
-                  </div>
-                  <div className="flex-1 space-y-1.5">
-                      <label className="text-sm font-semibold text-slate-700">CVC / CVV</label>
-                      <input
-                          type="password"
-                          name="cardCvv"
-                          value={cardDetail.cardCvv}
-                          onChange={handleCardChange}
-                          maxLength={4}
-                          placeholder="123"
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-center"
-                      />
-                  </div>
+                <div className="flex-1 space-y-1.5">
+                  <label className="text-sm font-semibold text-slate-700">
+                    Expiry Date
+                  </label>
+                  <input
+                    type="text"
+                    name="cardExpiry"
+                    value={cardDetail.cardExpiry}
+                    onChange={handleCardChange}
+                    maxLength={5}
+                    placeholder="MM / YY"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-center"
+                  />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <label className="text-sm font-semibold text-slate-700">
+                    CVC / CVV
+                  </label>
+                  <input
+                    type="password"
+                    name="cardCvv"
+                    value={cardDetail.cardCvv}
+                    onChange={handleCardChange}
+                    maxLength={4}
+                    placeholder="123"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-center"
+                  />
+                </div>
               </div>
 
               {/* Consent & Notes (Same as your original UI) */}
-              <div className={`bg-slate-50 rounded-xl p-4 border transition-colors ${isConsentAccepted ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"}`}>
+              <div
+                className={`bg-slate-50 rounded-xl p-4 border transition-colors ${isConsentAccepted ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"}`}
+              >
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -375,15 +406,21 @@ const PaymentPage = () => {
                     className="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                   />
                   <div className="flex-1 text-sm text-slate-600">
-                    <span className="font-semibold text-slate-800 block mb-1">Data Privacy & Consent</span>
-                    <p className="leading-relaxed text-xs">I agree to the collection of my data and photography/video consent for promotional purposes.</p>
+                    <span className="font-semibold text-slate-800 block mb-1">
+                      Data Privacy & Consent
+                    </span>
+                    <p className="leading-relaxed text-xs">
+                      I agree to the collection of my data and photography/video
+                      consent for promotional purposes.
+                    </p>
                   </div>
                 </label>
               </div>
 
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                 <label className="flex items-center gap-2 mb-2 font-semibold text-slate-800 text-sm">
-                  <HeartPulse size={16} className="text-rose-500" /> ข้อมูลสุขภาพ & ความต้องการเพิ่มเติม
+                  <HeartPulse size={16} className="text-rose-500" />{" "}
+                  ข้อมูลสุขภาพ & ความต้องการเพิ่มเติม
                 </label>
                 <Textarea
                   placeholder="เช่น มีอาการปวดหลัง, ผ่าตัดเข่ามา หรืออยากเน้นส่วนไหนเป็นพิเศษ..."
@@ -399,7 +436,11 @@ const PaymentPage = () => {
                 disabled={isScriptLoading || isProcessing || isValidatingCoupon}
                 className="w-full h-14 text-lg font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
               >
-                {isProcessing ? <Loader2 className="animate-spin" /> : `ชำระเงิน ฿${Math.round(amountToPay).toLocaleString()}`}
+                {isProcessing ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  `ชำระเงิน ฿${Math.round(amountToPay).toLocaleString()}`
+                )}
               </Button>
             </form>
           </div>
@@ -414,9 +455,16 @@ const PaymentPage = () => {
               <div className="p-6">
                 {/* Product Detail */}
                 <div className="flex gap-4 mb-6">
-                  <div className="w-20 h-20 bg-slate-100 rounded-xl shrink-0 bg-cover bg-center" style={{ backgroundImage: `url("${process.env.NEXT_PUBLIC_HOST_IMAGE}${booking?.cover_image}")` }}></div>
+                  <div
+                    className="w-20 h-20 bg-slate-100 rounded-xl shrink-0 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url("${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${booking?.cover_image}")`,
+                    }}
+                  ></div>
                   <div className="flex-1">
-                    <h6 className="font-bold text-slate-800 leading-tight truncate">{booking?.title}</h6>
+                    <h6 className="font-bold text-slate-800 leading-tight truncate">
+                      {booking?.title}
+                    </h6>
                     <div className="flex items-center gap-2 text-xs text-slate-600 mt-2 bg-slate-50 p-1.5 rounded">
                       <Calendar size={12} /> {dateLabel} • {timeLabel}
                     </div>
@@ -425,11 +473,23 @@ const PaymentPage = () => {
 
                 {/* Quantity */}
                 <div className="flex items-center justify-between mb-6 p-3 bg-slate-50 rounded-lg">
-                  <span className="text-sm font-medium text-slate-600">จำนวนผู้เข้าใช้งาน</span>
+                  <span className="text-sm font-medium text-slate-600">
+                    จำนวนผู้เข้าใช้งาน
+                  </span>
                   <div className="flex items-center gap-3 bg-white rounded-md border p-1">
-                    <button onClick={() => decrementQuantity()} className="p-1 hover:bg-slate-100"><Minus size={14}/></button>
+                    <button
+                      onClick={() => decrementQuantity()}
+                      className="p-1 hover:bg-slate-100"
+                    >
+                      <Minus size={14} />
+                    </button>
                     <span className="font-bold px-2">{quantity}</span>
-                    <button onClick={() => incrementQuantity()} className="p-1 hover:bg-slate-100"><Plus size={14}/></button>
+                    <button
+                      onClick={() => incrementQuantity()}
+                      className="p-1 hover:bg-slate-100"
+                    >
+                      <Plus size={14} />
+                    </button>
                   </div>
                 </div>
 
@@ -439,19 +499,31 @@ const PaymentPage = () => {
                     <input
                       type="text"
                       value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        setCouponCode(e.target.value.toUpperCase())
+                      }
                       placeholder="โค้ดส่วนลด"
                       className="flex-1 border rounded-lg px-3 py-2 uppercase font-mono text-sm"
                     />
-                    <Button variant="outline" onClick={handleApplyCoupon} disabled={isValidatingCoupon}>
-                      {isValidatingCoupon ? <Loader2 className="animate-spin w-4 h-4" /> : "ใช้โค้ด"}
+                    <Button
+                      variant="outline"
+                      onClick={handleApplyCoupon}
+                      disabled={isValidatingCoupon}
+                    >
+                      {isValidatingCoupon ? (
+                        <Loader2 className="animate-spin w-4 h-4" />
+                      ) : (
+                        "ใช้โค้ด"
+                      )}
                     </Button>
                   </div>
                   {couponUsed && (
-                     <div className="mt-2 text-xs text-emerald-600 flex justify-between items-center bg-emerald-50 p-2 rounded">
-                        <span>ใช้โค้ด {appliedCode} สำเร็จ</span>
-                        <button onClick={removeCoupon}><X size={14} /></button>
-                     </div>
+                    <div className="mt-2 text-xs text-emerald-600 flex justify-between items-center bg-emerald-50 p-2 rounded">
+                      <span>ใช้โค้ด {appliedCode} สำเร็จ</span>
+                      <button onClick={removeCoupon}>
+                        <X size={14} />
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -471,7 +543,12 @@ const PaymentPage = () => {
 
                   <div className="flex justify-between text-slate-600">
                     <span>ภาษี (7%)</span>
-                    <span>฿{taxAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span>
+                      ฿
+                      {taxAmount.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
                   </div>
 
                   {couponUsed && (
@@ -483,7 +560,9 @@ const PaymentPage = () => {
 
                   <div className="pt-4 mt-4 border-t border-slate-100 flex justify-between items-end">
                     <div>
-                      <span className="text-slate-500 text-xs">ยอดรวมสุทธิ</span>
+                      <span className="text-slate-500 text-xs">
+                        ยอดรวมสุทธิ
+                      </span>
                       <div className="text-3xl font-black text-slate-900 mt-1">
                         ฿{Math.round(amountToPay).toLocaleString()}
                       </div>
@@ -493,7 +572,6 @@ const PaymentPage = () => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
