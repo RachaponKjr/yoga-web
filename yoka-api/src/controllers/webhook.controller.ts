@@ -9,17 +9,15 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
   try {
     // Omise จะส่งข้อมูลมาใน body
     const event = req.body;
+    console.log(event, "EVENT");
     console.log("Webhook Received:", event.key);
 
-    // เราสนใจแค่ event ที่ชื่อว่า "charge.complete" (การจ่ายเงินสิ้นสุดลง)
-    if (event.key === "charge.complete") {
+    if (event.key === "charge.complete" || event.key === "charge.create") {
       const charge = event.data;
 
-      // เช็ค metadata ที่เราแอบฝากไว้ตอน createCharge (orderId)
       const orderId = charge.metadata.orderId;
 
       if (!orderId) {
-        // กรณีไม่มี Order ID แนบมา (ไม่น่าเกิดขึ้นถ้าเราเขียนถูก)
         return res.status(StatusCodes.OK).send();
       }
 
