@@ -47,6 +47,7 @@ const CourseDetailPage = ({
     selectRound.startDateTime,
     selectRound.endDateTime,
   );
+  console.log(selectRound);
 
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
@@ -331,7 +332,7 @@ const CourseDetailPage = ({
                       Note
                     </h6>
                     <p className="text-xs text-slate-500 leading-relaxed font-medium pl-3.5">
-                      {course.description ||
+                      {selectRound.description ||
                         "No special requirements for this session."}
                     </p>
                   </div>
@@ -342,7 +343,7 @@ const CourseDetailPage = ({
                       Highlights
                     </h6>
                     <p className="text-xs text-slate-500 leading-relaxed font-medium pl-3.5 line-clamp-2">
-                      {course.about}
+                      {selectRound.about}
                     </p>
                   </div>
                 </div>

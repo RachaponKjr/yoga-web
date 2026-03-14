@@ -12,61 +12,233 @@ export interface BookingEmailData {
 
 export const getBookingSuccessTemplate = async (data: BookingEmailData) => {
   return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <style>
-        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; font-family: 'Inter', -apple-system, sans-serif; }
-        .header { background-color: #4F46E5; padding: 48px 20px; text-align: center; color: white; }
-        .content { padding: 40px; }
-        .status-badge { display: inline-block; padding: 6px 12px; background: #ECFDF5; color: #059669; border-radius: 99px; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
-        .booking-details { border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; margin: 24px 0; }
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #F3F4F6; padding-bottom: 12px; }
-        .detail-row:last-child { border: none; margin: 0; padding: 0; }
-        .label { color: #6B7280; font-size: 14px; }
-        .value { color: #111827; font-weight: 600; text-align: right; }
-        .attachment-notice { display: flex; align-items: center; background: #F9FAFB; padding: 16px; border-radius: 8px; font-size: 14px; color: #4B5563; }
-        .btn { display: block; text-align: center; background: #4F46E5; color: #ffffff !important; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-top: 24px; }
-      </style>
-    </head>
-    <body style="background-color: #F3F4F6; padding: 20px;">
-      <div class="container">
-        <div class="header">
-          <div style="font-size: 32px; margin-bottom: 8px;">🧘‍♂️</div>
-          <h1 style="margin: 0; font-size: 24px;">Your mat is ready!</h1>
-          <p style="opacity: 0.9;">We've confirmed your booking at Yoga by Niti</p>
-        </div>
-        <div class="content">
-          <div class="status-badge">Confirmed Successfully</div>
-          <p>Hi ${data.customerName}, your booking is all set. We've attached your <strong>Booking Confirmation PDF</strong> to this email for your records.</p>
-          
-          <div class="booking-details">
-            <div class="detail-row">
-              <span class="label">Course</span>
-              <span class="value">${data.courseTitle}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Date & Time</span>
-              <span class="value">${data.roundDate}<br/>${data.roundTime}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Booking ID</span>
-              <span class="value">#${data.bookingId}</span>
-            </div>
-          </div>
+  <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #333333;
+    "
+  >
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center" style="padding: 40px 10px">
+          <table
+            width="100%"
+            style="
+              background-color: #ffffff;
+              border: 1px solid #eeeeee;
+              border-radius: 12px;
+              overflow: hidden;
+            "
+          >
+            <tr>
+              <td style="padding: 30px 40px 0 40px">
+                <h1
+                  style="
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: #1a1a1a;
+                  "
+                >
+                  Thank you for your booking!
+                </h1>
+              </td>
+            </tr>
 
-          <div class="attachment-notice">
-            <span>📎 <strong>Note:</strong> Your entry ticket is attached as a PDF. Please have it ready (on phone) when you arrive.</span>
-          </div>
+            <tr>
+              <td style="padding: 20px 40px 20px 40px; line-height: 1.6">
+                <p style="margin: 0 0 16px 0; font-size: 16px">
+                  Dear ${data.customerName},
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 16px">
+                  We're excited to confirm your booking. Below are your session
+                  details:
+                </p>
 
-          <a href="https://yoka-yoga-studio.com/my-booking" class="btn">Manage My Booking</a>
-        </div>
-        <div style="text-align: center; padding: 24px; color: #9CA3AF; font-size: 12px;">
-          © 2026 Yoga by Niti. All rights reserved.
-        </div>
-      </div>
-    </body>
-    </html>
+                <div
+                  style="
+                    background-color: #fcfcfc;
+                    border: 1px solid #f0f0f0;
+                    border-radius: 8px;
+                    padding: 20px;
+                  "
+                >
+                  <table
+                    width="100%"
+                    border="0"
+                    cellspacing="0"
+                    cellpadding="8"
+                  >
+                    <tr>
+                      <td
+                        width="35%"
+                        style="
+                          font-size: 14px;
+                          color: #666666;
+                          font-weight: 600;
+                        "
+                      >
+                        Course
+                      </td>
+                      <td style="font-size: 14px; color: #1a1a1a">
+                        ${data.courseTitle}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="
+                          font-size: 14px;
+                          color: #666666;
+                          font-weight: 600;
+                        "
+                      >
+                        Date
+                      </td>
+                      <td style="font-size: 14px; color: #1a1a1a">
+                        ${data.roundDate}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="
+                          font-size: 14px;
+                          color: #666666;
+                          font-weight: 600;
+                        "
+                      >
+                        Time
+                      </td>
+                      <td style="font-size: 14px; color: #1a1a1a">
+                        ${data.roundTime}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="
+                          font-size: 14px;
+                          color: #666666;
+                          font-weight: 600;
+                        "
+                      >
+                        Booking ID
+                      </td>
+                      <td style="font-size: 14px; color: #1a1a1a">
+                        #${data.bookingId}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div
+                  style="
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #f0f0f0;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0 0 12px 0;
+                      font-size: 14px;
+                      font-weight: 700;
+                      color: #1a1a1a;
+                    "
+                  >
+                    Need help or have questions?
+                  </p>
+                  <table
+                    width="100%"
+                    border="0"
+                    cellspacing="0"
+                    cellpadding="0"
+                  >
+                    <tr>
+                      <td style="padding-bottom: 8px">
+                        <span style="font-size: 14px; color: #666666"
+                          >📞 Phone:</span
+                        >
+                        <a
+                          href="tel:0812345678"
+                          style="
+                            font-size: 14px;
+                            color: #1a1a1a;
+                            text-decoration: none;
+                            margin-left: 5px;
+                          "
+                          >081-234-5678</a
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding-bottom: 8px">
+                        <span style="font-size: 14px; color: #666666"
+                          >💬 Line ID:</span
+                        >
+                        <span
+                          style="
+                            font-size: 14px;
+                            color: #1a1a1a;
+                            margin-left: 5px;
+                          "
+                          >@yokaniti</span
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span style="font-size: 14px; color: #666666"
+                          >✉️ Email:</span
+                        >
+                        <a
+                          href="mailto:support@yokaniti.com"
+                          style="
+                            font-size: 14px;
+                            color: #1a1a1a;
+                            text-decoration: none;
+                            margin-left: 5px;
+                          "
+                          >support@yokaniti.com</a
+                        >
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 0 40px 40px 40px">
+                <p style="margin: 0; font-size: 14px; color: #999999">
+                  Best Regards,<br /><strong>Yoka by Niti Team</strong>
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <table
+            width="100%"
+            max-width="600"
+            style="max-width: 600px; margin-top: 20px"
+          >
+            <tr>
+              <td align="center" style="font-size: 12px; color: #aaaaaa">
+                &copy; 2026 Yoka by Niti. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>  
   `;
 };

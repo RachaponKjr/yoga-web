@@ -36,15 +36,17 @@ const MyBooking = () => {
       const term = searchTerm.toLowerCase();
 
       // ข้อมูลที่จะใช้ค้นหา
-      const courseTitle = booking.round.course.title.toLowerCase();
+      const courseTitle = booking?.round?.course?.title.toLowerCase();
       const teacherFirstName =
-        booking.round.course.teacher.userInfo.firstName?.toLowerCase() || "";
+        booking?.round?.course?.teacher?.userInfo?.firstName?.toLowerCase() ||
+        "";
       const teacherLastName =
-        booking.round.course.teacher.userInfo.lastName?.toLowerCase() || "";
+        booking?.round?.course?.teacher?.userInfo?.lastName?.toLowerCase() ||
+        "";
       const teacherFullName = `${teacherFirstName} ${teacherLastName}`;
 
       // เช็คว่าคำค้นหา ตรงกับ ชื่อคอร์ส หรือ ชื่อครู หรือไม่
-      return courseTitle.includes(term) || teacherFullName.includes(term);
+      return courseTitle?.includes(term) || teacherFullName.includes(term);
     });
   }, [bookings, searchTerm]); // ทำงานใหม่เฉพาะตอน bookings หรือ searchTerm เปลี่ยน
 
@@ -106,8 +108,8 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
       {/* Image Section */}
       <div className="relative w-full md:w-48 aspect-video md:h-auto rounded-xl overflow-hidden bg-zinc-100 shrink-0">
         <Image
-          src={booking.round.course.cover_image}
-          alt={booking.round.course.title}
+          src={booking?.round?.course?.cover_image}
+          alt={booking?.round?.course?.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -119,17 +121,17 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
           <div className="flex justify-between items-start mb-2">
             <div>
               <h3 className="font-bold text-lg text-zinc-900 line-clamp-1">
-                {booking.round.course.title}
+                {booking?.round?.course?.title}
               </h3>
               {/* ✅ แสดงวันที่ชำระเงิน ถ้าจ่ายแล้ว */}
-              {booking.status === "PAID" && booking.paidAt && (
+              {booking?.status === "PAID" && booking?.paidAt && (
                 <p className="text-[10px] text-emerald-600 font-medium mt-0.5">
                   Paid on{" "}
-                  {format(new Date(booking.paidAt), "dd MMM yyyy, hh:mm a")}
+                  {format(new Date(booking?.paidAt), "dd MMM yyyy, hh:mm a")}
                 </p>
               )}
             </div>
-            <StatusBadge status={booking.status as BookingStatus} />
+            <StatusBadge status={booking?.status as BookingStatus} />
           </div>
 
           {/* Meta Info (Calendar & Clock) */}
@@ -137,9 +139,9 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
             <div className="flex items-center gap-1.5">
               <Calendar size={14} />
               <span>
-                {booking.round.startDateTime
+                {booking?.round?.startDateTime
                   ? format(
-                      new Date(booking.round.startDateTime),
+                      new Date(booking?.round?.startDateTime),
                       "EEE, dd MMM yyyy",
                     )
                   : "TBA"}
@@ -148,10 +150,11 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
             <div className="flex items-center gap-1.5">
               <Clock size={14} />
               <span>
-                {booking.round.startDateTime && booking.round.endDateTime ? (
+                {booking?.round?.startDateTime &&
+                booking?.round?.endDateTime ? (
                   <>
-                    {format(new Date(booking.round.startDateTime), "hh:mm a")} -{" "}
-                    {format(new Date(booking.round.endDateTime), "hh:mm a")}
+                    {format(new Date(booking?.round?.startDateTime), "hh:mm a")}{" "}
+                    - {format(new Date(booking?.round?.endDateTime), "hh:mm a")}
                   </>
                 ) : (
                   <span>-</span>
@@ -166,15 +169,17 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
           <div className="flex items-center gap-2">
             <Avatar className="size-8 border border-zinc-100">
               <AvatarImage
-                src={`https://localhost:4001/${booking.round.course.teacher.userInfo.avatar}`}
+                src={`https://localhost:4001/${booking?.round?.course?.teacher?.userInfo?.avatar}`}
               />
               <AvatarFallback className="bg-zinc-100 text-xs">
-                {booking.round.course.teacher.userInfo.firstName?.charAt(0)}
+                {booking?.round?.course?.teacher?.userInfo?.firstName?.charAt(
+                  0,
+                )}
               </AvatarFallback>
             </Avatar>
             <span className="text-sm font-medium text-zinc-700">
-              {booking.round.course.teacher.userInfo.firstName}{" "}
-              {booking.round.course.teacher.userInfo.lastName}
+              {booking?.round?.course?.teacher?.userInfo?.firstName}{" "}
+              {booking?.round?.course?.teacher?.userInfo?.lastName}
             </span>
           </div>
         </div>

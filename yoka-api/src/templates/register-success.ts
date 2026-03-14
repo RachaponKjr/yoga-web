@@ -3,39 +3,174 @@ export const getRegisterEmailTemplate = (loginLink: string) => {
   // และใช้ ${variable} เพื่อแทรกตัวแปร
   return `
     <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <style>
-        /* CSS เบื้องต้นสำหรับ Email Client */
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px; }
-        .header { background-color: #4F46E5; padding: 20px; text-align: center; color: #ffffff; }
-        .content { padding: 30px; color: #333333; line-height: 1.6; }
-        .button { display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
-        .footer { background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #6b7280; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>Welcome to Yoka by Niti! 🧘‍♀️</h1>
-        </div>
-        <div class="content">
-          <p>Thank you for registering with us. We are excited to have you on board!</p>
-          <p>Your account has been successfully created. You can now login and start booking your classes.</p>
-          
-          <div style="text-align: center;">
-            <a href="${loginLink}" class="button" style="color: #ffffff;">Login to Account</a>
-          </div>
-          
-          <p style="margin-top: 30px;">Namaste,<br>The Yoka Team</p>
-        </div>
-        <div class="footer">
-          <p>© 2026 Yoka Yoga Studio. All rights reserved.</p>
-        </div>
-      </div>
-    </body>
-    </html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #333333;
+    "
+  >
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center" style="padding: 40px 10px">
+          <table
+            width="100%"
+            style="
+              background-color: #ffffff;
+              border: 1px solid #eeeeee;
+              border-radius: 12px;
+              overflow: hidden;
+            "
+          >
+            <tr>
+              <td align="center" style="padding: 40px 40px 0 40px">
+                <div
+                  style="
+                    background-color: #f0fdf4;
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    display: inline-block;
+                    line-height: 60px;
+                    font-size: 30px;
+                  "
+                >
+                  🧘‍♂️
+                </div>
+                <h1
+                  style="
+                    margin: 20px 0 0 0;
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: #1a1a1a;
+                  "
+                >
+                  Welcome to Yoka by Niti!
+                </h1>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  padding: 20px 40px 30px 40px;
+                  line-height: 1.6;
+                  text-align: center;
+                "
+              >
+                <p style="margin: 0 0 16px 0; font-size: 16px">
+                  Hello ,
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 16px">
+                  We're so happy to have you join our community! Your account is
+                  now active, and you're ready to start your wellness journey
+                  with us.
+                </p>
+
+                <table
+                  border="0"
+                  cellspacing="0"
+                  cellpadding="0"
+                  style="margin: 0 auto"
+                >
+                  <tr>
+                    <td
+                      align="center"
+                      style="border-radius: 8px"
+                      bgcolor="#1a1a1a"
+                    >
+                      <a
+                        href="${loginLink}"
+                        target="_blank"
+                        style="
+                          font-size: 16px;
+                          font-family: Helvetica, Arial, sans-serif;
+                          color: #ffffff;
+                          text-decoration: none;
+                          border-radius: 8px;
+                          padding: 12px 30px;
+                          border: 1px solid #1a1a1a;
+                          display: inline-block;
+                          font-weight: bold;
+                        "
+                      >
+                        Login to Your Account
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin: 30px 0 0 0; font-size: 14px; color: #666666">
+                  With your account, you can book classes, track your schedule,
+                  and access exclusive content designed just for you.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 0 40px 30px 40px">
+                <div
+                  style="
+                    background-color: #fafafa;
+                    border-radius: 8px;
+                    padding: 20px;
+                    text-align: left;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0 0 10px 0;
+                      font-size: 14px;
+                      font-weight: 700;
+                    "
+                  >
+                    Need a hand getting started?
+                  </p>
+                  <p style="margin: 0; font-size: 13px; color: #666666">
+                    If you have any questions, just reply to this email or reach
+                    us at
+                    <a
+                      href="mailto:support@yokaniti.com"
+                      style="color: #1a1a1a; text-decoration: underline"
+                      >support@yokaniti.com</a
+                    >
+                  </p>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 0 40px 40px 40px; text-align: center">
+                <p style="margin: 0; font-size: 14px; color: #999999">
+                  Best Regards,<br /><strong>Yoka by Niti Team</strong>
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <table
+            width="100%"
+            max-width="600"
+            style="max-width: 600px; margin-top: 20px"
+          >
+            <tr>
+              <td align="center" style="font-size: 12px; color: #aaaaaa">
+                &copy; 2026 Yoka by Niti. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
   `;
 };

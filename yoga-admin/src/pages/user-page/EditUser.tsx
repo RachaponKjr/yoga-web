@@ -16,7 +16,6 @@ import {
   Twitter,
   Mail,
   Phone,
-  MapPin,
   Briefcase,
   Loader2,
   Camera,
