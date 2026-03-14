@@ -100,7 +100,7 @@ const CoursePage = () => {
                       <div className="w-16 h-16 shrink-0 rounded-lg bg-gray-100 overflow-hidden border border-gray-200">
                         {course?.cover_image ? (
                           <img
-                            src={`http://119.59.99.141:4001/${course?.cover_image}`}
+                            src={`https://api.yogabyniti.com/${course?.cover_image}`}
                             alt={course?.title}
                             className="w-full h-full object-cover"
                           />

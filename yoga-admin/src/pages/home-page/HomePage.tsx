@@ -255,7 +255,7 @@ const HomePage = () => {
                 className="flex items-center gap-3 p-2 rounded-2xl hover:bg-gray-50 transition-all group"
               >
                 <img
-                  src={`http://119.59.99.141:4001/${item.student.userInfo.avatar}`}
+                  src={`https://api.yogabyniti.com/${item.student.userInfo.avatar}`}
                   className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                   onError={(e: any) =>
                     (e.target.src = `https://ui-avatars.com/api/?name=${item.student.userInfo.firstName}`)

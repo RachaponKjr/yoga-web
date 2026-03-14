@@ -22,7 +22,7 @@ const UserCardMinimal = ({
   twitter?: string;
 }) => {
   const imageSrc = avatar
-    ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${avatar}`
+    ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${avatar}`
     : "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?q=80&w=2069&auto=format&fit=crop";
 
   return (

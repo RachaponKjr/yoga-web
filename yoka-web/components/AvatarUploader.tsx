@@ -67,7 +67,7 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
   // Logic การเลือกรูป: ถ้ามี preview ใหม่ใช้ preview, ถ้าไม่มีใช้ของเดิม, ถ้าไม่มีเลยใช้ default github
   const currentAvatarSrc =
     previewUrl ||
-    `${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${userInfo?.avatar}` ||
+    `${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${userInfo?.avatar}` ||
     "https://github.com/shadcn.png";
 
   return (

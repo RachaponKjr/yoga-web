@@ -24,7 +24,7 @@ const BookingPage = () => {
   const fetchBookings = useCallback(async () => {
     try {
       const response = await bookingService.getAllBooking();
-      (response);
+      response;
       setBookings(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -158,7 +158,7 @@ const BookingPage = () => {
                       <div className="flex items-center gap-3">
                         {/* ผมใส่ Avatar placeholder ให้เผื่อรูปไม่มี */}
                         <img
-                          src={`${"http://119.59.99.141:4001/"}${
+                          src={`${"https://api.yogabyniti.com/"}${
                             booking.student.userInfo.avatar || ""
                           }`}
                           alt={booking.student.email}

@@ -8,7 +8,7 @@ import DelUser from "./DelUser";
 import RegisterUser from "./RegisterUser";
 
 // กำหนด Base URL รูป
-const BASE_IMG_URL = "http://api.yogabyniti.com/";
+const BASE_IMG_URL = "https://api.yogabyniti.com/";
 
 interface UserProps extends UserType {
   createdAt: string;
