@@ -34,7 +34,7 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
               <div className="group cursor-pointer">
                 <div className="relative w-full aspect-3/4 bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 ease-out">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${instructor.userInfo.avatar}`}
+                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${instructor.userInfo.avatar}`}
                     alt={`${instructor.userInfo.firstName} ${instructor.userInfo.lastName}`}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
@@ -76,7 +76,7 @@ const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
                   {/* Gradient สำหรับมือถือเพื่อให้ text อ่านง่าย */}
                   {instructor.userInfo.avatar ? (
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${instructor.userInfo.avatar}`}
+                      src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${instructor.userInfo.avatar}`}
                       alt={`${instructor.userInfo.firstName} ${instructor.userInfo.lastName}`}
                       fill
                       className="object-cover"

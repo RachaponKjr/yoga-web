@@ -12,7 +12,7 @@ const ProductItem = ({ course }: { course: CourseType }) => {
 
       <div className="w-full aspect-16/14 bg-tertiary/20 rounded-2xl z-10 relative overflow-hidden">
         <Image
-          src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course?.cover_image}`}
+          src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${course?.cover_image}`}
           alt={course?.title}
           fill
           className="object-cover object-center"

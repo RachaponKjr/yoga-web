@@ -33,6 +33,7 @@ app.use(
       "http://119.59.99.141:3002", // IP จริงของ Admin
       "http://localhost:3000", // เผื่อเทส Local
       "http://localhost:5173",
+      "http://yogabyniti.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,

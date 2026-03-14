@@ -132,7 +132,7 @@ const CourseDetailPage = ({
                 onClick={() => setSelectedImg(course.cover_image)}
               >
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.cover_image}`}
+                  src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${course.cover_image}`}
                   className="w-full h-full object-cover transition-all duration-700 group-hover/main:scale-105"
                   alt="Main Course Image"
                   fill
@@ -205,7 +205,7 @@ const CourseDetailPage = ({
               <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start">
                 <Avatar className="size-28 border-4 border-white/20 shadow-2xl">
                   <AvatarImage
-                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${course.teacher?.userInfo?.avatar}`}
+                    src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${course.teacher?.userInfo?.avatar}`}
                     className="object-cover"
                   />
                   <AvatarFallback className="bg-emerald-500 text-3xl font-bold">

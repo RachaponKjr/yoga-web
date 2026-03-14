@@ -237,7 +237,7 @@ const UserDropdown = ({ user }: UserProps) => {
             <AvatarImage
               src={
                 user?.userInfo?.avatar
-                  ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://119.59.99.141:4001/"}${user?.userInfo?.avatar}`
+                  ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "http://api.yogabyniti.com/"}${user?.userInfo?.avatar}`
                   : "https://github.com/shadcn.png"
               }
               className="object-cover"
