@@ -9,7 +9,7 @@ export const BookingSchema = z.object({
   price: z.number(),
   roundId: z.string(),
   type: z.enum(["ONLINE", "WALK_IN"]),
-  status: z.enum(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"]),
+  status: z.enum(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED", "PAID"]),
   paidAt: z.string().nullable(),
   paymentId: z.string().nullable(),
   description: z.string().nullable(),

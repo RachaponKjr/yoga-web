@@ -10,7 +10,6 @@ import { BookingType } from "@/types/booking.type";
 import { bookingService } from "@/service/booking.service";
 import { useAuthStore } from "@/store/useAuthStore";
 
-// --- Mock Data Types ---
 type BookingStatus = "PENDING" | "PAID" | "CANCELLED";
 
 const MyBooking = () => {
@@ -104,7 +103,7 @@ const MyBooking = () => {
 const BookingCard = ({ booking }: { booking: BookingType }) => {
   return (
     <div className="group bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-300 flex flex-col md:flex-row gap-5">
-      {/* Image */}
+      {/* Image Section */}
       <div className="relative w-full md:w-48 aspect-video md:h-auto rounded-xl overflow-hidden bg-zinc-100 shrink-0">
         <Image
           src={booking.round.course.cover_image}
@@ -114,17 +113,26 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
         />
       </div>
 
-      {/* Content */}
+      {/* Content Section */}
       <div className="flex-1 flex flex-col justify-between py-1">
         <div>
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-lg text-zinc-900 line-clamp-1">
-              {booking.round.course.title}
-            </h3>
+            <div>
+              <h3 className="font-bold text-lg text-zinc-900 line-clamp-1">
+                {booking.round.course.title}
+              </h3>
+              {/* ✅ แสดงวันที่ชำระเงิน ถ้าจ่ายแล้ว */}
+              {booking.status === "PAID" && booking.paidAt && (
+                <p className="text-[10px] text-emerald-600 font-medium mt-0.5">
+                  Paid on{" "}
+                  {format(new Date(booking.paidAt), "dd MMM yyyy, hh:mm a")}
+                </p>
+              )}
+            </div>
             <StatusBadge status={booking.status as BookingStatus} />
           </div>
 
-          {/* Meta Info */}
+          {/* Meta Info (Calendar & Clock) */}
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500 mb-4">
             <div className="flex items-center gap-1.5">
               <Calendar size={14} />
@@ -132,7 +140,7 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
                 {booking.round.startDateTime
                   ? format(
                       new Date(booking.round.startDateTime),
-                      "EEE, dd MMM yyyy"
+                      "EEE, dd MMM yyyy",
                     )
                   : "TBA"}
               </span>
@@ -153,11 +161,10 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
           </div>
         </div>
 
-        {/* Footer: Instructor & Price */}
+        {/* Footer: Instructor */}
         <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
           <div className="flex items-center gap-2">
             <Avatar className="size-8 border border-zinc-100">
-              {/* ตรวจสอบ URL รูปภาพให้ดีว่าต้องมี http หรือไม่ */}
               <AvatarImage
                 src={`https://localhost:4001/${booking.round.course.teacher.userInfo.avatar}`}
               />

@@ -116,6 +116,7 @@ const getBookingByUserIdService = async ({ id }: { id: string }) => {
       },
       // student: true,
     },
+    orderBy: { createdAt: "desc" },
   });
 
   return res;
