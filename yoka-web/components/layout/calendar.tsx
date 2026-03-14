@@ -313,12 +313,25 @@ const Calendar = () => {
 
                     <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200/60">
                       <div className="flex flex-col">
-                        <span className="text-xs text-gray-400">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500 mb-0.5">
                           ราคาต่อท่าน
                         </span>
-                        <span className="text-lg font-bold text-blue-600">
-                          ฿{event.course.price.toLocaleString()}
-                        </span>
+                        <div className="flex items-baseline gap-2">
+                          {event.course.discount_price ? (
+                            <>
+                              <span className="text-2xl font-extrabold text-blue-600">
+                                ฿{event.course.discount_price.toLocaleString()}
+                              </span>
+                              <span className="text-sm font-medium text-gray-400 line-through">
+                                ฿{event.course.price.toLocaleString()}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-2xl font-extrabold text-blue-600">
+                              ฿{event.course.price.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <Button

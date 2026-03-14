@@ -12,10 +12,9 @@ export const chargeCardController = async (req: Request, res: Response) => {
       throw new AppError("Omise Token is required", StatusCodes.BAD_REQUEST);
     }
 
-    // 1. ดึงข้อมูล Order เพื่อเอายอดเงินจริง (ห้ามเชื่อยอดเงินจาก Frontend)
     const order = await prisma.booking.findUnique({
       where: { id: orderId },
-      include: { student: true }, // ดึง email user มาด้วย (ถ้ามี)
+      include: { student: true },
     });
 
     if (!order) {
@@ -25,7 +24,7 @@ export const chargeCardController = async (req: Request, res: Response) => {
     // 2. สั่งตัดบัตร
     const charge = await createCardChargeService({
       couponId: couponId,
-      amount: order.price,
+      amount: order.price * 100,
       token: omiseToken,
       orderId: order.id,
       email: order.student?.email,
