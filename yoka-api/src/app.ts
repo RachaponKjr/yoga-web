@@ -29,10 +29,12 @@ app.use(
 app.use(
   cors({
     origin: [
-      "http://localhost:3000", // เผื่อเทส Local
+      "http://localhost:3000",
       "http://localhost:5173",
+      "https://yogabyniti.com",
+      "https://www.yogabyniti.com",
+      "https://admin.yogabyniti.com",
       "http://yogabyniti.com",
-      "http://api.yogabyniti.com",
       "http://admin.yogabyniti.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
