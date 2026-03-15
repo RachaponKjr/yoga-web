@@ -105,7 +105,7 @@ export default function ReviewSection() {
 
                   {/* Profile Section - ติดอยู่ด้านล่างสุดเสมอ */}
                   <div className="flex items-center gap-4 border-t pt-2 md:pt-0 border-gray-50 mt-auto">
-                    <div className="relative w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden ring-4 ring-[#FEFAE0] shrink-0">
+                    <div className="relative w-8 h-8 md:w-14 md:h-14 rounded-full overflow-hidden ring-4 ring-[#FEFAE0] shrink-0">
                       <Image
                         src={item.avatarUrl || item.avatarUrl}
                         alt={item.name}

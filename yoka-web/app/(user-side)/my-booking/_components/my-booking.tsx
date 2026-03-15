@@ -108,7 +108,7 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
       {/* Image Section */}
       <div className="relative w-full md:w-48 aspect-video md:h-auto rounded-xl overflow-hidden bg-zinc-100 shrink-0">
         <Image
-          src={booking?.round?.course?.cover_image}
+          src={`${process.env.NEXT_PUBLIC_API_URL}${booking?.round?.course?.cover_image}`}
           alt={booking?.round?.course?.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -169,7 +169,7 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
           <div className="flex items-center gap-2">
             <Avatar className="size-8 border border-zinc-100">
               <AvatarImage
-                src={`https://localhost:4001/${booking?.round?.course?.teacher?.userInfo?.avatar}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}${booking?.round?.course?.teacher?.userInfo?.avatar}`}
               />
               <AvatarFallback className="bg-zinc-100 text-xs">
                 {booking?.round?.course?.teacher?.userInfo?.firstName?.charAt(

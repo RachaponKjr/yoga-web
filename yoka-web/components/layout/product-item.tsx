@@ -25,7 +25,7 @@ const ProductItem = ({ course }: { course: CourseType }) => {
         </p>
       </div>
       <div className="flex justify-between items-center z-10 relative">
-        <span className="text-xl font-semibold">{course?.price}$</span>
+        <span className="text-xl font-semibold">{course?.price} ฿</span>
         <Button
           onClick={() => router.push(`/course?courseId=${course?.id}`)}
           className="rounded-full text-white bg-[#3D552F] hover:bg-[#3D552F] cursor-pointer shadow-md"

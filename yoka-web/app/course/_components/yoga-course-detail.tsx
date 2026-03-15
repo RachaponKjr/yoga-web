@@ -123,7 +123,7 @@ const CourseDetailPage = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* --- Left Content (Main - 8 cols) --- */}
-          <div className="lg:col-span-7 flex flex-col gap-12">
+          <div className="lg:col-span-7 flex flex-col gap-6 md:gap-12">
             {/* --- Gallery Grid --- */}
             <div className="grid grid-cols-1 md:grid-col-1 gap-3 h-[300px] md:h-[650px]">
               {/* รูปหลัก (Feature Image) */}
@@ -186,12 +186,12 @@ const CourseDetailPage = ({
             </div> */}
 
             {/* Description */}
-            <div className="bg-white ">
+            <div className="bg-white">
               <h3 className="text-xl uppercase font-bold text-slate-900 mb-4 flex items-center gap-2">
                 About this course
               </h3>
               <div className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed">
-                <p className="text-slate-600 whitespace-pre-wrap font-medium">
+                <p className="text-slate-600 whitespace-pre-wrap text-sm md:text-base font-medium">
                   {course.about || "ไม่พบข้อมูล"}
                 </p>
               </div>
@@ -212,7 +212,7 @@ const CourseDetailPage = ({
                     {course.teacher?.userInfo?.firstName?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="text-center md:text-left space-y-4">
+                <div className="text-center md:text-left space-y-2 md:space-y-4">
                   <div>
                     <span className="text-emerald-400 font-bold text-xs uppercase tracking-[0.2em]">
                       Certified Instructor
@@ -222,7 +222,7 @@ const CourseDetailPage = ({
                       {course.teacher?.userInfo?.lastName}
                     </h3>
                   </div>
-                  <p className="text-slate-300 leading-relaxed max-w-xl italic line-clamp-5">
+                  <p className="text-slate-300 leading-relaxed max-w-xl text-sm md:text-base italic line-clamp-5">
                     &quot;
                     {course.teacher?.userInfo?.experience ||
                       "With years of practice, I focus on harmonizing body and mind through movement."}

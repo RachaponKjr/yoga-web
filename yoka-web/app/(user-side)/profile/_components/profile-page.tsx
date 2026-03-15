@@ -87,12 +87,12 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen py-24 bg-gray-50/30">
+    <div className="min-h-screen py-12 md:py-24 bg-gray-50/30">
       <div className="container max-w-5xl mx-auto flex flex-col gap-6 px-4">
         <div className="bg-white rounded-3xl shadow-sm border border-gray-200/60 overflow-hidden">
           <div className="h-32 bg-linear-to-r from-indigo-50 to-slate-50 border-b border-gray-100"></div>
 
-          <div className="px-8 pb-8 -mt-12">
+          <div className="px-4 md:px-8 pb-8 -mt-12">
             {/* Profile Header */}
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-10">
               <div className="relative">
@@ -271,7 +271,7 @@ const ProfilePage = () => {
                 <Button
                   onClick={handleSave}
                   disabled={isLoading}
-                  className="w-full h-12 rounded-2xl bg-indigo-600"
+                  className="w-full h-12 rounded-2xl bg-[#3D552F] text-white"
                 >
                   {isLoading ? (
                     <Loader2 className="animate-spin" />

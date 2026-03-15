@@ -112,8 +112,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="z-50 relative">
-          <h1 className="text-2xl font-bold tracking-tight text-primary">
-            Yoga Studio<span className="text-tertiary">.</span>
+          <h1 className="text-lg md:text-2xl font-bold tracking-tight text-primary">
+            Yoga By Niti<span className="text-tertiary">.</span>
           </h1>
         </Link>
 
@@ -226,7 +226,7 @@ const UserDropdown = ({ user }: UserProps) => {
       <DropdownMenuTrigger asChild>
         <div className="flex min-w-max items-center gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm">
           <div className="flex-col items-end flex w-full">
-            <span className="text-sm font-semibold text-foreground/90 max-w-full truncate">
+            <span className="text-xs md:text-sm font-semibold text-foreground/90 max-w-full truncate">
               {displayName || "ไม่พบข้อมูล"}
             </span>
             <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-bold">
@@ -287,7 +287,10 @@ const UserDropdown = ({ user }: UserProps) => {
               Admin Panel
             </DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href="/admin/dashboard" className="cursor-pointer">
+              <Link
+                href="https://admin.yogabyniti.com"
+                className="cursor-pointer"
+              >
                 Admin Dashboard
               </Link>
             </DropdownMenuItem>
