@@ -8,7 +8,6 @@ import { Toaster } from "sonner";
 import AuthHydrator from "@/components/AuthHydrator";
 import { headers } from "next/headers";
 import Footer from "@/components/layout/footer";
-import SmoothScrolling from "@/components/SmoothScrolling";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +20,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yoga Studio.",
-  description: "Yoga Studio.",
+  title: "Yoga By Niti | สอนโยคะ และอาหารเพื่อสุขภาพ",
+  description:
+    "ฝึกโยคะเพื่อสุขภาพกับ Yoga By Niti คลาสสำหรับมือใหม่และผู้เชี่ยวชาญ พร้อมบริการอาหารคลีน อาหารเพื่อสุขภาพที่คัดสรรวัตถุดิบอย่างดี",
+  keywords: [
+    "สอนโยคะ",
+    "ร้านอาหารสุขภาพ",
+    "Yoga Studio",
+    "อาหารคลีน",
+    "ฝึกโยคะมือใหม่",
+  ],
 };
 
 export default async function RootLayout({

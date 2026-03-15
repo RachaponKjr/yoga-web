@@ -3,6 +3,7 @@ import { sendResponse } from "../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { BookingSchema } from "../types/order.type";
 import {
+  checkStatusService,
   createBookingService,
   getAllBookingService,
   getBookingByIdService,
@@ -17,7 +18,7 @@ interface AuthenticatedRequest extends Request {
 
 const createBookingController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const user = req.user;
@@ -71,7 +72,7 @@ const createBookingController = async (
 
 const getAllBookingController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { limit, offset } = req.query;
@@ -110,7 +111,7 @@ const getAllBookingController = async (
 
 const getBookingByIdController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { id } = req.params as { id: string };
@@ -143,7 +144,7 @@ const getBookingByIdController = async (
 
 const getBookingByUserIdController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { id } = req.user;
@@ -176,7 +177,7 @@ const getBookingByUserIdController = async (
 
 const updateBookingController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const { id } = req.params as { id: string };
@@ -214,13 +215,13 @@ const updateBookingController = async (
       await mailService.sendEmail(
         updateBookingRes.student.email,
         "Booking Payment Success",
-        "Booking Payment Success"
+        "Booking Payment Success",
       );
     } else if (status && status === "CANCELLED" && updateBookingRes.student) {
       await mailService.sendEmail(
         updateBookingRes.student.email,
         "Booking Cancellation Success",
-        "Booking Cancellation Success"
+        "Booking Cancellation Success",
       );
     }
 
@@ -241,10 +242,53 @@ const updateBookingController = async (
   }
 };
 
+const checkStatusController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const { bookingId } = req.query as { bookingId: string };
+
+    if (!bookingId) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: "Booking ID is required!",
+      });
+      return;
+    }
+
+    const checkStatusRes = await checkStatusService({ bookingId });
+    if (!checkStatusRes) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "Booking not found!",
+      });
+      return;
+    }
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Booking status checked successfully",
+      data: checkStatusRes,
+    });
+    return;
+  } catch (err) {
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: "Server error!",
+    });
+    return;
+  }
+};
+
 export {
   createBookingController,
   getAllBookingController,
   getBookingByIdController,
   getBookingByUserIdController,
   updateBookingController,
+  checkStatusController,
 };

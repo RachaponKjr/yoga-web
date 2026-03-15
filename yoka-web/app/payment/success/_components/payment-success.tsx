@@ -1,140 +1,270 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Check, Calendar, Home, ArrowRight, Download } from "lucide-react";
+import {
+  Check,
+  Calendar,
+  Home,
+  Download,
+  AlertCircle,
+  RefreshCw,
+  Clock,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion"; // แนะนำให้ลงเพิ่ม: npm install framer-motion
+import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import http from "@/lib/http";
+import { BookingType } from "@/types/booking.type";
 
 const PaymentSuccessPage = () => {
-  const mockData = {
-    amount: 1500.0,
-    refId: "INV-20260313",
-    date: new Date().toLocaleDateString("th-TH", {
+  const [status, setStatus] = useState<"loading" | "success" | "timeout">(
+    "loading",
+  );
+  const searchParams = useSearchParams();
+  const bookingId = searchParams.get("bookingId");
+  const [seconds, setSeconds] = useState(0);
+  const [booking, setBooking] = useState<BookingType | null>(null);
+
+  const formatThaiDate = (date: string | Date, showTime = true) => {
+    return new Date(date).toLocaleString("th-TH", {
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-    courseName: "Vinyasa Yoga Flow - Morning Bliss",
+      ...(showTime && { hour: "2-digit", minute: "2-digit" }),
+    });
   };
 
+  const formatTime = (dateTime: string | Date) => {
+    return new Date(dateTime).toLocaleTimeString("th-TH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
+  const checkPaymentStatus = useCallback(async () => {
+    if (!bookingId) return;
+    try {
+      const { data } = await http.get("/booking/check-status", {
+        params: { bookingId },
+      });
+      if (data.data.status === "PAID") {
+        setBooking(data.data);
+        setStatus("success");
+      }
+    } catch (error) {
+      console.error("Verification failed", error);
+    }
+  }, [bookingId]);
+
+  useEffect(() => {
+    if (status !== "loading") return;
+
+    const interval = setInterval(() => {
+      setSeconds((prev) => {
+        const nextValue = prev + 5;
+        if (nextValue >= 30) {
+          clearInterval(interval);
+          setStatus("timeout");
+          return nextValue;
+        }
+        checkPaymentStatus();
+        return nextValue;
+      });
+    }, 5000);
+
+    checkPaymentStatus();
+    return () => clearInterval(interval);
+  }, [status, checkPaymentStatus]);
+
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-center p-6 font-sans">
-      <motion.main
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-xl w-full"
-      >
-        <div className="bg-white border border-gray-100 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] p-8 md:p-12 relative overflow-hidden">
-          {/* Decorative Background Element */}
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-green-50 rounded-full blur-3xl opacity-50" />
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-50 rounded-full blur-3xl opacity-50" />
-
-          {/* Success Animated Icon */}
-          <div className="flex justify-center mb-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-              className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-200"
-            >
-              <Check className="w-12 h-12 text-white" strokeWidth={3} />
-            </motion.div>
-          </div>
-
-          {/* Header Texts */}
-          <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
-              ชำระเงินเรียบร้อยแล้ว
-            </h1>
-            <p className="text-gray-500 text-lg">
-              เราเตรียมเสื่อไว้รอคุณแล้วที่{" "}
-              <span className="text-indigo-600 font-semibold">
-                Yoga by Niti
-              </span>
+    <div className="min-h-[calc(100vh-5rem)] bg-gray-50/30 flex flex-col items-center justify-center p-4 md:p-6 font-sans">
+      <AnimatePresence mode="wait">
+        {/* --- 1. Loading State --- */}
+        {status === "loading" && (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center text-center"
+          >
+            <div className="relative mb-8">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full"
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              กำลังตรวจสอบยอดชำระ
+            </h2>
+            <p className="text-gray-500 text-sm">
+              กรุณารอสักครู่ ระบบกำลังดึงข้อมูลการจองของคุณ...
             </p>
-          </div>
+          </motion.div>
+        )}
 
-          {/* Receipt Content */}
-          <div className="bg-gray-50/50 rounded-3xl p-6 mb-10 border border-gray-50">
-            <div className="text-center mb-6">
-              <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">
-                Total Paid
-              </p>
-              <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight">
-                <span className="text-2xl font-medium mr-1">฿</span>
-                {mockData.amount.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                })}
-              </h2>
-            </div>
-
-            <div className="space-y-4 pt-6 border-t border-dashed border-gray-200">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">คลาสเรียน</span>
-                <span className="text-gray-900 font-semibold">
-                  {mockData.courseName}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">หมายเลขอ้างอิง</span>
-                <span className="text-gray-900 font-mono">
-                  {mockData.refId}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">วันที่ทำรายการ</span>
-                <span className="text-gray-900">{mockData.date}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-1 gap-4">
-            <Link href="/my-booking" className="w-full">
-              <Button className="w-full h-14 rounded-2xl bg-gray-900 hover:bg-black text-white text-lg font-semibold transition-all hover:shadow-xl hover:-translate-y-1">
-                <Calendar className="w-5 h-5 mr-2" />
-                เช็คตารางเรียนของคุณ
-              </Button>
-            </Link>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Link href="/">
-                <Button
-                  variant="outline"
-                  className="w-full h-14 rounded-2xl border-gray-200 text-gray-600 hover:bg-gray-50"
+        {/* --- 2. Success State --- */}
+        {status === "success" && booking && (
+          <motion.main
+            key="success"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-lg w-full"
+          >
+            <div className="bg-white border border-gray-100 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.05)] overflow-hidden">
+              {/* Top Section: Icon & Headline */}
+              <div className="pt-10 pb-6 px-8 text-center relative">
+                <div className="absolute top-0 left-0 w-full h-24 bg-linear-to-b from-green-50/50 to-transparent -z-10" />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                  className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-100 mx-auto mb-6"
                 >
-                  <Home className="w-5 h-5 mr-2" />
-                  หน้าหลัก
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                className="w-full h-14 rounded-2xl border-gray-200 text-indigo-600 hover:bg-indigo-50 border-indigo-100"
-                onClick={() => window.print()} // หรือเรียกฟังก์ชันโหลด PDF ที่เราทำตะกี้
-              >
-                <Download className="w-5 h-5 mr-2" />
-                ใบเสร็จ PDF
-              </Button>
-            </div>
-          </div>
+                  <Check className="w-10 h-10 text-white" strokeWidth={3} />
+                </motion.div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+                  ชำระเงินสำเร็จ
+                </h1>
+                <p className="text-gray-500">จองคลาสเรียนของคุณเรียบร้อยแล้ว</p>
+              </div>
 
-          {/* Helpful Footer */}
-          <p className="text-center mt-10 text-gray-400 text-sm">
-            ระบบได้ส่งใบยืนยันการจองไปที่อีเมลของคุณเรียบร้อยแล้ว <br />
-            ต้องการความช่วยเหลือ?{" "}
-            <Link
-              href="/contact"
-              className="text-indigo-500 font-medium hover:underline"
-            >
-              ติดต่อเรา
-            </Link>
-          </p>
-        </div>
-      </motion.main>
+              {/* Main Content Card */}
+              <div className="px-8 pb-10">
+                <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 mb-8">
+                  {/* Amount Section */}
+                  <div className="text-center pb-6 mb-6 border-b border-dashed border-gray-200">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">
+                      ยอดชำระรวม
+                    </p>
+                    <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+                      <span className="text-xl font-medium mr-1 text-gray-500">
+                        ฿
+                      </span>
+                      {booking.price.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </h2>
+                  </div>
+
+                  {/* Details List */}
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start text-sm">
+                      <span className="text-gray-400 shrink-0">คลาสเรียน</span>
+                      <span className="text-gray-900 font-semibold text-right leading-tight">
+                        {booking.round.course.title}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-400">หมายเลขอ้างอิง</span>
+                      <span className="text-gray-900 font-mono text-[12px]">
+                        {booking.id}
+                      </span>
+                    </div>
+
+                    {/* Schedule Row: Clean Minimalist Style */}
+                    <div className="pt-4 mt-2 border-t flex justify-between border-gray-100">
+                      <span className="text-gray-400">วันเวลาเรียน</span>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5">
+                          <Calendar className="w-4 h-4 text-gray-500" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {formatThaiDate(booking.round.startDateTime, false)}
+                          </p>
+                          <p className="text-[13px] text-gray-500 flex items-center gap-1.5 mt-0.5">
+                            <Clock className="w-3.5 h-3.5" />
+                            {formatTime(booking.round.startDateTime)} -{" "}
+                            {formatTime(booking.round.endDateTime)} น.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col gap-4">
+                  <Link href="/my-booking">
+                    <Button className="w-full h-14 rounded-2xl bg-gray-900 hover:bg-black text-white text-base font-semibold shadow-lg shadow-gray-200 transition-all active:scale-95">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      เช็คตารางเรียนทั้งหมด
+                    </Button>
+                  </Link>
+                  <div className="grid grid-cols-ๅ gap-3">
+                    <Link href="/">
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 rounded-2xl border-gray-200 text-gray-600 hover:bg-gray-50"
+                      >
+                        <Home className="w-4 h-4 mr-2" /> หน้าหลัก
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                <p className="text-center mt-8 text-xs text-gray-400 leading-relaxed">
+                  ระบบได้ส่งอีเมลยืนยันการจองไปให้คุณเรียบร้อยแล้ว
+                  <br />
+                  หากมีข้อสงสัย{" "}
+                  <Link
+                    href="/contact"
+                    className="text-indigo-600 hover:underline"
+                  >
+                    ติดต่อเรา
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </motion.main>
+        )}
+
+        {/* --- 3. Timeout State --- */}
+        {status === "timeout" && (
+          <motion.div
+            key="timeout"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-md w-full bg-white border border-gray-100 rounded-[2.5rem] p-8 md:p-10 shadow-xl text-center"
+          >
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-3">
+              ไม่พบข้อมูลการชำระเงิน
+            </h2>
+            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              เรายังไม่ได้รับการยืนยันรายการในเวลาที่กำหนด
+              หากคุณมั่นใจว่าชำระเงินเรียบร้อยแล้ว
+              กรุณากดตรวจสอบอีกครั้งหรือเตรียมหลักฐานเพื่อติดต่อเจ้าหน้าที่
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={() => {
+                  setStatus("loading");
+                  setSeconds(0);
+                }}
+                className="w-full h-14 rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-100"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" /> ตรวจสอบอีกครั้ง
+              </Button>
+              <Link
+                href="/contact"
+                className="text-sm text-gray-400 hover:text-gray-600 transition-colors pt-2"
+              >
+                ต้องการความช่วยเหลือ?
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

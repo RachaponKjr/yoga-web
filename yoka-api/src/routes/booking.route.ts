@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware, restrictTo } from "../middlewares/auth.middleware";
 import {
+  checkStatusController,
   createBookingController,
   getAllBookingController,
   getBookingByIdController,
@@ -14,21 +15,22 @@ router.get(
   "/all-booking",
   authMiddleware,
   restrictTo("Admin"),
-  getAllBookingController
+  getAllBookingController,
 );
+router.get("/check-status", authMiddleware, checkStatusController);
 router.get("/:id", authMiddleware, getBookingByIdController);
 router.get("/booking-user/:id", authMiddleware, getBookingByUserIdController);
 router.patch(
   "/update-booking/:id",
   authMiddleware,
   restrictTo("Admin"),
-  updateBookingController
+  updateBookingController,
 );
 router.delete(
   "/delete-booking/:id",
   authMiddleware,
   restrictTo("Admin"),
-  () => {}
+  () => {},
 );
 
 export default router;

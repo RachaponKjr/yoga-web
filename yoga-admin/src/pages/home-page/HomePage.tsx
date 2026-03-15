@@ -103,7 +103,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="bg-gray-50/50 font-sans p-4 space-y-6">
+    <div className="bg-gray-50/50 font-sans space-y-4">
       {/* 1. Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -114,7 +114,7 @@ const HomePage = () => {
             ยินดีต้อนรับกลับ, สรุปภาพรวมของวันนี้ 👋
           </p>
         </div>
-        <div className="bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-2">
+        <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
           <Calendar size={16} className="text-indigo-500" />
           <span className="text-sm font-semibold text-gray-600">
             {format(new Date(), "eeee d MMMM yyyy", { locale: th })}
@@ -127,7 +127,7 @@ const HomePage = () => {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
+            className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
           >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
@@ -147,9 +147,9 @@ const HomePage = () => {
       </div>
 
       {/* 3. Main Content Grid (Middle Section) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Rounds Table */}
-        <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center">
             <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
               <Clock size={20} className="text-indigo-600" /> ตารางรอบเรียน
@@ -244,7 +244,7 @@ const HomePage = () => {
         </div>
 
         {/* Recent Bookings */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
           <h2 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-green-500" /> การจองล่าสุด
           </h2>
@@ -278,7 +278,7 @@ const HomePage = () => {
           </div>
           <Link
             to="/bookings"
-            className="w-full mt-6 py-3 rounded-2xl bg-gray-50 text-[11px] font-bold text-gray-500 hover:bg-indigo-600 hover:text-white flex justify-center transition-all uppercase tracking-widest"
+            className="w-full mt-6 py-3 rounded-2xl hover:text-white! bg-gray-50 text-[11px] font-bold text-gray-500 hover:bg-indigo-600 flex justify-center transition-all uppercase tracking-widest"
           >
             ดูประวัติทั้งหมด
           </Link>
@@ -286,7 +286,7 @@ const HomePage = () => {
       </div>
 
       {/* 4. Bottom Section: Country Monitor (Long & Detailed) */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-50">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-blue-50 rounded-xl text-blue-600">

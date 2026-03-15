@@ -14,7 +14,9 @@ export const BookingSchema = z.object({
   paymentId: z.string().nullable(),
   description: z.string().nullable(),
   createdAt: z.string(),
-  round: RoundCourseSchema,
+  round: RoundCourseSchema.extend({
+    course: CourseSchema,
+  }),
 });
 
 export type BookingType = z.infer<typeof BookingSchema>;

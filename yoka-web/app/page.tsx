@@ -9,6 +9,7 @@ import { authService } from "@/service/auth.service";
 import { UserInfoType, UserType } from "@/types/auth.type";
 import PortfolioGallery from "./_components/gallory";
 import About from "./_components/about";
+import ReviewSection from "@/components/Review";
 
 interface InstructorProps extends UserType {
   userInfo: UserInfoType;
@@ -25,6 +26,7 @@ export default async function Home() {
         <div className="flex flex-col gap-4 md:gap-12 bg-[#FDFCF8] py-8 md:py-24">
           <DetailRestaurant />
           <About />
+          <ReviewSection />
         </div>
         <Instructors data={data} />
       </div>

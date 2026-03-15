@@ -1,30 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react"; // เพิ่ม icon X
-import { Highlighter } from "@/components/ui/highlighter";
-
-import image1 from "@/assets/images/gallory/CC__2033.jpg";
-import image2 from "@/assets/images/gallory/CC__2039.jpg";
-import image3 from "@/assets/images/gallory/CC__2048.jpg";
-import image4 from "@/assets/images/gallory/CC__2063.jpg";
-import image5 from "@/assets/images/gallory/CC__2066.jpg";
-import image6 from "@/assets/images/gallory/CC__2070.jpg";
-import image7 from "@/assets/images/gallory/CC__2091.jpg";
-import image8 from "@/assets/images/gallory/CC__2096.jpg";
-import image9 from "@/assets/images/gallory/CC__2117.jpg";
-import image10 from "@/assets/images/gallory/CC__2137.jpg";
-import image11 from "@/assets/images/gallory/CC__2145.jpg";
-import image12 from "@/assets/images/gallory/CC__2152.jpg";
-import image13 from "@/assets/images/gallory/CC__2195.jpg";
-import image14 from "@/assets/images/gallory/CC__2231.jpg";
-import image15 from "@/assets/images/gallory/CC__2244.jpg";
-import image16 from "@/assets/images/gallory/CC__2245.jpg";
-import image17 from "@/assets/images/gallory/CC__2346.jpg";
-import image18 from "@/assets/images/gallory/CC__2427.jpg";
-import image19 from "@/assets/images/gallory/CC__2467.jpg";
 
 // 1. ข้อมูลรูปภาพ (เหมือนเดิม)
 
@@ -45,9 +25,6 @@ const itemVariants = {
     transition: { type: "spring", bounce: 0.3, duration: 0.6 },
   },
 };
-
-// Type Definitions
-// type GalleryItem = (typeof galleryItems)[0];
 
 export default function PortfolioGallery() {
   // State สำหรับเก็บรูปที่กำลังเปิดอยู่

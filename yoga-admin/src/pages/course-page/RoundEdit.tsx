@@ -32,8 +32,8 @@ import {
   AlignLeft,
   Trash2, // เพิ่มไอคอนถังขยะ
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { format, addDays, setHours, setMinutes } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { format, addDays, setHours } from "date-fns";
 import { courseService } from "@/service/course.service";
 import { toast } from "sonner";
 import type { Round } from "@/types/round.type";
@@ -318,7 +318,7 @@ const RoundForm = ({
                 value={formData.status}
                 onValueChange={(v) => setFormData({ ...formData, status: v })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -340,7 +340,7 @@ const RoundForm = ({
                   setFormData({ ...formData, teacherId: v })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

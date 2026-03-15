@@ -7,7 +7,7 @@ const ProductItem = ({ course }: { course: CourseType }) => {
   const router = useRouter();
   console.log(course, "course");
   return (
-    <div className="w-full flex flex-col gap-4 p-5 rounded-3xl bg-secondary backdrop-blur-lg border border-white/30 shadow-lg relative overflow-hidden">
+    <div className="w-full flex flex-col gap-4 p-5 rounded-3xl bg-[#FDFCF8] backdrop-blur-lg border border-white/30 shadow-lg relative overflow-hidden">
       <div className="absolute inset-0 bg-linear-to-br from-white/60 to-transparent opacity-50 pointer-events-none"></div>
 
       <div className="w-full aspect-16/14 bg-tertiary/20 rounded-2xl z-10 relative overflow-hidden">

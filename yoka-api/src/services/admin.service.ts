@@ -92,17 +92,14 @@ export const getStatsService = async () => {
 export const getBookingListService = async () => {
   const bookings = await prisma.booking.findMany({
     where: {
-      status: PaymentStatus.PENDING,
+      status: {
+        in: ["PAID", "PENDING"],
+      },
     },
-    // 1. เอาแค่ 5 อันล่าสุด
-    take: 5,
-
-    // 2. เรียงจากวันที่สร้างล่าสุด (ใหม่ -> เก่า)
+    take: 10,
     orderBy: {
       createdAt: "desc",
     },
-
-    // 3. Join ตารางเพื่อเอาข้อมูลไปแสดงผล
     include: {
       // ดึงข้อมูลคนจอง (User + UserInfo)
       student: {

@@ -1,0 +1,42 @@
+(function() {
+    const reviewElements = document.querySelectorAll('.jftiEf');
+    const reviews = [];
+
+    reviewElements.forEach((el) => {
+        // ดึงชื่อผู้เขียน
+        const author = el.querySelector('.Vpc5Fe')?.innerText;
+        
+        // ดึงคะแนน (จาก aria-label เช่น "5 ดาว")
+        const ratingText = el.querySelector('.dHX2k')?.getAttribute('aria-label');
+        const rating = ratingText ? ratingText.match(/\d+/)?.[0] : null;
+
+        // ดึงข้อความรีวิว
+        const text = el.querySelector('.OA1nbd')?.innerText;
+
+        // ดึงเวลาที่รีวิว (เช่น 2 เดือนที่แล้ว)
+        const relativeTime = el.querySelector('.y3Ibjb')?.innerText;
+
+        // ดึงรูปโปรไฟล์
+        const avatar = el.querySelector('.ANWksb')?.src;
+
+        reviews.push({
+            author,
+            rating: rating ? parseInt(rating) : null,
+            text: text || "",
+            relativeTime,
+            avatar
+        });
+    });
+
+    // แสดงผลเป็นตารางใน Console
+    console.table(reviews);
+
+    // สร้างไฟล์ JSON แล้วดาวน์โหลดลงเครื่องทันที
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reviews, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "yoga_by_niti_reviews.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+})();

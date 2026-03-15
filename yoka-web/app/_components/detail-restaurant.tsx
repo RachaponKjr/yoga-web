@@ -9,7 +9,7 @@ import Image from "next/image";
 
 const DetailRestaurant = () => {
   return (
-    <section className=" bg-[#FDFCF8] text-[#1A1A1A] relative overflow-hidden">
+    <section className=" text-[#1A1A1A] relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 items-center">
           {/* Left Content: Storytelling */}
@@ -55,15 +55,15 @@ const DetailRestaurant = () => {
                 asChild
                 className="rounded-full h-12 px-8 bg-[#132B28] text-white hover:bg-primary transition-all duration-300 shadow-lg shadow-[#132B28]/20"
               >
-                <Link href="/restaurant">Explore Menu</Link>
+                <Link href="/contact">Contact Us.</Link>
               </Button>
               <Button
                 asChild
                 variant="ghost"
                 className="rounded-full h-12 px-6 text-[#132B28] hover:bg-[#132B28]/5 hover:text-primary gap-2 group"
               >
-                <Link href="/contact">
-                  Book a Table
+                <Link href="/about">
+                  View More
                   <Icon
                     icon="mdi:arrow-right"
                     className="w-4 h-4 group-hover:translate-x-1 transition-transform"
