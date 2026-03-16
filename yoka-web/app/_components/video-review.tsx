@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { videoService } from "@/service/video.service";
 import { useEffect, useState } from "react";
@@ -21,10 +22,10 @@ interface VideoType {
 
 const VideoReview = () => {
   const [video, setVideo] = useState<VideoType>();
-
   const handleGetVideo = async () => {
     try {
       const data = await videoService.getAll();
+      console.log(data);
       setVideo(data);
     } catch (error) {
       console.error("Error fetching video:", error);
@@ -40,7 +41,7 @@ const VideoReview = () => {
   const videoList = [video.url_1, video.url_2, video.url_3, video.url_4];
 
   return (
-    <div className="container mx-auto py-12 px-4">
+    <div className="container mx-auto py-12 px-4 bg-red-500">
       <Swiper
         modules={[Pagination, Autoplay, Navigation]}
         spaceBetween={24} // ระยะห่างระหว่างวิดีโอ
@@ -52,11 +53,11 @@ const VideoReview = () => {
           640: { slidesPerView: 2.3 },
           1024: { slidesPerView: 4 },
         }}
-        className="pb-12 !overflow-visible" // ปรับเพื่อให้เงาของ Card ไม่โดนตัด
+        className="pb-12 overflow-visible!" // ปรับเพื่อให้เงาของ Card ไม่โดนตัด
       >
         {videoList.map((url, index) => (
           <SwiperSlide key={index}>
-            <div className="group relative w-full aspect-[12/16] rounded-3xl overflow-hidden bg-black cursor-pointer shadow-lg transition-all duration-500 hover:-translate-y-2">
+            <div className="group relative w-full aspect-12/16 rounded-3xl overflow-hidden bg-black cursor-pointer shadow-lg transition-all duration-500 hover:-translate-y-2">
               {/* 1. ตัววิดีโอ */}
               <iframe
                 src={`${url}${url.endsWith("/") ? "" : "/"}embed`}
@@ -77,7 +78,7 @@ const VideoReview = () => {
               </div>
 
               {/* 3. Gradient ด้านล่าง */}
-              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
           </SwiperSlide>
         ))}

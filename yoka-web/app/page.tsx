@@ -19,7 +19,7 @@ interface InstructorProps extends UserType {
 export default async function Home() {
   const data = (await authService.getInstructor()) as InstructorProps[];
   return (
-    <main className="relative flex flex-col">
+    <main className="relative flex flex-col overflow-hidden">
       {/* <Social /> */}
       <Hero />
       <div className="bg-[#283618] py-4 flex flex-col gap-8 relative">
