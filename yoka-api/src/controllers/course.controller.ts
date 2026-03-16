@@ -167,7 +167,6 @@ const getCourseController = async (req: Request, res: Response) => {
       offset: parsedOffset,
       search: searchTerm,
     });
-    console.log(courses);
 
     if (!courses || courses.length === 0) {
       sendResponse(res, {
@@ -617,8 +616,6 @@ const updateCourseController = async (
       price: Number(data.price),
       discount_price: Number(data.discount_price),
     };
-
-    console.log(data);
 
     // ✅ แก้ไข 2: จัดการ Logic รูปภาพ
     // ใส่ Logic เฉพาะเมื่อมีไฟล์ใหม่ถูกส่งมาเท่านั้น

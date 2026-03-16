@@ -36,10 +36,8 @@ const formatTime = (date: Date) => {
 
 const CoursePage = () => {
   const [courses, setCourses] = useState<CourseType[]>([]);
-  console.log(courses);
   const getCourses = async () => {
     const res = await courseService.getCourseAll();
-    console.log(res);
     setCourses(res.data.courses);
   };
 

@@ -107,8 +107,6 @@ const EditCourse = ({
     }
   };
 
-  console.log(course);
-
   useEffect(() => {
     if (open) {
       void getInstructor(); // ดึงข้อมูลเมื่อเปิด Dialog
