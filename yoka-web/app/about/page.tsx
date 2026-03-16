@@ -10,6 +10,7 @@ import yoga2 from "@/assets/images/gallory/CC__2048.jpg";
 import yoga3 from "@/assets/images/gallory/CC__2231.jpg";
 import yoga4 from "@/assets/images/gallory/CC__2244.jpg";
 import yoga5 from "@/assets/images/gallory/CC__2427.jpg";
+import ReviewSection from "@/components/Review";
 
 const Page = () => {
   return (
@@ -160,7 +161,6 @@ const Page = () => {
             </p>
           </div>
         </div>
-
         {/* --- Banner Item --- */}
         {/* <div className="w-full">
           <BannerItem className="bg-[#8ba888]!" />

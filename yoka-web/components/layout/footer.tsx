@@ -5,9 +5,8 @@ import React from "react";
 const Footer = () => {
   // ข้อมูล Social Media
   const socials = [
-    { icon: "mdi:facebook", href: "#" },
-    { icon: "mdi:instagram", href: "#" },
-    { icon: "mdi:line", href: "#" },
+    { icon: "mdi:facebook", href: "https://www.facebook.com/yogabyniti" },
+    { icon: "mdi:instagram", href: "https://www.instagram.com/yoga_by_niti/" },
   ];
 
   // ข้อมูล Link ตาม Navbar
@@ -154,6 +153,7 @@ const Footer = () => {
               <a
                 key={index}
                 href={social.href}
+                target="_blank"
                 className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white transition-all duration-300 hover:-translate-y-1"
               >
                 <Icon icon={social.icon} width={22} height={22} />

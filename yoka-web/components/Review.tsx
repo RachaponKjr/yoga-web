@@ -53,7 +53,7 @@ export default function ReviewSection() {
         </div>
 
         {/* Swiper Carousel */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-visible">
           <Swiper
             modules={[Pagination, Navigation, Autoplay]}
             spaceBetween={24}
@@ -78,7 +78,7 @@ export default function ReviewSection() {
                 <div className="bg-white p-4 md:p-8 rounded-xl md:rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-500 flex flex-col h-full">
                   {/* Content Wrapper - flex-1 จะช่วยดันส่วนล่างให้เท่ากัน */}
                   <div className="flex-1">
-                    <div className="hidden w-12 h-12 bg-[#FEFAE0] rounded-2xl md:flex items-center justify-center mb-4 text-[#283618]">
+                    <div className="hidden w-12 h-12 bg-[#FEFAE0] rounded-xl md:flex items-center justify-center mb-4 text-[#283618]">
                       <Quote
                         size={24}
                         fill="currentColor"

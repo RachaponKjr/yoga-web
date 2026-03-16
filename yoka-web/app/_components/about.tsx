@@ -34,7 +34,7 @@ const About = () => {
   ];
 
   return (
-    <section className="py-4 md:py-8">
+    <section className="py-4">
       <div className="container mx-auto px-6 md:px-12 space-y-2">
         {/* หัวข้อหลัก (Optional) */}
         <div className="mb-6 text-center flex flex-col gap-4">

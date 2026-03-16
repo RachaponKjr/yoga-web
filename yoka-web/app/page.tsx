@@ -10,6 +10,7 @@ import { UserInfoType, UserType } from "@/types/auth.type";
 import PortfolioGallery from "./_components/gallory";
 import About from "./_components/about";
 import ReviewSection from "@/components/Review";
+import VideoReview from "./_components/video-review";
 
 interface InstructorProps extends UserType {
   userInfo: UserInfoType;
@@ -19,21 +20,22 @@ export default async function Home() {
   const data = (await authService.getInstructor()) as InstructorProps[];
   return (
     <main className="relative flex flex-col">
-      <Social />
+      {/* <Social /> */}
       <Hero />
       <div className="bg-[#283618] py-4 flex flex-col gap-8 relative">
         <Story />
         <div className="flex flex-col gap-4 md:gap-12 bg-[#FDFCF8] py-8 md:py-24">
           <DetailRestaurant />
+          <VideoReview />
           <About />
           <ReviewSection />
         </div>
         <Instructors data={data} />
       </div>
       <StepService />
-      {/* <Banner /> */}
       <ProductCourse />
-      <PortfolioGallery />
+      {/* <Banner /> */}
+      {/* <PortfolioGallery /> */}
     </main>
   );
 }

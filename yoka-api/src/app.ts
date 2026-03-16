@@ -14,6 +14,7 @@ import webhookRouter from "./routes/webhook.route";
 import paymentRoutes from "./routes/payment.route";
 import adminRoutes from "./routes/admin.route";
 import couponRoutes from "./routes/coupon.routes";
+import videoRoutes from "./routes/video.routes";
 
 import path from "path";
 
@@ -53,6 +54,7 @@ app.use(`${apiPrefix}/booking`, bookingRoutes);
 app.use(`${apiPrefix}/payment`, paymentRoutes);
 app.use(`${apiPrefix}/admin`, adminRoutes);
 app.use(`${apiPrefix}/coupon`, couponRoutes);
+app.use(`${apiPrefix}/video`, videoRoutes);
 
 // Webhook
 app.use("/webhook", webhookRouter);
