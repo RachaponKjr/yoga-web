@@ -20,8 +20,18 @@ export const bookingService = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         withCredentials: true,
-      }
+      },
     );
+    return response.data;
+  },
+
+  getBookingById: async (id: string) => {
+    const response = await http.get(`/booking/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      withCredentials: true,
+    });
     return response.data;
   },
 };

@@ -14,22 +14,49 @@ import type { BookingType } from "@/types/booking.type";
 import { formatDate } from "@/utils/format";
 import DialogAddBooking from "./DialogAddBooking";
 import DialogEdit from "./dialog/DialogEdit";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const BookingPage = () => {
   const [bookings, setBookings] = useState<BookingType[]>([]);
+  const [selectedBooking, setSelectedBooking] = useState<BookingType | null>(
+    null,
+  );
 
+  console.log(selectedBooking);
+
+  const [dialogInfo, setDialogInfo] = useState(false);
   // 1. เพิ่ม State สำหรับคำค้นหา
   const [searchTerm, setSearchTerm] = useState("");
 
   const fetchBookings = useCallback(async () => {
     try {
       const response = await bookingService.getAllBooking();
-      response;
       setBookings(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
   }, []);
+
+  const fetchBookingById = useCallback(async (id: string) => {
+    try {
+      const response = await bookingService.getBookingById(id);
+      setBookings(response.data);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  }, []);
+
+  const handleOpenDialogInfo = (booking: BookingType) => {
+    setSelectedBooking(booking);
+    setDialogInfo(true);
+  };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -207,12 +234,185 @@ const BookingPage = () => {
                     {/* Action Column */}
                     <td className="py-4 px-6 text-center">
                       <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
-                          title="ดูรายละเอียด"
-                        >
-                          <Eye size={18} />
-                        </button>
+                        <Dialog>
+                          <DialogTrigger>
+                            <button
+                              onClick={() => handleOpenDialogInfo(booking)}
+                              className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                              title="ดูรายละเอียด"
+                            >
+                              <Eye size={18} />
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl overflow-hidden rounded-2xl p-0">
+                            <DialogHeader className="p-6 bg-black text-white">
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <DialogTitle className="text-xl font-bold">
+                                    รายละเอียดการจอง
+                                  </DialogTitle>
+                                  <DialogDescription className="text-indigo-100 opacity-90">
+                                    รหัสการจอง: {selectedBooking?.id}
+                                  </DialogDescription>
+                                </div>
+                                <div className="bg-white/20 px-3 py-1 rounded-full text-xs backdrop-blur-sm border border-white/30">
+                                  {selectedBooking?.type}
+                                </div>
+                              </div>
+                            </DialogHeader>
+
+                            {selectedBooking && (
+                              <div className="p-6 space-y-8 max-h-[80vh] overflow-y-auto bg-white font-sans">
+                                {/* ส่วนที่ 1: ข้อมูลนักเรียน */}
+                                <section>
+                                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <span className="w-1 h-4 bg-indigo-500 rounded-full"></span>
+                                    ข้อมูลนักเรียน
+                                  </h4>
+                                  <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                    <img
+                                      src={`https://api.yogabyniti.com/${selectedBooking.student.userInfo.avatar || ""}`}
+                                      alt="avatar"
+                                      className="h-16 w-16 rounded-2xl object-cover border-2 border-white shadow-sm"
+                                    />
+                                    <div className="grid grid-cols-2 flex-1 gap-y-2">
+                                      <div>
+                                        <p className="text-xs text-gray-500">
+                                          ชื่อ-นามสกุล
+                                        </p>
+                                        <p className="text-sm font-bold text-gray-800">
+                                          {
+                                            selectedBooking.student.userInfo
+                                              .firstName
+                                          }{" "}
+                                          {
+                                            selectedBooking.student.userInfo
+                                              .lastName
+                                          }
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-gray-500">
+                                          เบอร์โทรศัพท์
+                                        </p>
+                                        <p className="text-sm font-bold text-gray-800">
+                                          {selectedBooking.student.userInfo
+                                            .phone_number || "-"}
+                                        </p>
+                                      </div>
+                                      <div className="col-span-2">
+                                        <p className="text-xs text-gray-500">
+                                          อีเมล
+                                        </p>
+                                        <p className="text-sm font-medium text-indigo-600">
+                                          {selectedBooking.student.email}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </section>
+
+                                {/* ส่วนที่ 2: รายละเอียดคอร์สและรอบเรียน */}
+                                <section>
+                                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <span className="w-1 h-4 bg-indigo-500 rounded-full"></span>
+                                    รายละเอียดคอร์ส
+                                  </h4>
+                                  <div className="grid grid-cols-2 gap-6 bg-white border border-gray-100 p-4 rounded-xl shadow-sm">
+                                    <div className="col-span-2 sm:col-span-1">
+                                      <p className="text-xs text-gray-500 mb-1">
+                                        คอร์สที่จอง
+                                      </p>
+                                      <p className="text-sm font-bold text-gray-900 leading-tight">
+                                        {selectedBooking.round.course.title}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-xs text-gray-500 mb-1">
+                                        วันที่เรียน
+                                      </p>
+                                      <div className="flex items-center gap-2 text-sm font-bold text-gray-800">
+                                        <Clock
+                                          size={14}
+                                          className="text-indigo-500"
+                                        />
+                                        {formatDate(
+                                          String(
+                                            selectedBooking.round.startDateTime,
+                                          ),
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <p className="text-xs text-gray-500 mb-1 font-medium italic">
+                                        คำอธิบายเพิ่มเติม
+                                      </p>
+                                      <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border-l-4 border-gray-200">
+                                        {selectedBooking.note ||
+                                          "ไม่มีรายละเอียดเพิ่มเติม"}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </section>
+
+                                {/* ส่วนที่ 3: สถานะการชำระเงิน */}
+                                <section className="bg-gray-900 text-white p-5 rounded-2xl shadow-xl relative overflow-hidden">
+                                  {/* Background Decoration */}
+                                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+
+                                  <div className="relative z-10">
+                                    <h4 className="text-[10px] font-bold text-indigo-300 uppercase tracking-[0.2em] mb-4">
+                                      สรุปการชำระเงิน
+                                    </h4>
+                                    <div className="flex justify-between items-end">
+                                      <div className="space-y-3">
+                                        <div>
+                                          <p className="text-xs text-gray-400 font-medium italic">
+                                            สถานะปัจจุบัน
+                                          </p>
+                                          <div className="mt-1">
+                                            {getStatusBadge(
+                                              selectedBooking.status,
+                                            )}
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <p className="text-xs text-gray-400 font-medium italic">
+                                            ชำระเมื่อ
+                                          </p>
+                                          <p className="text-sm font-semibold">
+                                            {selectedBooking.paidAt
+                                              ? formatDate(
+                                                  String(
+                                                    selectedBooking.paidAt,
+                                                  ),
+                                                )
+                                              : "ยังไม่ได้รับการชำระ"}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="text-right">
+                                        <p className="text-xs text-gray-400 mb-1">
+                                          ยอดรวมสุทธิ
+                                        </p>
+                                        <p className="text-4xl font-black text-white">
+                                          <span className="text-sm font-normal text-indigo-400 mr-1">
+                                            ฿
+                                          </span>
+                                          {selectedBooking.price.toLocaleString(
+                                            undefined,
+                                            { minimumFractionDigits: 2 },
+                                          )}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </section>
+                              </div>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+
                         <DialogEdit
                           booking={booking}
                           onComplete={fetchBookings}

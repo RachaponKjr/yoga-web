@@ -104,7 +104,7 @@ export const BookingSchema = z.object({
   status: BookingStatusEnum,
   description: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
   courseId: z.string(),
-
+  note: z.string().min(1, "กรุณากรอกรายละเอียด").optional(),
   paidAt: z.coerce.date().nullable(), // อนุญาตให้เป็น null
   paymentId: z.string().nullable(), // อนุญาตให้เป็น null
   createdAt: z.coerce.date(),

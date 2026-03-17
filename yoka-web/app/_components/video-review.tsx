@@ -5,11 +5,9 @@ import { videoService } from "@/service/video.service";
 import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 
 import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 interface VideoType {
   id: string;
@@ -22,6 +20,11 @@ interface VideoType {
 // --- คอมโพเนนต์ย่อยสำหรับแต่ละ Slide ---
 const VideoSlide = ({ url }: { url: string }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   // สร้าง URL สำหรับเล่นอัตโนมัติเมื่อกด
   const videoSrc = isPlaying
@@ -38,15 +41,15 @@ const VideoSlide = ({ url }: { url: string }) => {
         src={videoSrc}
         className={`w-full h-full transition-transform duration-500 ${!isPlaying ? "group-hover:scale-105 pointer-events-none" : "pointer-events-auto"}`}
         style={{
-          transform: "scale(1.3)",
-          marginTop: "-10%",
+          transform: isMobile ? "scale(1)" : "scale(1.3)",
+          marginTop: isMobile ? "0%" : "-10%",
         }}
         frameBorder="0"
         scrolling="no"
       ></iframe>
 
       {/* 2. Overlay ปุ่ม Play */}
-      {!isPlaying && (
+      {!isPlaying && !isMobile && (
         <>
           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
             <div className="w-16 h-16 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 shadow-xl">
@@ -85,9 +88,9 @@ const VideoReview = () => {
   return (
     <div className="container mx-auto py-12 px-4">
       <Swiper
-        modules={[Pagination, Autoplay, Navigation]}
+        modules={[Autoplay]}
         spaceBetween={24}
-        slidesPerView={1.3}
+        slidesPerView={1.5}
         navigation={true}
         pagination={{ clickable: true, dynamicBullets: true }}
         breakpoints={{
@@ -102,26 +105,6 @@ const VideoReview = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      <style jsx global>{`
-        .swiper-button-next,
-        .swiper-button-prev {
-          color: #f87171 !important;
-          background: white;
-          width: 45px !important;
-          height: 45px !important;
-          border-radius: 50%;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-          transform: scale(0.7);
-        }
-        .swiper-button-next:after,
-        .swiper-button-prev:after {
-          font-size: 20px !important;
-        }
-        .swiper-pagination-bullet-active {
-          background: #f87171 !important;
-        }
-      `}</style>
     </div>
   );
 };
