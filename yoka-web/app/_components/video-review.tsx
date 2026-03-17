@@ -91,8 +91,6 @@ const VideoReview = () => {
         modules={[Autoplay]}
         spaceBetween={24}
         slidesPerView={1.5}
-        navigation={true}
-        pagination={{ clickable: true, dynamicBullets: true }}
         breakpoints={{
           640: { slidesPerView: 2.3 },
           1024: { slidesPerView: 4 },

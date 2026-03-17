@@ -23,6 +23,7 @@ export const createCardChargeService = async ({
       currency: "THB",
       card: token,
       description: `Order ID: ${orderId}`,
+      capture: true,
       metadata: {
         orderId: orderId,
         email: email,
@@ -30,7 +31,7 @@ export const createCardChargeService = async ({
         couponId: couponId,
       },
       // 3D Secure: ต้องระบุ return_uri เพื่อให้ธนาคารเด้งกลับมาหาเราหลังใส่ OTP
-      return_uri: `${process.env.REDIRECT_URL}/payment/complete?orderId=${orderId}`,
+      return_uri: `${process.env.REDIRECT_URL}/payment/success?bookingId=${orderId}`,
     });
 
     return charge;

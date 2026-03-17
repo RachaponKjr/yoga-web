@@ -111,7 +111,7 @@ const DetailRestaurant = () => {
               <div className="w-full h-full rounded-4xl overflow-hidden shadow-2xl shadow-stone-200  relative">
                 {/* Overlay Text (Optional - e.g. Open Hours) */}
                 <div className="absolute top-4 right-4 z-20 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-[#132B28] shadow-sm">
-                  Open Daily 08:00 - 20:00
+                  Open Daily 09:00 - 21:00
                 </div>
 
                 {/* The Slider Component */}

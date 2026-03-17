@@ -170,10 +170,13 @@ const PaymentPage = () => {
         couponId: couponId,
         omiseToken,
       });
-
-      if (paymentRes.success) {
-        toast.success(paymentRes.data.message);
-        router.push("/payment/success");
+      if (paymentRes.data.authorizeUri) {
+        // ย้ายหน้าไปที่หน้ากรอก OTP ของธนาคาร
+        window.location.href = paymentRes.data.authorizeUri;
+      } else {
+        // ถ้าไม่มี (ชำระสำเร็จเลย) ก็ไปหน้าขอบคุณ
+        toast.success(paymentRes.message);
+        router.push(`/payment/success?bookingId=${bookingRes.data.data.id}`);
       }
     } catch (error: any) {
       console.error("❌ Error:", error);

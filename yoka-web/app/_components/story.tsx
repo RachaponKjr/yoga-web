@@ -70,7 +70,7 @@ const Story = () => {
 
             {/* Signature (Optional) */}
             <div className="pt-4 mt-4 border-t border-gray-200">
-              <p className="font-serif text-2xl ">Alison Doe</p>
+              <p className="font-serif text-2xl ">Nitikarn</p>
               <p className="text-sm text-[#f2f2f2]">Lead Instructor</p>
             </div>
           </div>
