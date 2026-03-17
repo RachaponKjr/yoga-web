@@ -9,6 +9,8 @@ services:
     restart: always
     ports:
       - "3001:3001"
+    args:
+      - NEXT_PUBLIC_OMISE_PUBLIC_KEY=${NEXT_PUBLIC_OMISE_PUBLIC_KEY}
     env_file: .env
     networks:
       - yoga-network

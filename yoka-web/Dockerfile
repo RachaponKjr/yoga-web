@@ -25,6 +25,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+
+ARG NEXT_PUBLIC_OMISE_PUBLIC_KEY
+ENV NEXT_PUBLIC_OMISE_PUBLIC_KEY=$NEXT_PUBLIC_OMISE_PUBLIC_KEY
 # ป้องกัน Next.js ส่ง Telemetry data
 ENV NEXT_TELEMETRY_DISABLED 1
 
