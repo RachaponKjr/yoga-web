@@ -3,8 +3,7 @@ import Cookies from "js-cookie";
 
 const http = axios.create({
   baseURL:
-    // process.env.NEXT_PUBLIC_API_URL ?? "https://api.yogabyniti.com/api/v1",
-    "http://localhost:3001/api/v1",
+    process.env.NEXT_PUBLIC_API_URL ?? "https://api.yogabyniti.com/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
