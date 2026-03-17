@@ -1,10 +1,9 @@
+/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { videoService } from "@/service/video.service";
 import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
-
-// Import Swiper React components และ Styles
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, Navigation } from "swiper/modules";
 
@@ -20,12 +19,55 @@ interface VideoType {
   url_4: string;
 }
 
+// --- คอมโพเนนต์ย่อยสำหรับแต่ละ Slide ---
+const VideoSlide = ({ url }: { url: string }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // สร้าง URL สำหรับเล่นอัตโนมัติเมื่อกด
+  const videoSrc = isPlaying
+    ? `${url}${url.endsWith("/") ? "" : "/"}embed/?autoplay=1`
+    : `${url}${url.endsWith("/") ? "" : "/"}embed`;
+
+  return (
+    <div
+      className="group relative w-full aspect-12/16 rounded-3xl overflow-hidden bg-black cursor-pointer shadow-lg transition-all duration-500"
+      onClick={() => setIsPlaying(true)}
+    >
+      {/* 1. ตัววิดีโอ */}
+      <iframe
+        src={videoSrc}
+        className={`w-full h-full transition-transform duration-500 ${!isPlaying ? "group-hover:scale-105 pointer-events-none" : "pointer-events-auto"}`}
+        style={{
+          transform: "scale(1.3)",
+          marginTop: "-10%",
+        }}
+        frameBorder="0"
+        scrolling="no"
+      ></iframe>
+
+      {/* 2. Overlay ปุ่ม Play */}
+      {!isPlaying && (
+        <>
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+            <div className="w-16 h-16 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 shadow-xl">
+              <Play className="text-white fill-white" size={28} />
+            </div>
+          </div>
+
+          {/* 3. Gradient ด้านล่าง */}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+        </>
+      )}
+    </div>
+  );
+};
+
 const VideoReview = () => {
   const [video, setVideo] = useState<VideoType>();
+
   const handleGetVideo = async () => {
     try {
       const data = await videoService.getAll();
-      console.log(data);
       setVideo(data);
     } catch (error) {
       console.error("Error fetching video:", error);
@@ -33,7 +75,7 @@ const VideoReview = () => {
   };
 
   useEffect(() => {
-    handleGetVideo();
+    void handleGetVideo();
   }, []);
 
   if (!video) return null;
@@ -41,54 +83,30 @@ const VideoReview = () => {
   const videoList = [video.url_1, video.url_2, video.url_3, video.url_4];
 
   return (
-    <div className="container mx-auto py-12 px-4 bg-red-500">
+    <div className="container mx-auto py-12 px-4">
       <Swiper
         modules={[Pagination, Autoplay, Navigation]}
-        spaceBetween={24} // ระยะห่างระหว่างวิดีโอ
-        slidesPerView={1.3} // เริ่มต้นที่ 1 อันในมือถือ
-        navigation={true} // เพิ่มปุ่มซ้าย-ขวา
+        spaceBetween={24}
+        slidesPerView={1.3}
+        navigation={true}
         pagination={{ clickable: true, dynamicBullets: true }}
         breakpoints={{
-          // เมื่อจอใหญ่ขึ้น ให้แสดงจำนวนอันเพิ่มขึ้น
           640: { slidesPerView: 2.3 },
           1024: { slidesPerView: 4 },
         }}
-        className="pb-12 overflow-visible!" // ปรับเพื่อให้เงาของ Card ไม่โดนตัด
+        className="pb-12 overflow-visible!"
       >
         {videoList.map((url, index) => (
           <SwiperSlide key={index}>
-            <div className="group relative w-full aspect-12/16 rounded-3xl overflow-hidden bg-black cursor-pointer shadow-lg transition-all duration-500 hover:-translate-y-2">
-              {/* 1. ตัววิดีโอ */}
-              <iframe
-                src={`${url}${url.endsWith("/") ? "" : "/"}embed`}
-                className="w-full h-full transition-transform duration-500 group-hover:scale-105"
-                style={{
-                  transform: "scale(1.3)",
-                  marginTop: "-10%",
-                }}
-                frameBorder="0"
-                scrolling="no"
-              ></iframe>
-
-              {/* 2. Overlay ปุ่ม Play */}
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300 flex items-center justify-center pointer-events-none">
-                <div className="w-16 h-16 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300">
-                  <Play className="text-white fill-white" size={28} />
-                </div>
-              </div>
-
-              {/* 3. Gradient ด้านล่าง */}
-              <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
+            <VideoSlide url={url} />
           </SwiperSlide>
         ))}
       </Swiper>
 
-      {/* Custom Styles สำหรับแต่งปุ่ม Swiper ให้เข้ากับธีม */}
       <style jsx global>{`
         .swiper-button-next,
         .swiper-button-prev {
-          color: #f87171 !important; /* สีแดง red-400 */
+          color: #f87171 !important;
           background: white;
           width: 45px !important;
           height: 45px !important;
@@ -99,7 +117,6 @@ const VideoReview = () => {
         .swiper-button-next:after,
         .swiper-button-prev:after {
           font-size: 20px !important;
-          font-weight: bold;
         }
         .swiper-pagination-bullet-active {
           background: #f87171 !important;

@@ -12,7 +12,7 @@ const router = Router();
 router.post("/create", authMiddleware, restrictTo("Admin"), createVideoPreview);
 
 // ดึงข้อมูลไปแสดง (User/Admin ดูได้หมด)
-router.get("/get", authMiddleware, getVideoPreview);
+router.get("/get", getVideoPreview);
 
 router.patch(
   "/update",
