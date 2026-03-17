@@ -169,7 +169,7 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
           <div className="flex items-center gap-2">
             <Avatar className="size-8 border border-zinc-100">
               <AvatarImage
-                src={`${process.env.NEXT_PUBLIC_API_URL}${booking?.round?.course?.teacher?.userInfo?.avatar}`}
+                src={`http://api.yogabyniti.com/${booking?.round?.course?.teacher?.userInfo?.avatar}`}
               />
               <AvatarFallback className="bg-zinc-100 text-xs">
                 {booking?.round?.course?.teacher?.userInfo?.firstName?.charAt(
