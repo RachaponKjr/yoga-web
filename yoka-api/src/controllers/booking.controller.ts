@@ -75,14 +75,16 @@ const getAllBookingController = async (
   res: Response,
 ) => {
   try {
-    const { limit, offset } = req.query;
+    const { page, limit } = req.query;
 
+    const parsedPage = Number(page) > 0 ? Number(page) : 1;
     const parsedLimit = Number(limit) > 0 ? Number(limit) : 10;
-    const parsedOffset = Number(offset) >= 0 ? Number(offset) : 0;
+
+    const calculatedOffset = (parsedPage - 1) * parsedLimit;
 
     const getAllBookingRes = await getAllBookingService({
       limit: parsedLimit,
-      offset: parsedOffset,
+      offset: calculatedOffset, // ส่งค่าที่คำนวณแล้วไปให้ Service
     });
     if (!getAllBookingRes) {
       sendResponse(res, {

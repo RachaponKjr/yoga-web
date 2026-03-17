@@ -24,11 +24,16 @@ const getDashboardStats = async (req: Request, res: Response) => {
     // 1. เรียก Service เพื่อดึงข้อมูล
     const stats = await getStatsService();
 
+    const safeStats = JSON.parse(
+      JSON.stringify(stats, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value,
+      ),
+    );
     // 2. ส่งข้อมูลกลับไป (HTTP 200 OK)
     return res.status(200).json({
       success: true,
       message: "ดึงข้อมูลสถิติสำเร็จ",
-      data: stats,
+      data: safeStats,
     });
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);

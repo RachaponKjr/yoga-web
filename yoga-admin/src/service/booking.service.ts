@@ -2,13 +2,16 @@ import http from "@/lib/http";
 import type { PayloadProps } from "@/pages/book-page/dialog/DialogEdit";
 
 export const bookingService = {
-  getAllBooking: async () => {
-    const response = await http.get("/booking/all-booking", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+  getAllBooking: async (page: number, limit: number) => {
+    const response = await http.get(
+      `/booking/all-booking?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        withCredentials: true,
       },
-      withCredentials: true,
-    });
+    );
     return response.data;
   },
   updateBookingService: async (id: string, payload: PayloadProps) => {

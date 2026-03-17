@@ -29,16 +29,32 @@ const BookingPage = () => {
     null,
   );
 
-  console.log(selectedBooking);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+  });
+
+  console.log(pagination);
 
   const [dialogInfo, setDialogInfo] = useState(false);
   // 1. เพิ่ม State สำหรับคำค้นหา
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchBookings = useCallback(async () => {
+  const fetchBookings = useCallback(async (page: number, limit: number) => {
     try {
-      const response = await bookingService.getAllBooking();
-      setBookings(response.data);
+      // เรียกใช้ service ตาม page และ limit ที่กด
+      const response = await bookingService.getAllBooking(page, limit);
+
+      // อิงตามโครงสร้าง: response.data.data คือ array 10 รายการ
+      // และ response.data.total คือ 18
+      setBookings(response.data.data);
+      setPagination((prev) => ({
+        ...prev,
+        page: page,
+        limit: limit,
+        total: response.data.total,
+      }));
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
@@ -59,9 +75,17 @@ const BookingPage = () => {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void fetchBookings();
-  }, [fetchBookings]);
+    // ส่ง pagination.page และ pagination.limit ไปจริงๆ
+    fetchBookings(pagination.page, pagination.limit);
+  }, [pagination.page, pagination.limit, fetchBookings]);
+
+  // ฟังก์ชันเปลี่ยนหน้าต้อง setPagination เพื่อให้ useEffect ข้างบนทำงาน
+  const handlePageChange = (newPage: number) => {
+    const totalPages = Math.ceil(pagination.total / pagination.limit);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPagination((prev) => ({ ...prev, page: newPage }));
+    }
+  };
 
   // 2. Logic การกรองข้อมูล (Filter)
   const filteredBookings = bookings.filter((booking) => {
@@ -436,13 +460,31 @@ const BookingPage = () => {
         {/* Footer / Pagination */}
         <div className="p-4 border-t border-gray-100 flex items-center justify-between">
           <p className="text-sm text-gray-500">
-            แสดง {filteredBookings.length} รายการ
+            หน้า {pagination.page} จาก{" "}
+            {Math.ceil(pagination.total / pagination.limit) || 1}
+            (ทั้งหมด {pagination.total} รายการ)
           </p>
           <div className="flex items-center gap-2">
-            <button className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50">
+            <button
+              className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              onClick={() => handlePageChange(pagination.page - 1)}
+              disabled={pagination.page === 1}
+            >
               <ChevronLeft size={16} />
             </button>
-            <button className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50">
+
+            <span className="text-sm font-semibold px-3 py-1 bg-gray-100 rounded-md">
+              {pagination.page}
+            </span>
+
+            <button
+              className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              onClick={() => handlePageChange(pagination.page + 1)}
+              disabled={
+                pagination.page >=
+                Math.ceil(pagination.total / pagination.limit)
+              }
+            >
               <ChevronRight size={16} />
             </button>
           </div>

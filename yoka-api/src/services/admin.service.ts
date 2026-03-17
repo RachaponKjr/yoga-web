@@ -3,76 +3,71 @@ import { PaymentStatus, Role, Sex, Status } from "@prisma/client";
 import { UserEditState } from "../controllers/admin.controller";
 
 export const getStatsService = async () => {
-  // 1. เตรียมตัวแปรสำหรับหา "คลาสเรียนวันนี้"
-  const today = new Date();
-  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+  const now = new Date();
 
-  // ใช้ Promise.all เพื่อดึงข้อมูลพร้อมกัน 5 ส่วน (เร็วเกือบเท่า query เดียว)
+  // 1. เตรียมช่วงเวลา "วันนี้"
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(now);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  // 2. เตรียมช่วงเวลา "เดือนนี้"
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+  );
+
+  // ใช้ Promise.all ดึงข้อมูลพร้อมกัน
   const [
     totalUsers,
     totalBookings,
     classesToday,
     totalRevenue,
-    monthlyRevenue,
+    currentMonthRevenue, // เพิ่มส่วนนี้
+    monthlyRevenueHistory,
   ] = await Promise.all([
-    // ---------------------------------------------
-    // 1. จำนวน User ทั้งหมด
-    // ---------------------------------------------
     prisma.user.count(),
-
-    // ---------------------------------------------
-    // 2. ยอดการจองทั้งหมด (แยกตามสถานะให้ด้วยเผื่อใช้)
-    // ---------------------------------------------
     prisma.booking.count(),
-
-    // ---------------------------------------------
-    // 3. จำนวนคลาสวันนี้ (CourseRound)
-    // ---------------------------------------------
     prisma.courseRound.count({
       where: {
-        startDateTime: {
-          gte: startOfDay, // มากกว่าหรือเท่ากับ 00:00
-          lte: endOfDay, // น้อยกว่าหรือเท่ากับ 23:59
-        },
-        // อาจจะกรอง Status ด้วย เช่น ไม่เอาคลาสที่ถูกยกเลิก (ถ้ามี status Cancel)
-        status: {
-          not: Status.Draft, // ตัวอย่าง: ไม่นับคลาสที่เป็น Draft
-        },
+        startDateTime: { gte: startOfDay, lte: endOfDay },
+        status: { not: Status.Draft },
       },
     }),
-
-    // ---------------------------------------------
-    // 4. รายได้รวมทั้งหมด (เฉพาะที่จ่ายเงินแล้ว: PAID)
-    // ---------------------------------------------
+    // รายได้รวมทั้งหมด
     prisma.booking.aggregate({
-      _sum: {
-        price: true,
-      },
+      _sum: { price: true },
+      where: { status: PaymentStatus.PAID },
+    }),
+    // รายได้เฉพาะเดือนนี้ (ที่คุณต้องการเพิ่ม)
+    prisma.booking.aggregate({
+      _sum: { price: true },
       where: {
         status: PaymentStatus.PAID,
+        createdAt: { gte: startOfMonth, lte: endOfMonth },
       },
     }),
-
-    // ---------------------------------------------
-    // 5. รายได้ในแต่ละเดือน (Graph Data)
-    // หมายเหตุ: ใช้ Raw Query เพราะ Prisma groupBy ยังไม่รองรับ Date Truncate ได้ดีพอใน PG
-    // ---------------------------------------------
+    // ข้อมูลรายเดือนย้อนหลัง (Raw Query)
     prisma.$queryRaw`
       SELECT 
-        TO_CHAR("paidAt", 'YYYY-MM') as month, 
-        SUM(price) as total_revenue,
-        COUNT(id) as booking_count
+        TO_CHAR("createdAt", 'YYYY-MM') as month, 
+        SUM(price)::FLOAT as total_revenue,
+        COUNT(id)::INT as booking_count
       FROM "Booking"
-      WHERE status = 'PAID' AND "paidAt" IS NOT NULL
-      GROUP BY TO_CHAR("paidAt", 'YYYY-MM')
+      WHERE status = 'PAID'
+      GROUP BY TO_CHAR("createdAt", 'YYYY-MM')
       ORDER BY month DESC
       LIMIT 12;
     `,
   ]);
 
-  // คืนค่ากลับไป
-  return {
+  // คืนค่ากลับไป พร้อมจัดการ BigInt ให้เป็น Number/String
+  const stats = {
     users: {
       total: totalUsers,
     },
@@ -83,10 +78,18 @@ export const getStatsService = async () => {
       today: classesToday,
     },
     revenue: {
-      total: totalRevenue._sum.price || 0,
-      monthly: monthlyRevenue, // Array ของรายได้แต่ละเดือน
+      total: Number(totalRevenue._sum.price || 0),
+      thisMonth: Number((currentMonthRevenue as any)._sum.price || 0), // ยอดของเดือนนี้
+      monthly: monthlyRevenueHistory,
     },
   };
+
+  // ป้องกัน Error "Do not know how to serialize a BigInt"
+  return JSON.parse(
+    JSON.stringify(stats, (key, value) =>
+      typeof value === "bigint" ? value.toString() : value,
+    ),
+  );
 };
 
 export const getBookingListService = async () => {

@@ -252,8 +252,31 @@ const HomePage = () => {
             {bookings.slice(0, 5).map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 p-2 rounded-2xl hover:bg-gray-50 transition-all group"
+                className="flex relative items-center gap-3 p-2 rounded-2xl hover:bg-gray-50 transition-all group"
               >
+                <div
+                  className={`absolute top-2 right-2 z-10 px-2 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border ${
+                    item.status === "PAID"
+                      ? "bg-green-100 text-green-700 border-green-200"
+                      : item.status === "PENDING"
+                        ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+                        : "bg-red-100 text-red-700 border-red-200"
+                  }`}
+                >
+                  <span className="flex items-center gap-1">
+                    {/* ใส่จุดไฟเล็กๆ ข้างหน้าเพื่อให้ดูมีสถานะจริง */}
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        item.status === "PAID"
+                          ? "bg-green-500"
+                          : item.status === "PENDING"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                      }`}
+                    ></span>
+                    {item.status}
+                  </span>
+                </div>
                 <img
                   src={`https://api.yogabyniti.com/${item.student.userInfo.avatar}`}
                   className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
@@ -270,7 +293,7 @@ const HomePage = () => {
                     จอง: {item.round.course.title}
                   </p>
                 </div>
-                <div className="text-right text-[10px] font-bold text-gray-400 uppercase">
+                <div className="text-right text-[10px] mt-4 font-bold text-gray-400 uppercase">
                   {format(new Date(item.round.startDateTime), "HH:mm")}
                 </div>
               </div>

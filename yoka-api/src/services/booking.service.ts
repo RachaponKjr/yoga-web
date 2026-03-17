@@ -86,11 +86,14 @@ const getAllBookingService = async ({
         },
       },
     },
+    orderBy: { createdAt: "desc" },
     take: limit,
     skip: offset,
   });
 
-  return res;
+  const total = await prisma.booking.count();
+
+  return { data: res, total };
 };
 
 const getBookingByIdService = async ({ id }: { id: string }) => {
