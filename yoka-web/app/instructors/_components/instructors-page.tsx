@@ -22,7 +22,6 @@ type Instructor = {
 const image_url = "https://api.yogabyniti.com/";
 
 const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
-  console.log(instructors);
   return (
     <LayoutSection
       image={instructorBanner.src}
