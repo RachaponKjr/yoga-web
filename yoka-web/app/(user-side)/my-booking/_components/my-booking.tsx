@@ -108,7 +108,7 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
       {/* Image Section */}
       <div className="relative w-full md:w-48 aspect-video md:h-auto rounded-xl overflow-hidden bg-zinc-100 shrink-0">
         <Image
-          src={`${process.env.NEXT_PUBLIC_API_URL}${booking?.round?.course?.cover_image}`}
+          src={`https://api.yogabyniti.com/${booking?.round?.course?.cover_image}`}
           alt={booking?.round?.course?.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"

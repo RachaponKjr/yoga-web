@@ -94,7 +94,7 @@ const CourseBox = () => {
         {/* ใช้ activeCourses ที่กรองแล้วมา map */}
         {activeCourses.map((course: CourseType, index: number) => (
           <SwiperSlide key={course.id || index} className="h-auto py-2">
-            <div className="h-full">
+            <div className="h-auto">
               <ProductItem course={course} />
             </div>
           </SwiperSlide>
