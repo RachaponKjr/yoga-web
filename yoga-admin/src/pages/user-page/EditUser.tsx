@@ -70,7 +70,6 @@ const EditUser: React.FC<EditUserProps> = ({ user, onSuccess }) => {
       [name]: value,
     }));
   };
-  console.log(avatar);
   // 5. Submit Form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

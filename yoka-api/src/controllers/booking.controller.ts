@@ -184,7 +184,6 @@ const updateBookingController = async (
     const { payload } = req.body;
     const { status } = payload;
 
-    console.log(req.user);
     if (!id) {
       sendResponse(res, {
         success: false,

@@ -36,11 +36,10 @@ const RegisterUser = ({ getUser }: { getUser: () => void }) => {
     setPayload({ ...payload, password: e.target.value });
   };
 
-  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = authService.register(payload);
-      console.log(response);
+      await authService.register(payload);
     } catch (error) {
       console.log(error);
     } finally {
