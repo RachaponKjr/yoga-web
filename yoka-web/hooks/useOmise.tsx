@@ -55,7 +55,8 @@ export const useOmise = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const publicKey = process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY;
+    const publicKey =
+      process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY || "pkey_66z98bv0r68ai81k752";
 
     if (!publicKey) {
       console.error("❌ Missing NEXT_PUBLIC_OMISE_PUBLIC_KEY in .env file");
