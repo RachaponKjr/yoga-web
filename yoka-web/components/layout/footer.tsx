@@ -29,9 +29,6 @@ const Footer = () => {
           {/* --- Column 1: Brand & Description --- */}
           <div className="flex flex-col gap-6 max-w-xl">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-900/20 text-white">
-                <Icon icon="mdi:lotus" width={28} height={28} />
-              </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-white tracking-tight leading-none">
                   Yoga by Niti
@@ -42,9 +39,9 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-slate-400 leading-relaxed text-sm">
-              Your sanctuary for holistic wellness. Join us for expert-led yoga
-              sessions and nourish your body with our signature organic clean
-              food.
+              ฝึกโยคะเพื่อสุขภาพกับ Yoga By Niti
+              คลาสสำหรับมือใหม่และผู้เชี่ยวชาญ พร้อมบริการอาหารคลีน
+              อาหารเพื่อสุขภาพที่คัดสรรวัตถุดิบอย่างดี.
             </p>
           </div>
 

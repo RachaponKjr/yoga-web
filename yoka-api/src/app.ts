@@ -56,7 +56,7 @@ app.use(`${apiPrefix}/payment`, paymentRoutes);
 app.use(`${apiPrefix}/admin`, adminRoutes);
 app.use(`${apiPrefix}/coupon`, couponRoutes);
 app.use(`${apiPrefix}/video`, videoRoutes);
-// app.use(`${apiPrefix}/test`, testRoutes);
+app.use(`${apiPrefix}/test`, testRoutes);
 
 // Webhook
 app.use("/webhook", webhookRouter);

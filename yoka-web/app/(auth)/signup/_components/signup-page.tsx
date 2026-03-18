@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { AuthSchema, AuthType } from "@/types/auth.type";
 
+import bgyoga from "@/assets/images/CC__2194-2.jpg";
+import Image from "next/image";
+
 interface SignUpPageProps extends AuthType {
   confirmPassword: string;
 }
@@ -55,7 +58,7 @@ const SignUpPage = () => {
           icon: "✅",
           className: "!text-green-500",
         });
-        router.push("/signin");
+        router.push("/signin?callbackUrl=/profile");
       }
     } catch (error) {
       toast.error("Register failed", {
@@ -68,7 +71,7 @@ const SignUpPage = () => {
 
   return (
     <div className="h-max md:h-[calc(100vh-6rem)] md:min-h-screen container mx-auto my-12 md:my-0 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-5xl mx-auto p-2 md:p-6 rounded-3xl shadow-2xl flex flex-col md:flex-row gap-4 overflow-hidden">
+      <div className="bg-white w-full max-w-5xl mx-auto p-2 md:p-6 rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
         {/* Left Side: Form */}
         <div className="flex-1 py-6 px-4 md:px-8 flex flex-col gap-6 items-center justify-center">
           <div className="flex flex-col gap-6 w-full max-w-sm">
@@ -145,7 +148,9 @@ const SignUpPage = () => {
 
         {/* Right Side: Image / Decoration */}
         {/* เปลี่ยนเป็น flex-col บนมือถือ และซ่อนรูปภาพเมื่อจอเล็กเพื่อให้ฟอร์มเด่นชัด */}
-        <div className="flex-1 aspect-12/16 bg-primary/80 rounded-2xl hidden md:block"></div>
+        <div className="flex-1 aspect-12/16 bg-primary/80 rounded-2xl hidden md:block overflow-hidden relative">
+          <Image src={bgyoga.src} alt="" fill objectFit="cover" />
+        </div>
       </div>
     </div>
   );

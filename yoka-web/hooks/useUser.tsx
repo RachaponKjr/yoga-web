@@ -22,7 +22,7 @@ export const useAuth = () => {
         } else {
           // Token ยังใช้ได้
           setIsAuthenticated(true);
-          //   setUser(checkToken.data); // เก็บข้อมูล User ไว้ใช้งาน (เช่น role, id)
+          setUser(checkToken.data); // เก็บข้อมูล User ไว้ใช้งาน (เช่น role, id)
         }
       } catch (error) {
         // Token ผิดรูปแบบ หรือ Corrupt

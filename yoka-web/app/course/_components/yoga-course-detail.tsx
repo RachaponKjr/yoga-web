@@ -274,21 +274,21 @@ const CourseDetailPage = ({
                 <div className="grid grid-cols-1 gap-3">
                   {[
                     {
-                      label: "Schedule",
+                      label: "วันที่สอน",
                       value: dateLabel,
                       icon: <Calendar size={18} strokeWidth={2.5} />,
                       color: "text-emerald-600",
                       bg: "bg-emerald-50",
                     },
                     {
-                      label: "Time",
+                      label: "ชั่วโมงการสอน",
                       value: timeLabel,
                       icon: <Clock size={18} strokeWidth={2.5} />,
                       color: "text-blue-600",
                       bg: "bg-blue-50",
                     },
                     {
-                      label: "Availability",
+                      label: "จำนวนที่เหลือ",
                       value:
                         availableSeats > 0
                           ? `${availableSeats} spots left`

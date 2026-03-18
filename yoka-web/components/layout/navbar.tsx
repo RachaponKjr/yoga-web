@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 // import { authService } from "@/service/auth.service";
 // import { toast } from "sonner";
 // import { Loader2 } from "lucide-react";
@@ -49,7 +50,6 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // เรียกเช็ค Token ทันทีที่เข้าเว็บ
     checkAuth();
   }, [checkAuth]);
 
@@ -262,7 +262,7 @@ const UserDropdown = ({ user }: UserProps) => {
           </Link>
         </DropdownMenuItem>
 
-        {user.role !== "user" && (
+        {user.role !== "Student" && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-primary">

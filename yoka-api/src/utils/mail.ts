@@ -18,10 +18,10 @@ class MailService {
     to: string,
     subject: string,
     html: string,
-    attachments?: Mail.Attachment[]
+    attachments?: Mail.Attachment[],
   ) {
     const mailOptions: Mail.Options = {
-      from: `"My App" <${process.env.MAIL_USER}>`,
+      from: `"Yoka by Niti" <${process.env.MAIL_USER}>`,
       to,
       subject,
       html,
