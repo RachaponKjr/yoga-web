@@ -10,8 +10,6 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
   try {
     // Omise จะส่งข้อมูลมาใน body
     const event = req.body;
-    console.log(event, "EVENT");
-    console.log("Webhook Received:", event.key);
 
     if (event.key === "charge.complete" || event.key === "charge.create") {
       const charge = event.data;

@@ -5,6 +5,10 @@ export const RoundSchema = z.object({
   courseId: z.string().min(1, "กรุณาเลือกคอร์ส"),
   startDateTime: z.string().min(1, "ระบุเวลาเริ่ม"),
   endDateTime: z.string().min(1, "ระบุเวลาเลิก"),
+  course: z.object({
+    price: z.number().min(0, "ราคาต้องไม่ติดลบ"),
+    title: z.string().min(1, "กรุณาเลือกคอร์ส"),
+  }),
   // ใช้ coerce เพื่อแปลง string จาก input เป็น number อัตโนมัติ
   max_online: z.coerce.number().min(0, "จำนวนต้องไม่ติดลบ"),
   current_online: z.coerce.number().min(0, "จำนวนต้องไม่ติดลบ"),

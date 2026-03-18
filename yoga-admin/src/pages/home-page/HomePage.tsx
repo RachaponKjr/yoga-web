@@ -294,7 +294,7 @@ const HomePage = () => {
                   </p>
                 </div>
                 <div className="text-right text-[10px] mt-4 font-bold text-gray-400 uppercase">
-                  {format(new Date(item.round.startDateTime), "HH:mm")}
+                  {format(new Date(item.createdAt), "dd/MM/yyyy HH:mm")}
                 </div>
               </div>
             ))}

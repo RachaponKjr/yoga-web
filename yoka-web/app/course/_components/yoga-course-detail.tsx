@@ -47,7 +47,6 @@ const CourseDetailPage = ({
     selectRound.startDateTime,
     selectRound.endDateTime,
   );
-  console.log(selectRound);
 
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
@@ -290,9 +289,7 @@ const CourseDetailPage = ({
                     {
                       label: "จำนวนที่เหลือ",
                       value:
-                        availableSeats > 0
-                          ? `${availableSeats} spots left`
-                          : "Sold Out",
+                        availableSeats > 0 ? `${availableSeats} ที่` : "เต็ม",
                       icon: <User size={18} strokeWidth={2.5} />,
                       color:
                         availableSeats > 3
@@ -329,7 +326,7 @@ const CourseDetailPage = ({
                   <div className="group">
                     <h6 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-2 mb-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      Note
+                      หมายเหตุ
                     </h6>
                     <p className="text-xs text-slate-500 leading-relaxed font-medium pl-3.5">
                       {selectRound.description ||
@@ -340,7 +337,7 @@ const CourseDetailPage = ({
                   <div className="group">
                     <h6 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-2 mb-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      Highlights
+                      รายละเอียดคอร์ส
                     </h6>
                     <p className="text-xs text-slate-500 leading-relaxed font-medium pl-3.5 line-clamp-2">
                       {selectRound.about}
@@ -380,11 +377,11 @@ const CourseDetailPage = ({
                   <div className="flex flex-col items-center gap-2 pt-2">
                     <div className="flex items-center gap-1.5 text-emerald-600 font-bold text-[10px] uppercase tracking-tighter">
                       <ShieldCheck size={14} className="animate-pulse" />
-                      Safe & Secure Checkout
+                      ชำระเงินปลอดภัย
                     </div>
                     <p className="text-[10px] text-slate-400 font-medium text-center leading-relaxed">
-                      Free cancellation up to 24 hours before <br />
-                      the start time for a full refund.
+                      ยกเลิกฟรีภายใน 24
+                      ชั่วโมงก่อนเวลาเริ่มเรียนเพื่อรับเงินคืนเต็มจำนวน
                     </p>
                   </div>
                 </div>

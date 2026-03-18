@@ -147,9 +147,6 @@ const BookingPage = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 cursor-pointer bg-white border border-gray-200 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
-            <Download size={18} /> Export
-          </button>
           <DialogAddBooking />
         </div>
       </div>

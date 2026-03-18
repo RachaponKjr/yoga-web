@@ -1,7 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import http from "@/lib/http";
 import type { PayloadProps } from "@/pages/book-page/dialog/DialogEdit";
 
 export const bookingService = {
+  createBooking: async (payload: any) => {
+    const response = await http.post(`/booking/create-booking`, payload, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  },
   getAllBooking: async (page: number, limit: number) => {
     const response = await http.get(
       `/booking/all-booking?page=${page}&limit=${limit}`,

@@ -9,6 +9,8 @@ import {
   ChevronRight,
   BookIcon,
   Tags,
+  VideoIcon,
+  LucideAlbum,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -19,10 +21,10 @@ const Sidebar = () => {
   const menuItems = [
     { name: "หน้าแรก", path: "/", icon: Home },
     { name: "การจอง", path: "/bookings", icon: BookIcon },
-    { name: "จัดการคลาส", path: "/classes", icon: BookIcon },
+    { name: "จัดการคลาส", path: "/classes", icon: LucideAlbum },
     { name: "จัดการคูปอง", path: "/coupons", icon: Tags },
     { name: "จัดการสมาชิก", path: "/users", icon: Users },
-    { name: "จัดการวิดีโอ", path: "/video", icon: Users },
+    { name: "จัดการวิดีโอ", path: "/video", icon: VideoIcon },
   ];
 
   const handleLogout = (e: React.MouseEvent) => {

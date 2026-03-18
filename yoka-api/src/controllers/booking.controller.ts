@@ -11,6 +11,7 @@ import {
   updateBookingService,
 } from "../services/booking.service";
 import { mailService } from "../utils/mail";
+import { sendTelegramNotice } from "../utils/telegram.util";
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -36,6 +37,40 @@ const createBookingController = async (
     const createBookingRes = await createBookingService({
       payload: payload.data,
     });
+
+    if (createBookingRes.data.type === "WALK_IN") {
+      const formatDate = (date: Date) => {
+        return date.toLocaleDateString("th-TH", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      };
+      const formatTime = (date: Date) => {
+        return date.toLocaleTimeString("th-TH", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true, // เป็น AM/PM
+        });
+      };
+      const message = `
+<b>🔔 มีรายการจองใหม่! (Walk-in) (ทดสอบการจองไม่ได้จองจริง)</b>
+<b>วันที่จอง:</b> ${formatDate(new Date())}
+<b>เวลา:</b> ${formatTime(new Date())}
+--------------------------
+<b>รหัสการจอง:</b> <code>${createBookingRes.data.id}</code>
+<b>ผู้จอง:</b> "Admin YogaByniti"
+<b>คอร์ส:</b> ${createBookingRes.data.round?.course?.title}
+<b>ยอดเงิน:</b> ฿${createBookingRes.data.price.toLocaleString()}
+<b>สถานะ:</b> ${createBookingRes.data.status === "PAID" ? "ชำระเงินแล้ว" : "รอชำระเงิน"}
+<b>สถานะการจอง:</b> ${createBookingRes.data.type === "WALK_IN" ? "จองที่สตูดิโอ" : "จองออนไลน์"}
+<b>หมายเหตุ:</b> ${createBookingRes.data.note}
+--------------------------
+<a href="https://admin.yogabyniti.com/bookings">ดูรายละเอียดในระบบ Admin</a>
+    `;
+      sendTelegramNotice(message);
+    }
 
     if (createBookingRes.status === 404) {
       sendResponse(res, {
