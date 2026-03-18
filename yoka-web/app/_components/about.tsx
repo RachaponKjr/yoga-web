@@ -41,7 +41,7 @@ const About = () => {
           <h2 className="text-4xl md:text-6xl font-serif font-medium leading-none text-[#132B28]">
             About Niti Studio
           </h2>
-          <span className="text-xl text-primary/80">Yoka Wellness</span>
+          <span className="text-xl text-primary/80">Yoga Wellness</span>
         </div>
 
         {/* Grid 3 Columns */}

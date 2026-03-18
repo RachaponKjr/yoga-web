@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { mailService } from "../utils/mail";
 import { generateBookingPDF } from "../utils/pdfGenerator";
 import { getBookingSuccessTemplate } from "../templates/booking-success";
+import { sendTelegramNotice } from "../utils/telegram.util";
 
 export const omiseWebhookController = async (req: Request, res: Response) => {
   try {
@@ -108,6 +109,22 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
           roundTime: formatTime(startDate) + " - " + formatTime(endDate),
           bookingId: orderDetail.id,
         });
+
+        const message = `
+<b>🔔 มีรายการจองใหม่!</b>
+<b>วันที่จอง:</b> ${formatDate(new Date())}
+<b>เวลา:</b> ${formatTime(new Date())}
+--------------------------
+<b>รหัสการจอง:</b> <code>${orderDetail.id}</code>
+<b>ลูกค้า:</b> ${orderDetail.student?.email}
+<b>คอร์ส:</b> ${orderDetail.round?.course?.title}
+<b>ยอดเงิน:</b> ฿${orderDetail.price.toLocaleString()}
+<b>สถานะ:</b> ${orderDetail.status}
+--------------------------
+<a href="https://admin.yogabyniti.com/bookings">ดูรายละเอียดในระบบ Admin</a>
+    `;
+
+        await sendTelegramNotice(message);
 
         await mailService.sendEmail(
           orderDetail.student?.email || "",

@@ -5,6 +5,7 @@ import Image from "next/image";
 import wane from "@/assets/images/banner/wavn1.png";
 import yogaBanner from "@/assets/images/CC__2175.jpg";
 import polygrid from "@/assets/svg/polygrid.svg";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -36,16 +37,26 @@ const Hero = () => {
             <Button
               variant={"default"}
               size={"lg"}
-              className="rounded-full text-white bg-[#3D552F] hover:bg-[#3D552F] cursor-pointer"
+              className="rounded-full p-0 text-white bg-[#3D552F] hover:bg-[#3D552F] cursor-pointer"
             >
-              Booking Now <Icon icon="mdi:arrow-right" />
+              <Link
+                href="/yoga-time"
+                className="w-full h-full flex items-center gap-2 px-4"
+              >
+                Booking Now <Icon icon="mdi:arrow-right" />
+              </Link>
             </Button>
             <Button
               variant={"outline"}
               size={"lg"}
-              className="rounded-full bg-transparent hover:bg-tertiary/20 hover:text-tertiary cursor-pointer border-tertiary/20!"
+              className="rounded-full bg-transparent hover:bg-tertiary/20 hover:text-tertiary cursor-pointer p-0 border-tertiary/20!"
             >
-              Sign Up
+              <Link
+                href="/signup"
+                className="w-full h-full flex items-center gap-2 px-6"
+              >
+                Sign Up
+              </Link>
             </Button>
           </div>
         </div>

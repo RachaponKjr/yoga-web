@@ -124,14 +124,16 @@ const PaymentSuccessPage = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                  className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-100 mx-auto mb-6"
+                  className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-100 mx-auto mb-6"
                 >
                   <Check className="w-10 h-10 text-white" strokeWidth={3} />
                 </motion.div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
                   ชำระเงินสำเร็จ
                 </h1>
-                <p className="text-gray-500">จองคลาสเรียนของคุณเรียบร้อยแล้ว</p>
+                <p className="text-gray-500 text-xs">
+                  จองคลาสเรียนของคุณเรียบร้อยแล้ว
+                </p>
               </div>
 
               {/* Main Content Card */}
@@ -139,10 +141,10 @@ const PaymentSuccessPage = () => {
                 <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 mb-8">
                   {/* Amount Section */}
                   <div className="text-center pb-6 mb-6 border-b border-dashed border-gray-200">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">
                       ยอดชำระรวม
                     </p>
-                    <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+                    <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
                       <span className="text-xl font-medium mr-1 text-gray-500">
                         ฿
                       </span>
@@ -163,23 +165,25 @@ const PaymentSuccessPage = () => {
 
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-400">หมายเลขอ้างอิง</span>
-                      <span className="text-gray-900 font-mono text-[12px]">
-                        {booking.id}
+                      <span className="text-gray-900 font-mono text-[10px]">
+                        {booking.id.slice(0, 6)}******
                       </span>
                     </div>
 
                     {/* Schedule Row: Clean Minimalist Style */}
                     <div className="pt-4 mt-2 border-t flex justify-between border-gray-100">
-                      <span className="text-gray-400">วันเวลาเรียน</span>
+                      <span className="text-gray-400 text-sm">
+                        วันเวลาเรียน
+                      </span>
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5">
                           <Calendar className="w-4 h-4 text-gray-500" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">
+                          <p className="text-xs font-semibold text-gray-900">
                             {formatThaiDate(booking.round.startDateTime, false)}
                           </p>
-                          <p className="text-[13px] text-gray-500 flex items-center gap-1.5 mt-0.5">
+                          <p className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5">
                             <Clock className="w-3.5 h-3.5" />
                             {formatTime(booking.round.startDateTime)} -{" "}
                             {formatTime(booking.round.endDateTime)} น.
@@ -193,21 +197,19 @@ const PaymentSuccessPage = () => {
                 {/* Actions */}
                 <div className="flex flex-col gap-4">
                   <Link href="/my-booking">
-                    <Button className="w-full h-14 rounded-2xl bg-gray-900 hover:bg-black text-white text-base font-semibold shadow-lg shadow-gray-200 transition-all active:scale-95">
+                    <Button className="w-full h-14 rounded-2xl bg-gray-900 hover:bg-black text-white text-sm font-semibold shadow-lg shadow-gray-200 transition-all active:scale-95">
                       <Calendar className="w-4 h-4 mr-2" />
                       เช็คตารางเรียนทั้งหมด
                     </Button>
                   </Link>
-                  <div className="grid grid-cols-ๅ gap-3">
-                    <Link href="/">
-                      <Button
-                        variant="outline"
-                        className="w-full h-12 rounded-2xl border-gray-200 text-gray-600 hover:bg-gray-50"
-                      >
-                        <Home className="w-4 h-4 mr-2" /> หน้าหลัก
-                      </Button>
-                    </Link>
-                  </div>
+                  <Link href="/">
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 rounded-2xl border-gray-200 text-gray-600 text-sm hover:bg-gray-50"
+                    >
+                      <Home className="w-4 h-4 mr-2" /> หน้าหลัก
+                    </Button>
+                  </Link>
                 </div>
 
                 <p className="text-center mt-8 text-xs text-gray-400 leading-relaxed">
