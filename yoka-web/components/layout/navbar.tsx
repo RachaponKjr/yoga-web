@@ -118,7 +118,7 @@ const Navbar = () => {
             alt="Logo"
             width={100}
             height={100}
-            className="md:scale-150 scale-110 relative left-5 top-2"
+            className="md:scale-150 scale-110 relative md:left-5 md:top-2"
           />
         </Link>
 

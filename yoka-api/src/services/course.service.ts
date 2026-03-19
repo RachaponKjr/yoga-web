@@ -276,6 +276,9 @@ const getCourseRoundByCourseIdService = async ({ id }: { id: string }) => {
           },
         },
       },
+      orderBy: {
+        startDateTime: "desc",
+      },
     });
 
     return courseRound;
