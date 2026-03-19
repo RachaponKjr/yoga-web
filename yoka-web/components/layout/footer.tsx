@@ -1,4 +1,5 @@
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -29,14 +30,13 @@ const Footer = () => {
           {/* --- Column 1: Brand & Description --- */}
           <div className="flex flex-col gap-6 max-w-xl">
             <div className="flex items-center gap-3">
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-white tracking-tight leading-none">
-                  Yoga by Niti
-                </span>
-                <span className="text-xs text-emerald-400 uppercase tracking-widest font-medium mt-1">
-                  Studio & Kitchen
-                </span>
-              </div>
+              <Image
+                src={"/tlogo.png"}
+                alt="Logo"
+                width={100}
+                height={100}
+                className="scale-200 left-10 relative"
+              />
             </div>
             <p className="text-slate-400 leading-relaxed text-sm">
               ฝึกโยคะเพื่อสุขภาพกับ Yoga By Niti

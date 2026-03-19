@@ -21,6 +21,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Yoga By Niti | สอนโยคะ และอาหารเพื่อสุขภาพ",
+  icons: {
+    icon: "/logoyoga.png",
+  },
   description:
     "ฝึกโยคะเพื่อสุขภาพกับ Yoga By Niti คลาสสำหรับมือใหม่และผู้เชี่ยวชาญ พร้อมบริการอาหารคลีน อาหารเพื่อสุขภาพที่คัดสรรวัตถุดิบอย่างดี",
   keywords: [

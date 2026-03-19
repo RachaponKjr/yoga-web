@@ -8,8 +8,8 @@ class MailService {
     this.transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        user: "kjrrachapon@gmail.com",
+        pass: "mlyg acjw uoyb ikbp",
       },
     });
   }

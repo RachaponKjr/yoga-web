@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import Image from "next/image";
 // import { authService } from "@/service/auth.service";
 // import { toast } from "sonner";
 // import { Loader2 } from "lucide-react";
@@ -111,10 +112,14 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="z-50 relative">
-          <h1 className="text-lg md:text-2xl font-bold tracking-tight text-primary">
-            Yoga By Niti<span className="text-tertiary">.</span>
-          </h1>
+        <Link href="/" className="z-50 relative ">
+          <Image
+            src={"/tlogo.png"}
+            alt="Logo"
+            width={100}
+            height={100}
+            className="md:scale-200 scale-150 relative left-5 top-2"
+          />
         </Link>
 
         {/* Desktop Navigation */}
