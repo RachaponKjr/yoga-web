@@ -4,18 +4,18 @@ import Link from "next/link";
 
 const RefundPolicyPage = () => {
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen pt-4 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Back Button */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-slate-500 hover:text-[#3D552F] transition-colors mb-8 text-sm font-medium"
+          className="flex items-center gap-2 text-slate-500 hover:text-[#3D552F] transition-colors mb-4 text-sm font-medium"
         >
           <ArrowLeft size={16} /> กลับสู่หน้าหลัก
         </Link>
 
         {/* Header */}
-        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-8 text-center">
+        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 mb-4 text-center">
           <div className="bg-indigo-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <RefreshCcw className="text-[#3D552F]" size={32} />
           </div>
@@ -26,7 +26,7 @@ const RefundPolicyPage = () => {
         </div>
 
         {/* Content Section */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Section 1: การยกเลิก */}
           <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <div className="flex items-center gap-3 mb-4">
@@ -106,7 +106,7 @@ const RefundPolicyPage = () => {
           </section>
 
           {/* Contact Footer */}
-          <div className="text-center pt-8 pb-12">
+          <div className="text-center pt-4">
             <p className="text-sm text-slate-400 mb-2 font-sans">
               หากมีข้อสงสัยเพิ่มเติมกรุณาติดต่อเรา
             </p>

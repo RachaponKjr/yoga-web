@@ -145,7 +145,7 @@ const VideoPage = () => {
               <div className="max-w-xl aspect-square">
                 <img
                   className="w-full h-full object-cover"
-                  src={`http://localhost:3001/${videoData.url_5}`}
+                  src={`https://api.yogabyniti.com/${videoData.url_5}`}
                   alt=""
                 />
               </div>
