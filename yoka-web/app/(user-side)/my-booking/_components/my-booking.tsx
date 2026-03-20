@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, CheckCircle2, XCircle, Search } from "lucide-react";
@@ -9,6 +10,21 @@ import { format } from "date-fns";
 import { BookingType } from "@/types/booking.type";
 import { bookingService } from "@/service/booking.service";
 import { useAuthStore } from "@/store/useAuthStore";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Icon } from "@iconify/react";
+import { toast } from "sonner";
 
 type BookingStatus = "PENDING" | "PAID" | "CANCELLED";
 
@@ -19,16 +35,16 @@ const MyBooking = () => {
   // 1. เพิ่ม State สำหรับเก็บคำค้นหา
   const [searchTerm, setSearchTerm] = useState("");
 
+  const fetchBookings = useCallback(async () => {
+    const res = await bookingService.getMyBooking(user?.id);
+    if (res.response.success) {
+      setBookings(res.response.data);
+    }
+  }, [user]);
   useEffect(() => {
     if (!user) return;
-    const fetchBookings = async () => {
-      const res = await bookingService.getMyBooking(user?.id);
-      if (res.response.success) {
-        setBookings(res.response.data);
-      }
-    };
-    fetchBookings();
-  }, [user]);
+    void fetchBookings();
+  }, [fetchBookings, user]);
 
   // 2. Logic การ Filter ข้อมูล (ค้นหาจาก ชื่อคอร์ส หรือ ชื่อครู)
   const filteredBookings = useMemo(() => {
@@ -84,7 +100,11 @@ const MyBooking = () => {
           {/* 4. ใช้ filteredBookings ในการแสดงผลแทน bookings */}
           {filteredBookings.length > 0 ? (
             filteredBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
+              <BookingCard
+                key={booking.id}
+                booking={booking}
+                fetchBookings={fetchBookings}
+              />
             ))
           ) : // ปรับ EmptyState นิดหน่อยเพื่อให้รู้ว่าถ้าค้นหาไม่เจอ ให้แสดงข้อความอื่น
           bookings.length > 0 ? (
@@ -102,9 +122,42 @@ const MyBooking = () => {
 
 // --- Sub-Components (เหมือนเดิม) ---
 
-const BookingCard = ({ booking }: { booking: BookingType }) => {
+const BookingCard = ({
+  booking,
+  fetchBookings,
+}: {
+  booking: BookingType;
+  fetchBookings: () => void;
+}) => {
+  console.log(booking.round.course.teacher.userInfo.avatar);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  // --- Logic เช็คเวลา 2 ชั่วโมง ---
+  const now = new Date();
+  const bookingTime = new Date(booking.createdAt); // ใช้เวลาที่กดจอง
+  const twoHoursInMs = 2 * 60 * 60 * 1000; // 2 ชั่วโมงเป็นมิลลิวินาที
+
+  // ถ้าเวลาปัจจุบัน ลบ เวลาจอง น้อยกว่า 2 ชั่วโมง = ยังยกเลิกได้
+  const isWithinTwoHours = now.getTime() - bookingTime.getTime() < twoHoursInMs;
+
+  // เพิ่มเงื่อนไขว่าต้องเป็นสถานะ PAID และยังอยู่ในเวลา 2 ชม.
+  const canCancel = booking.status === "PAID" && isWithinTwoHours;
+
+  const handleCancelBooking = async () => {
+    if (!message.trim()) {
+      toast.error("กรุณาระบุเหตุผลในการยกเลิก");
+      return;
+    }
+    const res = await bookingService.cancelBooking(booking.id, message);
+    if (res.response.success) {
+      toast.success("Booking cancelled successfully");
+      setOpen(false);
+      setMessage("");
+      fetchBookings();
+    }
+  };
   return (
-    <div className="group bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-300 flex flex-col md:flex-row gap-5">
+    <div className="group bg-white relative rounded-2xl p-4 sm:p-5 border border-zinc-200 shadow-sm  hover:border-zinc-300 transition-all  flex flex-col md:flex-row gap-5">
       {/* Image Section */}
       <div className="relative w-full md:w-48 aspect-video md:h-auto rounded-xl overflow-hidden bg-zinc-100 shrink-0">
         <Image
@@ -117,13 +170,12 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
 
       {/* Content Section */}
       <div className="flex-1 flex flex-col justify-between py-1">
-        <div>
+        <div className="">
           <div className="flex justify-between items-start mb-2">
             <div>
-              <h3 className="font-bold text-lg text-zinc-900 line-clamp-1">
+              <h3 className="font-bold text-lg text-zinc-900 line-clamp-1 uppercase">
                 {booking?.round?.course?.title}
               </h3>
-              {/* ✅ แสดงวันที่ชำระเงิน ถ้าจ่ายแล้ว */}
               {booking?.status === "PAID" && booking?.paidAt && (
                 <p className="text-[10px] text-emerald-600 font-medium mt-0.5">
                   Paid on{" "}
@@ -162,6 +214,74 @@ const BookingCard = ({ booking }: { booking: BookingType }) => {
               </span>
             </div>
           </div>
+          {booking.status === "PAID" && (
+            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center md:absolute md:bottom-4 md:right-4 mt-4 md:mt-0">
+              <span
+                className={`text-[10px] md:text-xs ${isWithinTwoHours ? "text-gray-400" : "text-red-400 font-medium"}`}
+              >
+                {isWithinTwoHours
+                  ? "* ยกเลิกได้ภายใน 2 ชม. หลังการจอง"
+                  : "เกินกำหนดเวลา 2 ชม. ไม่สามารถยกเลิกได้"}
+              </span>
+
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={!isWithinTwoHours} // 👈 ปิดปุ่มตรงนี้
+                    className={`border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all ${
+                      !isWithinTwoHours
+                        ? "opacity-30 grayscale cursor-not-allowed"
+                        : ""
+                    }`}
+                  >
+                    ขอยกเลิกการจอง
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>ยืนยันการยกเลิกการจอง</DialogTitle>
+                    <DialogDescription>
+                      ระบบจะดำเนินการตรวจสอบคำขอของคุณตามนโยบายการคืนเงิน
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-2 my-4">
+                    <p className="text-sm font-semibold text-zinc-700">
+                      เหตุผลในการยกเลิก <span className="text-red-500">*</span>
+                    </p>
+                    <Textarea
+                      placeholder="เช่น ติดธุระด่วน, จองผิดรอบ..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                  <div className="flex justify-end mb-4">
+                    <Link
+                      href="/refund"
+                      target="_blank"
+                      className="text-xs text-indigo-600 hover:underline"
+                    >
+                      อ่านนโยบายการคืนเงินอย่างละเอียด
+                    </Link>
+                  </div>
+                  <DialogFooter className="gap-2 sm:gap-0">
+                    <DialogClose asChild>
+                      <Button variant="ghost">ปิดหน้าต่าง</Button>
+                    </DialogClose>
+                    <Button
+                      variant="destructive"
+                      onClick={handleCancelBooking}
+                      disabled={!message.trim()}
+                    >
+                      ยืนยันการยกเลิก
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
         </div>
 
         {/* Footer: Instructor */}

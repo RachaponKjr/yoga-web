@@ -26,6 +26,9 @@ import {
   updateCourseStatusService,
 } from "../services/course.service";
 import { StatusCodes } from "http-status-codes";
+import { mailService } from "../utils/mail";
+import { getClassCancellationTemplate } from "../templates/close-round";
+import dayjs from "dayjs";
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -724,6 +727,25 @@ const updateCourseRoundController = async (
       id,
       data,
     });
+
+    if (courseRound.status === "Closed") {
+      const emails = courseRound.bookings.map(
+        (booking) => booking.student.email,
+      );
+      console.log(emails);
+      emails.map(async (email) => {
+        await mailService.sendEmail(
+          email,
+          "Course Round Closed",
+          getClassCancellationTemplate(
+            courseRound.course.title,
+            dayjs(courseRound.startDateTime).format("YYYY-MM-DD"),
+            dayjs(courseRound.startDateTime).format("HH:mm"),
+            "https://yogabyniti.com",
+          ),
+        );
+      });
+    }
 
     if (!courseRound) {
       sendResponse(res, {

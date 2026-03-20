@@ -191,6 +191,28 @@ const checkStatusService = async ({ bookingId }: { bookingId: string }) => {
   return res;
 };
 
+const cancelBookingService = async ({
+  id,
+  description,
+}: {
+  id: string;
+  description: string;
+}) => {
+  const res = await prisma.booking.update({
+    where: { id },
+    data: { status: "CANCELLED", description: description },
+    include: {
+      round: {
+        include: {
+          course: true,
+        },
+      },
+      student: true,
+    },
+  });
+  return res;
+};
+
 export {
   createBookingService,
   getAllBookingService,
@@ -198,4 +220,5 @@ export {
   getBookingByUserIdService,
   updateBookingService,
   checkStatusService,
+  cancelBookingService,
 };

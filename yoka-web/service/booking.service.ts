@@ -38,4 +38,20 @@ export const bookingService = {
     );
     return { response, status };
   },
+
+  cancelBooking: async (bookingId: string, message: string) => {
+    const { data: response, status } = await http.post(
+      `/booking/cancel-booking/${bookingId}`,
+      {
+        description: message,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("token")}`,
+        },
+      },
+    );
+    return { response, status };
+  },
 };

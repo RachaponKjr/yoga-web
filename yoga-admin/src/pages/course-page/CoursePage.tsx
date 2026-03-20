@@ -1,4 +1,4 @@
-import { Edit, Trash2, Calendar, User as UserIcon } from "lucide-react";
+import { Trash2, Calendar, User as UserIcon } from "lucide-react";
 import AddCourse from "./AddCourse";
 import type { CourseType } from "@/types/course.type";
 import { useEffect, useState } from "react";
@@ -17,22 +17,6 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import EditCourse from "./EditCourse";
 import RoundEdit from "./RoundEdit";
-
-// Helper: จัด Format วันที่และเวลา
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat("th-TH", {
-    day: "numeric",
-    month: "short",
-    year: "2-digit",
-  }).format(date);
-};
-
-const formatTime = (date: Date) => {
-  return new Intl.DateTimeFormat("th-TH", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
 
 const CoursePage = () => {
   const [courses, setCourses] = useState<CourseType[]>([]);

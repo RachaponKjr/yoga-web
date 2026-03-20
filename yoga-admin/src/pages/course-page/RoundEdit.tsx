@@ -322,7 +322,7 @@ const RoundForm = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["Open", "Full", "Closed", "Cancelled"].map((s) => (
+                  {["Open", "Closed"].map((s) => (
                     <SelectItem key={s} value={s}>
                       {s}
                     </SelectItem>

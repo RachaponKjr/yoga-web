@@ -3,6 +3,7 @@ import { sendResponse } from "../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { BookingSchema } from "../types/order.type";
 import {
+  cancelBookingService,
   checkStatusService,
   createBookingService,
   getAllBookingService,
@@ -12,6 +13,8 @@ import {
 } from "../services/booking.service";
 import { mailService } from "../utils/mail";
 import { sendTelegramNotice } from "../utils/telegram.util";
+import { getCancellationEmailTemplate } from "../templates/cencel-booking";
+import dayjs from "dayjs";
 
 interface AuthenticatedRequest extends Request {
   user?: any;
@@ -55,7 +58,7 @@ const createBookingController = async (
         });
       };
       const message = `
-<b>🔔 มีรายการจองใหม่! (Walk-in) (ทดสอบการจองไม่ได้จองจริง)</b>
+<b>🔔 มีรายการจองใหม่! (Walk-in)</b>
 <b>วันที่จอง:</b> ${formatDate(new Date())}
 <b>เวลา:</b> ${formatTime(new Date())}
 --------------------------
@@ -251,13 +254,13 @@ const updateBookingController = async (
       await mailService.sendEmail(
         updateBookingRes.student.email,
         "Booking Payment Success",
-        "Booking Payment Success",
+        "การจองของคุณได้รับการชำระเงินเรียบร้อยแล้ว โดย​ Admin Yoga by Niti ขอบคุณที่ใช้บริการ Yoga by Niti",
       );
     } else if (status && status === "CANCELLED" && updateBookingRes.student) {
       await mailService.sendEmail(
         updateBookingRes.student.email,
         "Booking Cancellation Success",
-        "Booking Cancellation Success",
+        "การจองของคุณได้รับการยกเลิกเรียบร้อยแล้ว โดย Admin Yoga by Niti ขอบคุณที่ใช้บริการ Yoga by Niti",
       );
     }
 
@@ -320,6 +323,81 @@ const checkStatusController = async (
   }
 };
 
+const cancelBookingController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params as { id: string };
+    const { description } = req.body;
+    console.log(id, description);
+    if (!id) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: "Booking ID is required!",
+      });
+      return;
+    }
+    if (!description) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: "Payload is required!",
+      });
+      return;
+    }
+    const cancelBookingRes = await cancelBookingService({ id, description });
+    if (!cancelBookingRes) {
+      sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.NOT_FOUND,
+        message: "Booking not found!",
+      });
+      return;
+    }
+
+    const message = `<b>🚩 มีการยกเลิกการจอง!</b>
+<b>วันที่:</b> ${dayjs(new Date()).format("YYYY-MM-DD HH:mm")}
+<b>หมายเหตุ:</b> ${description}
+--------------------------
+<b>รหัสการจอง:</b> <code>${cancelBookingRes.id}</code>
+<b>รหัสการชำระเงิน:</b> <code>${cancelBookingRes.paymentId || "ยังไม่ชำระเงิน"}</code>
+<b>ลูกค้า:</b> ${cancelBookingRes.student.email}
+<b>คอร์ส:</b> ${cancelBookingRes.round?.course?.title}
+<b>สถานะ:</b> ${cancelBookingRes.status}
+--------------------------
+<a href="https://admin.yogabyniti.com/bookings">ดูรายละเอียดในระบบ Admin</a>`;
+
+    await sendTelegramNotice(message);
+
+    await mailService.sendEmail(
+      cancelBookingRes.student.email,
+      "รายการจองของคุณถูกยกเลิกแล้ว",
+      getCancellationEmailTemplate(
+        cancelBookingRes.round?.course?.title,
+        cancelBookingRes.round?.createdAt,
+        "https://yogabyniti.com/contact",
+      ),
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Booking cancelled successfully",
+      data: cancelBookingRes,
+    });
+    return;
+  } catch (err) {
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: "Server error!",
+    });
+    return;
+  }
+};
+
 export {
   createBookingController,
   getAllBookingController,
@@ -327,4 +405,5 @@ export {
   getBookingByUserIdController,
   updateBookingController,
   checkStatusController,
+  cancelBookingController,
 };

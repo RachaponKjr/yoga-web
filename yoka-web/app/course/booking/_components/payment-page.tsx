@@ -448,16 +448,18 @@ const PaymentPage = () => {
                     <span className="font-semibold text-slate-800 block mb-1">
                       Privacy Policy & Refund Policy
                     </span>
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-col md:flex-row md:gap-2">
                       <Link
                         href="/policy"
+                        target="_blank"
                         className="text-gray-400 hover:text-emerald-700"
                       >
                         อ่านนโยบายความเป็นส่วนตัว
                       </Link>
-                      <p className="text-gray-400">/</p>
+                      <p className="text-gray-400 hidden md:flex">/</p>
                       <Link
                         href="/refund"
+                        target="_blank"
                         className="text-gray-400 hover:text-emerald-700"
                       >
                         อ่านนโยบายการคืนเงิน

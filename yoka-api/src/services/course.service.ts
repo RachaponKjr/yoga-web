@@ -529,6 +529,10 @@ const updateCourseRoundService = async ({
       id,
     },
     data,
+    include: {
+      course: true,
+      bookings: { include: { student: { include: { userInfo: true } } } },
+    },
   });
 
   return resUpdate;

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware, restrictTo } from "../middlewares/auth.middleware";
 import {
+  cancelBookingController,
   checkStatusController,
   createBookingController,
   getAllBookingController,
@@ -18,6 +19,7 @@ router.get(
   getAllBookingController,
 );
 router.get("/check-status", authMiddleware, checkStatusController);
+router.post("/cancel-booking/:id", authMiddleware, cancelBookingController);
 router.get("/:id", authMiddleware, getBookingByIdController);
 router.get("/booking-user/:id", authMiddleware, getBookingByUserIdController);
 router.patch(

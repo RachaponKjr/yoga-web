@@ -26,7 +26,32 @@ const ProductItem = ({ course }: { course: CourseType }) => {
         </p>
       </div>
       <div className="flex justify-between items-center z-10 relative">
-        <span className="text-xl font-semibold">{course?.price} ฿</span>
+        <div className="flex items-center gap-2">
+          {/* เช็กว่ามีราคาลดไหม ถ้ามีให้โชว์ราคาเต็มแบบขีดฆ่า */}
+          {course?.discount_price > 0 ? (
+            <>
+              <span className="text-2xl font-bold text-black">
+                {course.discount_price.toLocaleString()} ฿
+              </span>
+              <span className="text-sm text-slate-400 line-through mt-1">
+                {course.price.toLocaleString()} ฿
+              </span>
+              {/* แถม Badge เปอร์เซ็นต์ส่วนลดให้ด้วย */}
+              <span className="bg-rose-100 text-rose-600 text-[10px] font-bold px-1.5 py-0.5 rounded ml-1">
+                -
+                {Math.round(
+                  ((course.price - course.discount_price) / course.price) * 100,
+                )}
+                %
+              </span>
+            </>
+          ) : (
+            /* ถ้าไม่มีส่วนลด โชว์ราคาปกติธรรมดา */
+            <span className="text-2xl font-bold text-slate-900">
+              {course?.price?.toLocaleString()} ฿
+            </span>
+          )}
+        </div>
         <Button
           onClick={() => router.push(`/course?courseId=${course?.id}`)}
           className="rounded-full text-white bg-[#3D552F] hover:bg-[#3D552F] cursor-pointer shadow-md"
