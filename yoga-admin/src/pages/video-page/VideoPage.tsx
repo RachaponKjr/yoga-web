@@ -140,7 +140,7 @@ const VideoPage = () => {
               <VideoCard url={videoData.url_3} />
               <VideoCard url={videoData.url_4} />
             </div>
-            <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-4 ">
               <h6 className="text-xl font-bold text-gray-800">ภาพตารางสอน</h6>
               <div className="max-w-xl aspect-square">
                 <img
