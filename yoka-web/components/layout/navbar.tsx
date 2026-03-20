@@ -107,7 +107,7 @@ const Navbar = () => {
       ${
         isScrolled
           ? "bg-secondary/80 backdrop-blur-md shadow-sm py-3 border-gray-200/20"
-          : "bg-secondary py-2 md:py-3"
+          : "bg-secondary py-0 md:py-3"
       }`}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -118,7 +118,7 @@ const Navbar = () => {
             alt="Logo"
             width={100}
             height={100}
-            className="md:scale-150 scale-110 relative md:left-5 md:top-2"
+            className="md:scale-150 scale-100 relative md:left-5 md:top-2"
           />
         </Link>
 
@@ -229,16 +229,16 @@ const UserDropdown = ({ user }: UserProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex min-w-max items-center gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm">
+        <div className="flex min-w-max items-center gap-1 md:gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm">
           <div className="flex-col items-end flex w-full">
-            <span className="text-xs md:text-sm font-semibold text-foreground/90 max-w-full truncate">
+            <span className="text-[10px] md:text-sm font-semibold text-foreground/90 max-w-full truncate">
               {displayName || "ไม่พบข้อมูล"}
             </span>
-            <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-bold">
+            <span className="text-[8px] uppercase tracking-wide text-muted-foreground font-bold">
               {user?.role || "ไม่พบข้อมูล"}
             </span>
           </div>
-          <Avatar className="size-9 ring-2 ring-white group-hover:ring-primary/20 transition-all">
+          <Avatar className="size-8 md:size-9 ring-2 ring-white group-hover:ring-primary/20 transition-all">
             <AvatarImage
               src={
                 user?.userInfo?.avatar

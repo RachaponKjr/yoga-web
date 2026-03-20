@@ -9,12 +9,10 @@ import { Loader2 } from "lucide-react";
 
 // Import Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 
 // Import CSS
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 
 // Type ของ Response
 interface CourseRes {
@@ -65,11 +63,9 @@ const CourseBox = () => {
   return (
     <div className="w-full relative md:px-0">
       <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
+        modules={[Autoplay]}
         spaceBetween={20}
         slidesPerView={1.2} // ในมือถือให้เห็นขอบรูปถัดไปนิดนึง (User Experience ดีกว่า)
-        navigation={true}
-        pagination={{ clickable: true, dynamicBullets: true }}
         autoplay={{
           delay: 3000,
           disableOnInteraction: false,
@@ -100,32 +96,6 @@ const CourseBox = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* Styles */}
-      <style jsx global>{`
-        .swiper-button-next,
-        .swiper-button-prev {
-          color: #059669;
-          background: white;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          z-index: 20; /* มั่นใจว่าปุ่มอยู่บนสุด */
-        }
-        .swiper-button-next:after,
-        .swiper-button-prev:after {
-          font-size: 18px;
-          font-weight: bold;
-        }
-        .swiper-button-disabled {
-          opacity: 0.35;
-          cursor: not-allowed;
-        }
-        .swiper-pagination-bullet-active {
-          background-color: #059669;
-        }
-      `}</style>
     </div>
   );
 };

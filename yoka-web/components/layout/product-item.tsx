@@ -18,7 +18,9 @@ const ProductItem = ({ course }: { course: CourseType }) => {
         />
       </div>
       <div className="flex flex-col gap-2 z-10 relative">
-        <span className="text-base font-semibold">{course?.title}</span>
+        <span className="text-base line-clamp-1 font-semibold">
+          {course?.title}
+        </span>
         <p className="text-neutral-700 line-clamp-2 text-sm">
           {course?.description}
         </p>

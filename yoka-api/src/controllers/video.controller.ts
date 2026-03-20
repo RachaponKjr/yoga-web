@@ -55,16 +55,21 @@ export const updateVideoPreview = async (
   next: NextFunction,
 ) => {
   try {
-    const { url_1, url_2, url_3, url_4, id } = req.body;
+    const { url_1, url_2, url_3, url_4, url_5, id } = req.body;
 
     if (!url_1 || !url_2 || !url_3 || !url_4) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: "Please provide all 4 URLs",
       });
     }
+    const files = req.files as any;
+
+    // ทีนี้คุณจะเข้าถึง field ไหนก็ได้แล้วครับ
+    const coverImage = files?.cover_image ? files.cover_image[0].path : null;
+    console.log(coverImage);
 
     const data = await videoService.updateVideoService({
-      payload: { url_1, url_2, url_3, url_4, id },
+      payload: { url_1, url_2, url_3, url_4, id, coverImage },
     });
 
     res.status(StatusCodes.OK).json({

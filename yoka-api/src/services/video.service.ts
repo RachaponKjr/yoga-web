@@ -37,12 +37,19 @@ export const updateVideoService = async ({
     url_2: string;
     url_3: string;
     url_4: string;
+    coverImage: string;
   };
 }) => {
   return await prisma.videoPerview.update({
     where: {
       id: payload.id,
     },
-    data: payload,
+    data: {
+      url_1: payload.url_1,
+      url_2: payload.url_2,
+      url_3: payload.url_3,
+      url_4: payload.url_4,
+      url_5: payload.coverImage,
+    },
   });
 };

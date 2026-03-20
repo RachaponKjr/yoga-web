@@ -5,6 +5,7 @@ import {
   getVideoPreview,
   updateVideoPreview,
 } from "../controllers/video.controller";
+import { createUploader } from "../middlewares/upload.middleware";
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.patch(
   "/update",
   authMiddleware,
   restrictTo("Admin"),
+  createUploader("images").fields([{ name: "cover_image", maxCount: 1 }]),
   updateVideoPreview,
 );
 

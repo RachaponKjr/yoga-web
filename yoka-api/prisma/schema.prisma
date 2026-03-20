@@ -161,11 +161,12 @@ model Coupon {
 }
 
 model VideoPerview {
-  id    String @id @default(cuid())
-  url_1 String
-  url_2 String
-  url_3 String
-  url_4 String
+  id    String  @id @default(cuid())
+  url_1 String?
+  url_2 String?
+  url_3 String?
+  url_4 String?
+  url_5 String?
 }
 
 model CouponUsage {

@@ -19,14 +19,12 @@ export const videoService = {
     return response.data.data;
   },
 
-  update: async (payload: {
-    id: string;
-    url_1: string;
-    url_2: string;
-    url_3: string;
-    url_4: string;
-  }) => {
-    const response = await http.patch("/video/update", payload);
+  update: async (payload: FormData) => {
+    const response = await http.patch("/video/update", payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 };

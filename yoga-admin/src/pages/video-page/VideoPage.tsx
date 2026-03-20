@@ -10,11 +10,13 @@ const VideoPage = () => {
     url_2: "",
     url_3: "",
     url_4: "",
+    url_5: "",
   });
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tempUrls, setTempUrls] = useState({ ...videoData });
-
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  console.log(videoData.url_5);
   // ดึงข้อมูลวิดีโอ
   const fetchVideos = useCallback(async () => {
     try {
@@ -27,6 +29,7 @@ const VideoPage = () => {
           url_2: res.url_2 || "",
           url_3: res.url_3 || "",
           url_4: res.url_4 || "",
+          url_5: res.url_5 || "",
         };
         setVideoData(newData);
         setTempUrls(newData);
@@ -52,16 +55,17 @@ const VideoPage = () => {
     try {
       // ตรวจสอบว่าใน tempUrls มี id หรือไม่
       if (tempUrls.id) {
+        const formData = new FormData();
+        formData.append("id", tempUrls.id);
+        formData.append("url_1", tempUrls.url_1);
+        formData.append("url_2", tempUrls.url_2);
+        formData.append("url_3", tempUrls.url_3);
+        formData.append("url_4", tempUrls.url_4);
+        if (coverImage) {
+          formData.append("cover_image", coverImage);
+        }
         // ถ้ามี id ให้เรียก update และส่ง tempUrls ไปทั้งหมดได้เลย
-        await videoService.update(
-          tempUrls as {
-            id: string;
-            url_1: string;
-            url_2: string;
-            url_3: string;
-            url_4: string;
-          },
-        );
+        await videoService.update(formData);
         toast.success("Updated successfully");
       } else {
         // ถ้าไม่มี id (กรณีข้อมูลชุดแรกสุด) ให้เรียก create
@@ -129,11 +133,23 @@ const VideoPage = () => {
             <Loader2 className="animate-spin text-blue-500" size={40} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8">
-            <VideoCard url={videoData.url_1} />
-            <VideoCard url={videoData.url_2} />
-            <VideoCard url={videoData.url_3} />
-            <VideoCard url={videoData.url_4} />
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8">
+              <VideoCard url={videoData.url_1} />
+              <VideoCard url={videoData.url_2} />
+              <VideoCard url={videoData.url_3} />
+              <VideoCard url={videoData.url_4} />
+            </div>
+            <div className="w-full flex flex-col gap-4">
+              <h6 className="text-xl font-bold text-gray-800">ภาพตารางสอน</h6>
+              <div className="max-w-xl aspect-square">
+                <img
+                  className="w-full h-full object-cover"
+                  src={`http://localhost:3001/${videoData.url_5}`}
+                  alt=""
+                />
+              </div>
+            </div>
           </div>
         )}
 
@@ -175,6 +191,20 @@ const VideoPage = () => {
                     </div>
                   </div>
                 ))}
+                <div className="space-y-2">
+                  <label className="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+                    ตารางสอน
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        setCoverImage(e.target.files?.[0] || null)
+                      }
+                      className="w-full pl-4 pr-4 py-3 bg-gray-100 border-transparent border-2 focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all text-sm"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="p-8 pt-0 flex gap-4">

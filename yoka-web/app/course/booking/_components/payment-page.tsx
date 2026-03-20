@@ -32,6 +32,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { CouponService, VerifyCouponPayload } from "@/service/coupon.service";
 import { Textarea } from "@/components/ui/textarea";
 import Policy from "./policy";
+import Link from "next/link";
 
 const PaymentPage = () => {
   const { booking, decrementQuantity, incrementQuantity } = useBooking();
@@ -41,6 +42,7 @@ const PaymentPage = () => {
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [isAgree, setIsAgree] = useState(false);
   const [isConsentAccepted, setIsConsentAccepted] = useState(false);
+  const [isPolicyAccepted, setIsPolicyAccepted] = useState(false);
 
   const router = useRouter();
 
@@ -117,11 +119,10 @@ const PaymentPage = () => {
   const handleConfirmPayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isConsentAccepted) {
+    if (!isPolicyAccepted) {
       toast.error("Please accept the privacy policy and consent terms.");
       return;
     }
-
     const { cardNumber, cardHolder, cardExpiry, cardCvv } = cardDetail;
     const rawCardNumber = cardNumber.replace(/\s/g, "");
 
@@ -431,6 +432,39 @@ const PaymentPage = () => {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                 />
+              </div>
+
+              <div
+                className={`bg-slate-50 rounded-xl p-4 border transition-colors ${isPolicyAccepted ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"}`}
+              >
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={isPolicyAccepted}
+                    onChange={(e) => setIsPolicyAccepted(e.target.checked)}
+                    className="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <div className="flex-1 text-sm text-slate-600">
+                    <span className="font-semibold text-slate-800 block mb-1">
+                      Privacy Policy & Refund Policy
+                    </span>
+                    <div className="flex flex-row gap-2">
+                      <Link
+                        href="/policy"
+                        className="text-gray-400 hover:text-emerald-700"
+                      >
+                        อ่านนโยบายความเป็นส่วนตัว
+                      </Link>
+                      <p className="text-gray-400">/</p>
+                      <Link
+                        href="/refund"
+                        className="text-gray-400 hover:text-emerald-700"
+                      >
+                        อ่านนโยบายการคืนเงิน
+                      </Link>
+                    </div>
+                  </div>
+                </label>
               </div>
 
               {/* Pay Button */}

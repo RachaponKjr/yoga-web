@@ -14,8 +14,6 @@ export const videoService = {
 
   getAll: async () => {
     const response = await http.get("/video/get");
-    // ปกติ axios จะได้ response.data และหลังบ้านคุณส่ง { success: true, data: ... }
-    // จึงต้องเข้าถึง .data สองครั้ง หรือตามโครงสร้างจริงของหลังบ้าน
     return response.data.data;
   },
 

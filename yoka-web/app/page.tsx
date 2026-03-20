@@ -11,6 +11,7 @@ import PortfolioGallery from "./_components/gallory";
 import About from "./_components/about";
 import ReviewSection from "@/components/Review";
 import VideoReview from "./_components/video-review";
+import YogaSchedule from "@/components/YogaSchedule";
 
 interface InstructorProps extends UserType {
   userInfo: UserInfoType;
@@ -29,6 +30,7 @@ export default async function Home() {
           <VideoReview />
           <About />
           <ReviewSection />
+          <YogaSchedule />
         </div>
         <Instructors data={data} />
       </div>

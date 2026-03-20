@@ -145,17 +145,33 @@ const Footer = () => {
           </p>
 
           {/* Social Icons */}
-          <div className="flex gap-4">
-            {socials.map((social, index) => (
-              <a
-                key={index}
-                href={social.href}
-                target="_blank"
-                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white transition-all duration-300 hover:-translate-y-1"
+          <div className="flex items-center gap-4">
+            <div className="flex gap-4">
+              <Link
+                href="/policy"
+                className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all duration-300 inline-flex items-center gap-2 text-sm"
               >
-                <Icon icon={social.icon} width={22} height={22} />
-              </a>
-            ))}
+                Privacy Policy
+              </Link>
+              <Link
+                href="/refund"
+                className="text-slate-400 hover:text-emerald-400 hover:translate-x-1 transition-all duration-300 inline-flex items-center gap-2 text-sm"
+              >
+                Refund Policy
+              </Link>
+            </div>
+            <div className="flex gap-4">
+              {socials.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white transition-all duration-300 hover:-translate-y-1"
+                >
+                  <Icon icon={social.icon} width={22} height={22} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
