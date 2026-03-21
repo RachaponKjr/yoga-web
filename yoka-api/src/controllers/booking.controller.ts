@@ -364,6 +364,7 @@ const cancelBookingController = async (
 <b>รหัสการจอง:</b> <code>${cancelBookingRes.id}</code>
 <b>รหัสการชำระเงิน:</b> <code>${cancelBookingRes.paymentId || "ยังไม่ชำระเงิน"}</code>
 <b>ลูกค้า:</b> ${cancelBookingRes.student.email}
+<b>เบอร์โทรลูกค้า:</b> ${cancelBookingRes.student.userInfo.phone_number || "ยังไม่ระบุ"}
 <b>คอร์ส:</b> ${cancelBookingRes.round?.course?.title}
 <b>สถานะ:</b> ${cancelBookingRes.status}
 --------------------------

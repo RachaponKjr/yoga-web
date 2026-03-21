@@ -207,7 +207,11 @@ const cancelBookingService = async ({
           course: true,
         },
       },
-      student: true,
+      student: {
+        include: {
+          userInfo: true,
+        },
+      },
     },
   });
   return res;
