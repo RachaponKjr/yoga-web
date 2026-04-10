@@ -21,10 +21,8 @@ const UserCardMinimal = ({
   instagram?: string;
   twitter?: string;
 }) => {
-  const imageSrc = avatar
-    ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${avatar}`
-    : "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?q=80&w=2069&auto=format&fit=crop";
-
+  const imageSrc = `https://api.yogabyniti.com/${avatar}`;
+  console.log(avatar);
   return (
     <div className="group relative w-full  mx-auto h-full">
       {/* Container: พื้นขาว Solid จัดระเบียบด้วย Grid/Flex */}
@@ -38,14 +36,10 @@ const UserCardMinimal = ({
                   src={imageSrc}
                   alt={fullName || "Instructor"}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
             </div>
-            {/* Status Indicator (Optional: เช่น Online/Verified) */}
-            {/* <div className="absolute bottom-1 right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-50">
-              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse" />
-            </div> */}
           </div>
 
           {/* 2. Text Content */}

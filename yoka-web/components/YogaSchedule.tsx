@@ -35,9 +35,9 @@ const YogaSchedule = () => {
           <Image
             src={`https://api.yogabyniti.com/${video?.url_5}`}
             alt=""
-            width={1000}
-            height={1000}
-            className="object-cover"
+            width={800}
+            height={800}
+            className="object-contain mx-auto"
           />
           {/* กรอบตกแต่งด้านหลัง (Decorative Frame) */}
           <div className="absolute -inset-3 border border-[#1A1A1A]/5 rounded-4xl -z-10" />
@@ -48,11 +48,6 @@ const YogaSchedule = () => {
           </div>
 
           {/* ป้ายกำกับเล็กๆ มุมภาพ */}
-          <div className="absolute bottom-6 right-6 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/50 shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A1A1A]">
-              Update: March 2026
-            </p>
-          </div>
         </div>
 
         {/* ข้อความเสริมด้านล่าง */}
