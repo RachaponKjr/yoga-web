@@ -450,9 +450,10 @@ const RoundForm = ({
           onClick={handleSubmit}
           disabled={isSubmitting}
           className={
-            mode === "create"
-              ? "bg-green-600 hover:bg-green-700"
-              : "bg-blue-600 hover:bg-blue-700"
+            `bg-green-600! text-white!` +
+            (mode === "create"
+              ? "bg-green-600! hover:bg-green-700!"
+              : "bg-blue-600! hover:bg-blue-700!")
           }
         >
           {isSubmitting ? (
