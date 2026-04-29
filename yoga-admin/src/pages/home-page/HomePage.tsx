@@ -124,7 +124,7 @@ const HomePage = () => {
 
       {/* 2. Stats Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
+        {stats?.map((stat, index) => (
           <div
             key={index}
             className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all"
@@ -132,13 +132,13 @@ const HomePage = () => {
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                  {stat.label}
+                  {stat?.label}
                 </span>
                 <span className="text-2xl font-black text-gray-800 mt-1">
-                  {stat.value}
+                  {stat?.value}
                 </span>
               </div>
-              <div className={`p-3 rounded-2xl ${stat.color}`}>
+              <div className={`p-3 rounded-2xl ${stat?.color}`}>
                 <stat.icon size={20} strokeWidth={2.5} />
               </div>
             </div>
@@ -173,7 +173,7 @@ const HomePage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {rounds.slice(0, 5).map((round, idx) => (
+                {rounds?.slice(0, 5).map((round, idx) => (
                   <tr
                     key={idx}
                     className="hover:bg-gray-50/50 transition-colors"
@@ -203,9 +203,9 @@ const HomePage = () => {
                           )}
                         </div>
                         <span className="text-xs font-medium text-gray-700">
-                          {round.subTeacherId
-                            ? round.subTeacher?.userInfo?.firstName
-                            : round.teacher?.userInfo?.firstName}
+                          {round?.subTeacherId
+                            ? round?.subTeacher?.userInfo?.firstName
+                            : round?.teacher?.userInfo?.firstName}
                         </span>
                       </div>
                     </td>
@@ -228,12 +228,12 @@ const HomePage = () => {
                     <td className="px-6 py-4 text-right">
                       <Badge
                         className={
-                          round.status === "Open"
+                          round?.status === "Open"
                             ? "bg-green-100 text-green-700"
                             : "bg-gray-100 text-gray-400"
                         }
                       >
-                        {round.status}
+                        {round?.status}
                       </Badge>
                     </td>
                   </tr>
@@ -249,16 +249,16 @@ const HomePage = () => {
             <TrendingUp size={18} className="text-green-500" /> การจองล่าสุด
           </h2>
           <div className="space-y-4 flex-1">
-            {bookings.slice(0, 5).map((item, idx) => (
+            {bookings?.slice(0, 5).map((item, idx) => (
               <div
                 key={idx}
                 className="flex relative items-center gap-3 p-2 rounded-2xl hover:bg-gray-50 transition-all group"
               >
                 <div
                   className={`absolute top-2 right-2 z-10 px-2 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border ${
-                    item.status === "PAID"
+                    item?.status === "PAID"
                       ? "bg-green-100 text-green-700 border-green-200"
-                      : item.status === "PENDING"
+                      : item?.status === "PENDING"
                         ? "bg-yellow-100 text-yellow-700 border-yellow-200"
                         : "bg-red-100 text-red-700 border-red-200"
                   }`}
@@ -267,34 +267,34 @@ const HomePage = () => {
                     {/* ใส่จุดไฟเล็กๆ ข้างหน้าเพื่อให้ดูมีสถานะจริง */}
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
-                        item.status === "PAID"
+                        item?.status === "PAID"
                           ? "bg-green-500"
-                          : item.status === "PENDING"
+                          : item?.status === "PENDING"
                             ? "bg-yellow-500"
                             : "bg-red-500"
                       }`}
                     ></span>
-                    {item.status}
+                    {item?.status}
                   </span>
                 </div>
                 <img
-                  src={`https://api.yogabyniti.com/${item.student.userInfo.avatar}`}
+                  src={`https://api.yogabyniti.com/${item?.student?.userInfo?.avatar}`}
                   className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                   onError={(e: any) =>
-                    (e.target.src = `https://ui-avatars.com/api/?name=${item.student.userInfo.firstName}`)
+                    (e.target.src = `https://ui-avatars.com/api/?name=${item?.student?.userInfo?.firstName}`)
                   }
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-gray-800 truncate">
-                    {item.student.userInfo.firstName}{" "}
-                    {item.student.userInfo.lastName}
+                    {item?.student?.userInfo?.firstName}{" "}
+                    {item?.student?.userInfo?.lastName}
                   </p>
                   <p className="text-[10px] text-gray-400 truncate">
-                    จอง: {item.round.course.title}
+                    จอง: {item?.round?.course?.title}
                   </p>
                 </div>
                 <div className="text-right text-[10px] mt-4 font-bold text-gray-400 uppercase">
-                  {format(new Date(item.createdAt), "dd/MM/yyyy HH:mm")}
+                  {format(new Date(item?.createdAt), "dd/MM/yyyy HH:mm")}
                 </div>
               </div>
             ))}
