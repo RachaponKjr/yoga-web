@@ -180,23 +180,23 @@ const HomePage = () => {
                   >
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-gray-700">
-                        {format(new Date(round.startDateTime), "HH:mm")}
+                        {format(new Date(round?.startDateTime), "HH:mm")}
                       </p>
                       <p className="text-[10px] text-gray-400">
-                        {format(new Date(round.startDateTime), "dd MMM yy")}
+                        {format(new Date(round?.startDateTime), "dd MMM yy")}
                       </p>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm font-bold text-gray-800">
-                        {round.course?.title}
+                        {round?.course?.title}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] border ${round.subTeacherId ? "bg-indigo-50 border-indigo-100 text-indigo-600" : "bg-gray-50 text-gray-400"}`}
+                          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] border ${round?.subTeacherId ? "bg-indigo-50 border-indigo-100 text-indigo-600" : "bg-gray-50 text-gray-400"}`}
                         >
-                          {round.subTeacherId ? (
+                          {round?.subTeacherId ? (
                             <UserCheck size={14} />
                           ) : (
                             <UserIcon size={14} />
@@ -215,13 +215,13 @@ const HomePage = () => {
                           variant="outline"
                           className="text-[9px] border-blue-100 text-blue-600"
                         >
-                          ON: {round.current_online}
+                          ON: {round?.current_online}
                         </Badge>
                         <Badge
                           variant="outline"
                           className="text-[9px] border-orange-100 text-orange-600"
                         >
-                          WK: {round.current_walk_in}
+                          WK: {round?.current_walk_in}
                         </Badge>
                       </div>
                     </td>
