@@ -89,7 +89,7 @@ const DialogEdit = ({
       if (response.data.courses) {
         const rounds = response.data.courses;
         const filteredRounds = rounds.filter(
-          (round: RoundType) => round.courseId === booking.round.courseId
+          (round: RoundType) => round.courseId === booking?.round?.courseId
         );
         setRound(filteredRounds);
       }
@@ -126,9 +126,9 @@ const DialogEdit = ({
               type="text"
               id="name"
               value={
-                booking.student.userInfo.firstName +
+                booking?.student?.userInfo?.firstName +
                 " " +
-                booking.student.userInfo.lastName
+                booking?.student?.userInfo?.lastName
               }
             />
           </div>
@@ -143,7 +143,7 @@ const DialogEdit = ({
               disabled
               type="text"
               id="phone"
-              value={String(booking.student.userInfo.phone_number)}
+              value={String(booking?.student?.userInfo?.phone_number)}
             />
           </div>
           <div className="space-y-2">
@@ -157,7 +157,7 @@ const DialogEdit = ({
               disabled
               type="email"
               id="email"
-              value={booking.student.email}
+              value={booking?.student?.email}
             />
           </div>
           <div className="space-y-2">

@@ -1,6 +1,5 @@
 import {
   Search,
-  Download,
   Eye,
   XCircle,
   CheckCircle,
@@ -207,17 +206,17 @@ const BookingPage = () => {
                         {/* ผมใส่ Avatar placeholder ให้เผื่อรูปไม่มี */}
                         <img
                           src={`${"https://api.yogabyniti.com/"}${
-                            booking.student.userInfo.avatar || ""
+                            booking?.student?.userInfo?.avatar || ""
                           }`}
-                          alt={booking.student.email}
+                          alt={booking?.student?.email}
                           className="h-10 w-10 rounded-full object-cover border border-gray-100"
                         />
                         <div>
                           <p className="text-sm font-bold text-gray-800">
-                            {booking.student.email}
+                            {booking?.student?.email}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {booking.student.userInfo?.phone_number || "-"}
+                            {booking?.student?.userInfo?.phone_number || "-"}
                           </p>
                         </div>
                       </div>
@@ -227,7 +226,7 @@ const BookingPage = () => {
                     <td className="py-4 px-6">
                       <div>
                         <p className="text-sm font-medium text-gray-900">
-                          {booking.round.course.title}
+                          {booking?.round?.course?.title || ""}
                         </p>
                       </div>
                     </td>
@@ -235,19 +234,19 @@ const BookingPage = () => {
                     {/* Date Column */}
                     <td className="py-4 px-6">
                       <div className="text-sm text-gray-600">
-                        <p>{formatDate(String(booking.createdAt))}</p>
+                        <p>{formatDate(String(booking?.createdAt))}</p>
                       </div>
                     </td>
 
                     {/* Status Column */}
                     <td className="py-4 px-6 text-center">
-                      {getStatusBadge(booking.status)}
+                      {getStatusBadge(booking?.status)}
                     </td>
 
                     {/* Price Column */}
                     <td className="py-4 px-6 text-right">
                       <p className="text-sm font-bold text-gray-800">
-                        {booking.price.toFixed(2)}
+                        {booking?.price?.toFixed(2)}
                       </p>
                       <p className="text-xs text-gray-400">Credit Card</p>
                     </td>
@@ -292,7 +291,7 @@ const BookingPage = () => {
                                   </h4>
                                   <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                                     <img
-                                      src={`https://api.yogabyniti.com/${selectedBooking.student.userInfo.avatar || ""}`}
+                                      src={`https://api.yogabyniti.com/${selectedBooking?.student?.userInfo?.avatar || ""}`}
                                       alt="avatar"
                                       className="h-16 w-16 rounded-2xl object-cover border-2 border-white shadow-sm"
                                     />
@@ -303,12 +302,12 @@ const BookingPage = () => {
                                         </p>
                                         <p className="text-sm font-bold text-gray-800">
                                           {
-                                            selectedBooking.student.userInfo
-                                              .firstName
+                                            selectedBooking?.student?.userInfo
+                                              ?.firstName
                                           }{" "}
                                           {
-                                            selectedBooking.student.userInfo
-                                              .lastName
+                                            selectedBooking?.student?.userInfo
+                                              ?.lastName
                                           }
                                         </p>
                                       </div>
@@ -317,8 +316,8 @@ const BookingPage = () => {
                                           เบอร์โทรศัพท์
                                         </p>
                                         <p className="text-sm font-bold text-gray-800">
-                                          {selectedBooking.student.userInfo
-                                            .phone_number || "-"}
+                                          {selectedBooking?.student?.userInfo
+                                            ?.phone_number || "-"}
                                         </p>
                                       </div>
                                       <div className="col-span-2">
@@ -326,7 +325,7 @@ const BookingPage = () => {
                                           อีเมล
                                         </p>
                                         <p className="text-sm font-medium text-indigo-600">
-                                          {selectedBooking.student.email}
+                                          {selectedBooking?.student?.email}
                                         </p>
                                       </div>
                                     </div>
@@ -345,7 +344,7 @@ const BookingPage = () => {
                                         คอร์สที่จอง
                                       </p>
                                       <p className="text-sm font-bold text-gray-900 leading-tight">
-                                        {selectedBooking.round.course.title}
+                                        {selectedBooking?.round?.course?.title}
                                       </p>
                                     </div>
                                     <div>
