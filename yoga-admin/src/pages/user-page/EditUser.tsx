@@ -26,7 +26,7 @@ import { authService } from "../../service/auth.service"; // อย่าลื�
 import { Button } from "@/components/ui/button";
 import CountrySelect from "@/components/CountrySelect";
 
-const BASE_IMG_URL = "https://api.yogabyniti.com/";
+const BASE_IMG_URL = import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/";
 
 interface EditUserProps {
   user: UserType & {

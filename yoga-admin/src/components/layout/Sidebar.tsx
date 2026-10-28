@@ -25,6 +25,7 @@ const Sidebar = () => {
     { name: "จัดการคูปอง", path: "/coupons", icon: Tags },
     { name: "จัดการสมาชิก", path: "/users", icon: Users },
     { name: "จัดการวิดีโอ", path: "/video", icon: VideoIcon },
+    { name: "จัดการบทความ", path: "/blog", icon: BookIcon },
   ];
 
   const handleLogout = (e: React.MouseEvent) => {

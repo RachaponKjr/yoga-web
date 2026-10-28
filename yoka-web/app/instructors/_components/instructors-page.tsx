@@ -19,7 +19,7 @@ type Instructor = {
   userInfo: UserInfoType;
 };
 
-const image_url = "https://api.yogabyniti.com/";
+const image_url = process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/";
 
 const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
   return (

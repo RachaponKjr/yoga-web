@@ -18,7 +18,7 @@ interface InstructorProps extends UserType {
 }
 
 export default async function Home() {
-  const data = (await authService.getInstructor()) as InstructorProps[];
+  // const data = (await authService.getInstructor()) as InstructorProps[];
   return (
     <main className="relative flex flex-col overflow-hidden">
       {/* <Social /> */}
@@ -32,7 +32,7 @@ export default async function Home() {
           <ReviewSection />
           <YogaSchedule />
         </div>
-        <Instructors data={data} />
+        {/* <Instructors data={data} /> */}
       </div>
       <StepService />
       <ProductCourse />

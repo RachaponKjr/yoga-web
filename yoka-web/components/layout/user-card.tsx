@@ -21,7 +21,7 @@ const UserCardMinimal = ({
   instagram?: string;
   twitter?: string;
 }) => {
-  const imageSrc = `https://api.yogabyniti.com/${avatar}`;
+  const imageSrc = `${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${avatar}`;
   console.log(avatar);
   return (
     <div className="group relative w-full  mx-auto h-full">

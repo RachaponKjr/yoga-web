@@ -15,6 +15,7 @@ import paymentRoutes from "./routes/payment.route";
 import adminRoutes from "./routes/admin.route";
 import couponRoutes from "./routes/coupon.routes";
 import videoRoutes from "./routes/video.routes";
+import blogRoutes from "./routes/blog.route";
 import testRoutes from "./routes/test.route";
 
 import path from "path";
@@ -32,6 +33,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
+      "http://localhost:3100",
       "http://localhost:5173",
       "https://yogabyniti.com",
       "https://www.yogabyniti.com",
@@ -43,6 +45,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use(`${apiPrefix}/blog`, express.json({ limit: "512kb" }));
 app.use(express.json()); // Body Parser
 app.use(morgan("dev")); // HTTP Request Logger
 app.use(cookieParser()); // Cookie Parser
@@ -56,6 +59,7 @@ app.use(`${apiPrefix}/payment`, paymentRoutes);
 app.use(`${apiPrefix}/admin`, adminRoutes);
 app.use(`${apiPrefix}/coupon`, couponRoutes);
 app.use(`${apiPrefix}/video`, videoRoutes);
+app.use(`${apiPrefix}/blog`, blogRoutes);
 app.use(`${apiPrefix}/test`, testRoutes);
 
 // Webhook

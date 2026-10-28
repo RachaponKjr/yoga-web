@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 import CouponPage from "./pages/coupon-page/CouponPage";
 import CoursePage from "./pages/course-page/CoursePage";
 import VideoPage from "./pages/video-page/VideoPage";
+import BlogPage from "./pages/blog-page/BlogPage";
 function App() {
   const { isLoading, checkAuth } = useAuthStore();
   useEffect(() => {
@@ -44,6 +45,7 @@ function App() {
               <Route path="/coupons" element={<CouponPage />} />
               <Route path="/classes" element={<CoursePage />} />
               <Route path="/video" element={<VideoPage />} />
+              <Route path="/blog" element={<BlogPage />} />
             </Route>
           </Route>
         </Routes>

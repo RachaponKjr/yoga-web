@@ -1,0 +1,12 @@
+{
+  "name": "yoka-local",
+  "private": true,
+  "scripts": {
+    "docker:up": "docker compose -p yoka-local -f compose.local.yml up -d --build --wait",
+    "docker:down": "docker compose -p yoka-local -f compose.local.yml down",
+    "docker:logs": "docker compose -p yoka-local -f compose.local.yml logs -f",
+    "dev": "node scripts/local.mjs",
+    "local:setup": "node scripts/local.mjs --setup",
+    "local:db:stop": "docker compose -p yoka-local -f compose.local.yml stop db"
+  }
+}

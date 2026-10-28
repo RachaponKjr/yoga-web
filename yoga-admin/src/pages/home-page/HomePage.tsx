@@ -278,7 +278,7 @@ const HomePage = () => {
                   </span>
                 </div>
                 <img
-                  src={`https://api.yogabyniti.com/${item?.student?.userInfo?.avatar}`}
+                  src={`${import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/"}${item?.student?.userInfo?.avatar}`}
                   className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                   onError={(e: any) =>
                     (e.target.src = `https://ui-avatars.com/api/?name=${item?.student?.userInfo?.firstName}`)

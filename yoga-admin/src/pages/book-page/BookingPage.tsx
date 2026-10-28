@@ -205,7 +205,7 @@ const BookingPage = () => {
                       <div className="flex items-center gap-3">
                         {/* ผมใส่ Avatar placeholder ให้เผื่อรูปไม่มี */}
                         <img
-                          src={`${"https://api.yogabyniti.com/"}${
+                          src={`${import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/"}${
                             booking?.student?.userInfo?.avatar || ""
                           }`}
                           alt={booking?.student?.email}
@@ -291,7 +291,7 @@ const BookingPage = () => {
                                   </h4>
                                   <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                                     <img
-                                      src={`https://api.yogabyniti.com/${selectedBooking?.student?.userInfo?.avatar || ""}`}
+                                      src={`${import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/"}${selectedBooking?.student?.userInfo?.avatar || ""}`}
                                       alt="avatar"
                                       className="h-16 w-16 rounded-2xl object-cover border-2 border-white shadow-sm"
                                     />

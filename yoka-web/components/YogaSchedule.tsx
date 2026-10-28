@@ -33,7 +33,7 @@ const YogaSchedule = () => {
         {/* --- ส่วนแสดงรูปภาพตารางสอน --- */}
         <div className="relative w-full max-w-full h-max group">
           <Image
-            src={`https://api.yogabyniti.com/${video?.url_5}`}
+            src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${video?.url_5}`}
             alt=""
             width={800}
             height={800}

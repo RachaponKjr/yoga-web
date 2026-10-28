@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Link, { LinkProps } from "next/link";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Icon } from "@iconify/react";
@@ -15,12 +15,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
-import Image from "next/image";
-// import { authService } from "@/service/auth.service";
-// import { toast } from "sonner";
-// import { Loader2 } from "lucide-react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import styles from "./navbar.module.css";
 
+gsap.registerPlugin(useGSAP);
+import Image from "next/image";
 interface UserProps {
   user: {
     role: string;
@@ -36,19 +36,78 @@ interface UserProps {
 
 const Navbar = () => {
   const pathname = usePathname();
-  const { user, checkAuth, logout, isLoading } = useAuthStore();
+  const { user, checkAuth } = useAuthStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // ตรวจจับการ Scroll
+  const headerRef = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia();
+      media.add(
+        { reduce: "(prefers-reduced-motion: reduce)", all: "(min-width: 0px)" },
+        (context) => {
+          const reduced = context.conditions?.reduce;
+          let compact = false;
+          const update = (initial = false) => {
+            // Separate thresholds keep the island stable near the transition.
+            const next = window.scrollY > (compact ? 32 : 80);
+            if (!initial && next === compact) return;
+            compact = next;
+            setIsScrolled(next);
+            gsap.to(headerRef.current, {
+              "--island-inset": next ? "16px" : "0px",
+              "--island-width": next ? "1160px" : "100vw",
+              "--island-height": next ? "68px" : "100px",
+              "--island-radius": next ? "36px" : "0px",
+              "--island-logo": next ? "72px" : "100px",
+              y: next ? 12 : 0,
+              duration: reduced || initial ? 0 : 0.65,
+              ease: "power3.inOut",
+              overwrite: "auto",
+            });
+          };
+          const onScroll = () => update();
+          update(true);
+          window.addEventListener("scroll", onScroll, { passive: true });
+          return () => {
+            window.removeEventListener("scroll", onScroll);
+            gsap.killTweensOf(headerRef.current);
+          };
+        },
+      );
+      return () => media.revert();
+    },
+    { scope: headerRef },
+  );
+
   useEffect(() => {
-    const handleScroll = () => {
-      // เริ่ม effect เมื่อ scroll ลงมามากกว่า 10px
-      setIsScrolled(window.scrollY > 10);
+    if (!isMobileMenuOpen) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+        toggleRef.current?.focus();
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const outside = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node))
+        setIsMobileMenuOpen(false);
+    };
+    const desktop = window.matchMedia("(min-width: 1200px)");
+    const resize = () => {
+      if (desktop.matches) setIsMobileMenuOpen(false);
+    };
+    document.addEventListener("keydown", close);
+    document.addEventListener("pointerdown", outside);
+    desktop.addEventListener("change", resize);
+    return () => {
+      document.removeEventListener("keydown", close);
+      document.removeEventListener("pointerdown", outside);
+      desktop.removeEventListener("change", resize);
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     checkAuth();
@@ -66,6 +125,11 @@ const Navbar = () => {
       label: "Yoga Timetable",
       icon: "mdi:calendar-blank-outline",
     },
+    {
+      href: "/blog",
+      label: "Blog",
+      icon: "mdi:book-open-page-variant-outline",
+    },
     { href: "/about", label: "About Us", icon: "mdi:information-outline" },
     { href: "/contact", label: "Contact Us", icon: "mdi:phone-outline" },
   ];
@@ -78,13 +142,16 @@ const Navbar = () => {
     link: LinkProps & { label: string; icon: string };
     mobile?: boolean;
   }) => {
-    const isActive = pathname === link.href;
+    const isActive =
+      pathname === link.href ||
+      (link.href === "/blog" && pathname.startsWith("/blog/"));
     return (
       <Link
         href={link.href}
+        aria-current={isActive ? "page" : undefined}
         onClick={() => mobile && setIsMobileMenuOpen(false)}
         className={`relative transition-colors flex items-center gap-2 hover:text-primary font-medium
-          ${mobile ? "text-base block w-full" : "text-sm lg:text-base"}
+          ${mobile ? "text-base block w-full" : "text-sm whitespace-nowrap"}
           ${isActive ? "text-primary font-semibold" : "text-foreground/60"}
         `}
       >
@@ -102,119 +169,129 @@ const Navbar = () => {
   };
 
   return (
-    <header
-      className={`relative top-0 left-0 right-0 z-999 transition-all duration-300 ease-in-out border-b border-transparent shadow-sm
-      ${
-        isScrolled
-          ? "bg-secondary/80 backdrop-blur-md shadow-sm py-3 border-gray-200/20"
-          : "bg-secondary py-0 md:py-3"
-      }`}
-    >
-      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="z-50 relative ">
-          <Image
-            src={"/tlogo.png"}
-            alt="Logo"
-            width={100}
-            height={100}
-            className="md:scale-150 scale-100 relative md:left-5 md:top-2"
-          />
-        </Link>
+    <div className={styles.placeholder}>
+      <header
+        ref={headerRef}
+        data-scrolled={isScrolled}
+        className={styles.header}
+      >
+        <div className={styles.bar}>
+          {/* Logo */}
+          <Link href="/" aria-label="Yoga By Niti home" className={styles.logo}>
+            <Image
+              src={"/tlogo.png"}
+              alt="Yoga By Niti"
+              width={100}
+              height={100}
+              className="h-full w-full object-contain"
+            />
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <div key={link.href} className="group relative">
-              <NavItem link={link} />
-            </div>
-          ))}
-        </nav>
-
-        {/* Right Side: Auth & Mobile Toggle */}
-        <div className="flex items-center gap-4">
-          <div className="hidden md:block">
-            {!user ? (
-              <div className="flex items-center  gap-3">
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="rounded-full hover:bg-white/20 hover:text-primary"
-                >
-                  <Link href="/signin">Sign In</Link>
-                </Button>
-                <Button
-                  asChild
-                  className="rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
-                >
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
+          {/* Desktop Navigation */}
+          <nav
+            aria-label="Main navigation"
+            className="hidden min-[1200px]:flex items-center gap-4"
+          >
+            {navLinks.map((link) => (
+              <div key={link.href} className="group relative">
+                <NavItem link={link} />
               </div>
-            ) : (
-              <UserDropdown user={user as any} />
+            ))}
+          </nav>
+
+          {/* Right Side: Auth & Mobile Toggle */}
+          <div className="flex items-center gap-4">
+            <div className="hidden min-[1200px]:block">
+              {!user ? (
+                <div className="flex items-center  gap-3">
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className="rounded-full hover:bg-white/20 hover:text-primary"
+                  >
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+                  >
+                    <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </div>
+              ) : (
+                <UserDropdown user={user as any} />
+              )}
+            </div>
+            <div className="min-[1200px]:hidden flex items-center gap-3">
+              {user && <UserDropdown user={user as any} />}
+              <button
+                ref={toggleRef}
+                aria-label={
+                  isMobileMenuOpen ? "Close navigation" : "Open navigation"
+                }
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-navigation"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-foreground/80 hover:text-primary transition-colors rounded-full focus-visible:outline-2 focus-visible:outline-primary"
+              >
+                <Icon
+                  icon={isMobileMenuOpen ? "mdi:close" : "mdi:menu"}
+                  width={28}
+                  height={28}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Overlay */}
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile navigation"
+          inert={!isMobileMenuOpen}
+          aria-hidden={!isMobileMenuOpen}
+          data-open={isMobileMenuOpen}
+          className={styles.mobileMenu}
+        >
+          <div className="container mx-auto px-6 py-6 flex flex-col gap-10">
+            {navLinks.map((link) => (
+              <NavItem key={link.href} link={link} mobile />
+            ))}
+
+            {!user && (
+              <>
+                <div className="h-px bg-foreground/10" />
+                <div className="flex flex-row max-w-full gap-3">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] border-primary/20"
+                  >
+                    <Link
+                      href="/signin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] bg-[#3D552F] hover:bg-[#3D552F]/90 text-white"
+                  >
+                    <Link
+                      href="/signup"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </Button>
+                </div>
+              </>
             )}
           </div>
-          <div className="md:hidden flex items-center gap-3">
-            {user && <UserDropdown user={user as any} />}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-foreground/80 hover:text-primary transition-colors focus:outline-none"
-            >
-              <Icon
-                icon={isMobileMenuOpen ? "mdi:close" : "mdi:menu"}
-                width={28}
-                height={28}
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation Overlay */}
-      <div
-        className={`md:hidden absolute top-full left-0 w-full bg-secondary/95 backdrop-blur-xl border-t border-white/10 shadow-xl overflow-hidden transition-all duration-300 ease-in-out
-        ${
-          isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="container mx-auto px-6 py-6 flex flex-col gap-6">
-          {navLinks.map((link) => (
-            <NavItem key={link.href} link={link} mobile />
-          ))}
-
-          {!user && (
-            <>
-              <div className="h-px bg-foreground/10" />
-              <div className="flex flex-row max-w-full gap-3">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] border-primary/20"
-                >
-                  <Link
-                    href="/signin"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Sign In
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] bg-[#3D552F] hover:bg-[#3D552F]/90 text-white"
-                >
-                  <Link
-                    href="/signup"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </header>
+        </nav>
+      </header>
+    </div>
   );
 };
 
@@ -229,9 +306,13 @@ const UserDropdown = ({ user }: UserProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex min-w-max items-center gap-1 md:gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm">
+        <button
+          type="button"
+          aria-label="Open account menu"
+          className="flex max-w-[190px] items-center gap-1 md:gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm"
+        >
           <div className="flex-col items-end flex w-full">
-            <span className="text-[10px] md:text-sm font-semibold text-foreground/90 max-w-full truncate">
+            <span className="text-[10px] md:text-sm font-semibold text-foreground/90 max-w-[110px] truncate">
               {displayName || "ไม่พบข้อมูล"}
             </span>
             <span className="text-[8px] uppercase tracking-wide text-muted-foreground font-bold">
@@ -251,7 +332,7 @@ const UserDropdown = ({ user }: UserProps) => {
               {user.userInfo?.firstName?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
-        </div>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 p-2 z-999">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
