@@ -3,14 +3,21 @@ import Mail from "nodemailer/lib/mailer";
 
 class MailService {
   private transporter: Transporter;
+  private mailUser: string;
 
   constructor() {
+    const user = process.env.MAIL_USER;
+    const pass = process.env.MAIL_PASS?.replace(/\s+/g, "");
+
+    if (!user || !pass) {
+      throw new Error("Missing MAIL_USER or MAIL_PASS");
+    }
+
+    this.mailUser = user;
+
     this.transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: {
-        user: "kjrrachapon@gmail.com",
-        pass: "mlyg acjw uoyb ikbp",
-      },
+      auth: { user, pass },
     });
   }
 
@@ -21,7 +28,7 @@ class MailService {
     attachments?: Mail.Attachment[],
   ) {
     const mailOptions: Mail.Options = {
-      from: `"Yoka by Niti" <${process.env.MAIL_USER}>`,
+      from: `"Yoka by Niti" <${this.mailUser}>`,
       to,
       subject,
       html,
