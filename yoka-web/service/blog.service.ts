@@ -20,7 +20,7 @@ export const blogService = {
 };
 export function blogImageUrl(value: string) {
   if (!value.startsWith("/uploads/")) return value;
-  const base = process.env.NEXT_PUBLIC_HOST_IMAGE || new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1").origin;
+  const base = process.env.NEXT_PUBLIC_HOST_IMAGE || new URL(process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "https://api.yogabyniti.com/api/v1" : "http://localhost:3001/api/v1")).origin;
   return `${base.replace(/\/$/, "")}${value}`;
 }
 export function blogDate(value: string | null) {

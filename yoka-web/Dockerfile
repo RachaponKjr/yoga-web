@@ -25,6 +25,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Public browser variables must be available when Next.js builds the bundle.
+ARG NEXT_PUBLIC_API_URL=https://api.yogabyniti.com/api/v1
+ARG NEXT_PUBLIC_HOST_IMAGE=https://api.yogabyniti.com/
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_HOST_IMAGE=$NEXT_PUBLIC_HOST_IMAGE
+
 # ป้องกัน Next.js ส่ง Telemetry data
 ENV NEXT_TELEMETRY_DISABLED 1
 

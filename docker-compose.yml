@@ -6,6 +6,9 @@ services:
     build:
       context: ./yoka-web
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.yogabyniti.com/api/v1}
+        NEXT_PUBLIC_HOST_IMAGE: ${NEXT_PUBLIC_HOST_IMAGE:-https://api.yogabyniti.com/}
     restart: always
     ports:
       - "3004:3001"

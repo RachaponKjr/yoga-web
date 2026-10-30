@@ -5,7 +5,9 @@ const http = axios.create({
   baseURL:
     (typeof window === "undefined" ? process.env.API_INTERNAL_URL : undefined) ||
     process.env.NEXT_PUBLIC_API_URL ||
-    "http://localhost:3001/api/v1",
+    (process.env.NODE_ENV === "production"
+      ? "https://api.yogabyniti.com/api/v1"
+      : "http://localhost:3001/api/v1"),
   headers: {
     "Content-Type": "application/json",
   },

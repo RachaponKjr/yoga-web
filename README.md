@@ -1,5 +1,19 @@
 # Yoka local development
 
+## Production API configuration
+
+The production frontend receives `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_HOST_IMAGE`
+as Docker build arguments from the root `.env` (the deployment workflow creates it
+from the `DOT_ENV` GitHub secret). They default to the HTTPS production API.
+Next.js embeds these public values during build; changing only the container's
+runtime environment or restarting it does not update the browser bundle.
+
+After changing these values or pulling this fix, rebuild and recreate the frontend:
+
+```sh
+docker compose up -d --build --no-deps frontend
+```
+
 ## Run everything in Docker
 
 Start Docker Desktop, then run from the repository root:
