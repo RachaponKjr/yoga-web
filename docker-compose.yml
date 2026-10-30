@@ -23,6 +23,9 @@ services:
     build:
       context: ./yoga-admin
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://api.yogabyniti.com/api/v1}
+        VITE_HOST_IMAGE: ${VITE_HOST_IMAGE:-https://api.yogabyniti.com/}
     restart: always
     ports:
       - "3003:3002"

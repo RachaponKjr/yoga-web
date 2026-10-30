@@ -1,232 +1,123 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Settings, Link as LinkIcon, X, Loader2 } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { Settings, X, Loader2 } from "lucide-react";
+import { isAxiosError } from "axios";
 import { videoService } from "@/service/video.service";
-import { toast } from "sonner"; // หรือใช้ alert ปกติก็ได้ครับ
+import type { VideoContent } from "@/service/video.service";
+import { instagramUrl, scheduleImageUrl } from "@/lib/video-content";
+import { toast } from "sonner";
 
-const VideoPage = () => {
-  const [videoData, setVideoData] = useState({
-    id: "",
-    url_1: "",
-    url_2: "",
-    url_3: "",
-    url_4: "",
-    url_5: "",
-  });
+const empty: VideoContent = { id: "", url_1: "", url_2: "", url_3: "", url_4: "", url_5: "" };
+const fields = ["url_1", "url_2", "url_3", "url_4"] as const;
+function errorMessage(error: unknown) {
+  return isAxiosError(error) ? error.response?.data?.message || "เชื่อมต่อไม่สำเร็จ กรุณาลองอีกครั้ง" : "บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง";
+}
+
+export default function VideoPage() {
+  const [data, setData] = useState<VideoContent>(empty);
+  const [draft, setDraft] = useState<VideoContent>(empty);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tempUrls, setTempUrls] = useState({ ...videoData });
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  console.log(videoData.url_5);
-  // ดึงข้อมูลวิดีโอ
-  const fetchVideos = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await videoService.getAll();
-      if (res) {
-        const newData = {
-          id: res.id || "", // เก็บ id ไว้
-          url_1: res.url_1 || "",
-          url_2: res.url_2 || "",
-          url_3: res.url_3 || "",
-          url_4: res.url_4 || "",
-          url_5: res.url_5 || "",
-        };
-        setVideoData(newData);
-        setTempUrls(newData);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+  const [loadError, setLoadError] = useState("");
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [removeImage, setRemoveImage] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+  const fetchContent = useCallback(async () => {
+    setLoading(true);
+    setLoadError("");
+    try { setData(await videoService.getAll() || empty); }
+    catch (error) { setLoadError(errorMessage(error)); }
+    finally { setLoading(false); }
   }, []);
-
+  useEffect(() => { void fetchContent(); }, [fetchContent]);
   useEffect(() => {
-    fetchVideos();
-  }, [fetchVideos]);
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
-  // เปิด Modal พร้อม Reset ค่า temp ตามข้อมูลปัจจุบัน
-  const openEditModal = () => {
-    setTempUrls({ ...videoData });
-    setIsModalOpen(true);
+  const startEdit = () => {
+    setDraft({ ...data }); setFile(null); setPreview(""); setRemoveImage(false); setSaveError(""); setOpen(true);
   };
-
-  const handleSave = async () => {
-    try {
-      // ตรวจสอบว่าใน tempUrls มี id หรือไม่
-      if (tempUrls.id) {
-        const formData = new FormData();
-        formData.append("id", tempUrls.id);
-        formData.append("url_1", tempUrls.url_1);
-        formData.append("url_2", tempUrls.url_2);
-        formData.append("url_3", tempUrls.url_3);
-        formData.append("url_4", tempUrls.url_4);
-        if (coverImage) {
-          formData.append("cover_image", coverImage);
-        }
-        // ถ้ามี id ให้เรียก update และส่ง tempUrls ไปทั้งหมดได้เลย
-        await videoService.update(formData);
-        toast.success("Updated successfully");
-      } else {
-        // ถ้าไม่มี id (กรณีข้อมูลชุดแรกสุด) ให้เรียก create
-        await videoService.create(tempUrls);
-        toast.success("Created successfully");
+  const save = async () => {
+    if (saving) return;
+    const body = new FormData();
+    for (const field of fields) {
+      const value = draft[field] || "";
+      const normalized = instagramUrl(value);
+      if (value.trim() && !normalized) {
+        setSaveError(`ลิงก์วิดีโอ ${fields.indexOf(field) + 1} ต้องเป็น Instagram Reel หรือโพสต์ เช่น https://www.instagram.com/reel/ABC/`);
+        return;
       }
-
-      await fetchVideos();
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      toast.error("Process failed");
+      body.append(field, normalized);
     }
+    if (draft.id) body.append("id", draft.id);
+    if (file) body.append("cover_image", file);
+    if (removeImage) body.append("remove_image", "true");
+    setSaving(true); setSaveError("");
+    try {
+      const result = draft.id ? await videoService.update(body) : await videoService.create(body);
+      setData(result); setImageFailed(false); setOpen(false); setFile(null); setPreview("");
+      toast.success("บันทึกวิดีโอและภาพตารางเรียนแล้ว");
+    } catch (error) { setSaveError(errorMessage(error)); }
+    finally { setSaving(false); }
   };
-
-  const VideoCard = ({ url }: { url: string }) => (
-    <div className="relative w-full aspect-12/16 bg-black rounded-3xl overflow-hidden shadow-xl border border-gray-100 group">
-      {url ? (
-        <>
-          <iframe
-            src={`${url}${url.endsWith("/") ? "" : "/"}embed/`}
-            className="absolute top-1/2 left-1/2 w-full h-[150%] border-none pointer-events-none"
-            style={{ transform: "translate(-50%, -50%) scale(1.7)" }}
-            frameBorder="0"
-            scrolling="no"
-          />
-          <div className="absolute inset-0 bg-transparent" />
-        </>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-2">
-          <LinkIcon size={32} className="opacity-20" />
-          <p className="text-xs uppercase tracking-widest opacity-50">
-            No Video URL
-          </p>
-        </div>
-      )}
-    </div>
-  );
+  const currentImage = scheduleImageUrl(data.url_5);
+  const draftImage = removeImage ? "" : file ? preview : scheduleImageUrl(draft.url_5);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-6">
-      <div className="max-w-full mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-10">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-              Video Showcase
-            </h1>
-            <p className="text-gray-500 mt-2">
-              จัดการวิดีโอรีวิวจาก Instagram สำหรับหน้าแรก
-            </p>
-          </div>
-          <button
-            onClick={openEditModal}
-            className="flex items-center gap-2 bg-white border border-gray-200 px-5 py-2.5 rounded-2xl shadow-sm hover:shadow-md transition-all font-semibold text-gray-700 active:scale-95"
-          >
-            <Settings size={18} />
-            Manage Content
-          </button>
-        </div>
-
-        {/* Video Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center h-[400px]">
-            <Loader2 className="animate-spin text-blue-500" size={40} />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8">
-              <VideoCard url={videoData.url_1} />
-              <VideoCard url={videoData.url_2} />
-              <VideoCard url={videoData.url_3} />
-              <VideoCard url={videoData.url_4} />
-            </div>
-            <div className="w-full flex flex-col gap-4 ">
-              <h6 className="text-xl font-bold text-gray-800">ภาพตารางสอน</h6>
-              <div className="max-w-xl aspect-square">
-                <img
-                  className="w-full h-full object-cover"
-                  src={`${import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/"}${videoData.url_5}`}
-                  alt=""
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Dialog / Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-            <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/20">
-              <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                <h3 className="text-xl font-bold text-gray-800">
-                  Video Settings
-                </h3>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="p-8 space-y-5">
-                {[1, 2, 3, 4].map((num) => (
-                  <div key={num} className="space-y-2">
-                    <label className="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">
-                      Instagram Reel URL {num}
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={tempUrls[`url_${num}` as keyof typeof tempUrls]}
-                        onChange={(e) =>
-                          setTempUrls({
-                            ...tempUrls,
-                            [`url_${num}`]: e.target.value,
-                          })
-                        }
-                        placeholder="https://www.instagram.com/reel/..."
-                        className="w-full pl-4 pr-4 py-3 bg-gray-100 border-transparent border-2 focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all text-sm"
-                      />
-                    </div>
-                  </div>
-                ))}
-                <div className="space-y-2">
-                  <label className="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">
-                    ตารางสอน
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      onChange={(e) =>
-                        setCoverImage(e.target.files?.[0] || null)
-                      }
-                      className="w-full pl-4 pr-4 py-3 bg-gray-100 border-transparent border-2 focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-8 pt-0 flex gap-4">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-3.5 text-gray-500 font-bold hover:bg-gray-100 rounded-2xl transition-colors"
-                >
-                  Discard
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="flex-[2] py-3.5 bg-blue-600 text-white font-bold hover:bg-blue-700 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+    <div className="min-h-screen bg-gray-50 p-6 sm:p-10">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div><h1 className="text-3xl font-bold">จัดการวิดีโอและตารางเรียน</h1><p className="text-gray-500 mt-2">วิดีโอ Instagram สูงสุด 4 รายการ และภาพตารางเรียนสำหรับหน้าเว็บ</p></div>
+        <button disabled={loading || !!loadError} onClick={startEdit} className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-white disabled:opacity-50"><Settings size={18} />แก้ไขเนื้อหา</button>
       </div>
+      {loading ? <div role="status" className="p-12"><Loader2 className="animate-spin" />กำลังโหลด…</div> : loadError ? (
+        <div role="alert" className="rounded-xl bg-red-50 p-6 text-red-700">{loadError}<button onClick={() => void fetchContent()} className="ml-4 underline">ลองอีกครั้ง</button></div>
+      ) : (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+            {fields.map((field, index) => {
+              const url = instagramUrl(data[field] || "");
+              return <section key={field} className="bg-white rounded-2xl border overflow-hidden">
+                <h2 className="font-semibold p-4">วิดีโอ {index + 1}</h2>
+                {url ? <><iframe title={`Instagram วิดีโอ ${index + 1}`} src={`${url}embed/`} loading="lazy" allow="autoplay; encrypted-media; fullscreen" className="w-full h-[440px] border-0" /><a href={url} target="_blank" rel="noopener noreferrer" className="block p-4 text-blue-600 underline">เปิดบน Instagram</a></> : <p className="p-10 text-gray-500">ยังไม่มีวิดีโอ</p>}
+              </section>;
+            })}
+          </div>
+          <section className="bg-white rounded-2xl border p-6"><h2 className="text-xl font-bold mb-4">ภาพตารางเรียน</h2>
+            {currentImage && !imageFailed ? <a href={currentImage} target="_blank" rel="noopener noreferrer"><img src={currentImage} onError={() => setImageFailed(true)} alt="ตารางเรียนโยคะ" className="max-w-full max-h-[800px] object-contain" /></a> : <p className="text-gray-500">{imageFailed ? "โหลดภาพไม่สำเร็จ กรุณาอัปโหลดภาพใหม่หรือตรวจสอบเซิร์ฟเวอร์ไฟล์" : "ยังไม่มีภาพตารางเรียน"}</p>}
+          </section>
+        </div>
+      )}
+      {open && <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+        <div role="dialog" aria-modal="true" aria-labelledby="content-title" className="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
+          <div className="flex justify-between items-center mb-5"><h2 id="content-title" className="text-xl font-bold">แก้ไขวิดีโอและตารางเรียน</h2><button aria-label="ปิด" disabled={saving} onClick={() => setOpen(false)}><X /></button></div>
+          <form onSubmit={(event) => { event.preventDefault(); void save(); }} className="space-y-4">
+            <fieldset disabled={saving} className="space-y-4">
+              <p className="text-sm text-gray-500">ใช้ลิงก์ Instagram ที่เปิดสาธารณะ เว้นว่างเพื่อลบวิดีโอออกจากหน้าเว็บ การเล่นวิดีโอขึ้นอยู่กับสิทธิ์การฝังของ Instagram</p>
+              {fields.map((field, index) => <label key={field} className="block text-sm font-medium">Instagram วิดีโอ {index + 1}<input type="url" value={draft[field] || ""} onChange={(event) => setDraft({ ...draft, [field]: event.target.value })} placeholder="https://www.instagram.com/reel/..." className="block w-full border rounded-xl p-3 mt-2" /></label>)}
+              <label className="block text-sm font-medium">ภาพตารางเรียน (JPG, PNG, WebP ไม่เกิน 5 MB)
+                <input type="file" accept="image/jpeg,image/png,image/webp" className="block w-full border rounded-xl p-3 mt-2" onChange={(event) => {
+                  const selected = event.target.files?.[0];
+                  if (!selected) return;
+                  if (!["image/jpeg", "image/png", "image/webp"].includes(selected.type) || selected.size > 5 * 1024 * 1024) {
+                    setSaveError("เลือกภาพ JPG, PNG หรือ WebP ขนาดไม่เกิน 5 MB"); event.target.value = ""; return;
+                  }
+                  setFile(selected); setRemoveImage(false); setSaveError("");
+                }} />
+              </label>
+              {draftImage && <img src={draftImage} alt="ตัวอย่างภาพตารางเรียน" className="w-full max-h-80 object-contain rounded-lg bg-gray-50" />}
+              {(draft.url_5 || file) && <label className="flex gap-2 items-center text-sm"><input type="checkbox" checked={removeImage} onChange={(event) => { setRemoveImage(event.target.checked); if (event.target.checked) { setFile(null); setPreview(""); } }} />ลบภาพตารางเรียน</label>}
+              <p className="text-sm text-gray-500">หากไม่เลือกภาพใหม่ ระบบจะเก็บภาพเดิมไว้</p>
+            </fieldset>
+            {saveError && <p role="alert" className="text-red-700 bg-red-50 rounded-lg p-3">{saveError}</p>}
+            <div className="flex justify-end gap-3 pt-3"><button type="button" disabled={saving} onClick={() => setOpen(false)} className="px-5 py-3 rounded-xl border">ยกเลิก</button><button type="submit" disabled={saving} className="px-5 py-3 rounded-xl bg-blue-600 text-white disabled:opacity-50">{saving ? "กำลังบันทึก…" : "บันทึกการเปลี่ยนแปลง"}</button></div>
+          </form>
+        </div>
+      </div>}
     </div>
   );
-};
-
-export default VideoPage;
+}

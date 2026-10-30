@@ -1,55 +1,25 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-// ฟังก์ชันสำหรับสร้าง (หรือจะใช้ upsert เพื่อไม่ให้ข้อมูลซ้ำซ้อนหลายแถวก็ได้)
-export const createVideoService = async ({
-  payload,
-}: {
-  payload: {
-    url_1: string;
-    url_2: string;
-    url_3: string;
-    url_4: string;
-  };
-}) => {
-  // แนะนำ: ลบข้อมูลเก่าทิ้งก่อน หรือจะเก็บประวัติไว้ก็ได้
-  // ในที่นี้คือสร้างใหม่เลยตามที่คุณเขียนมา
-  return await prisma.videoPerview.create({
-    data: payload,
-  });
+export interface VideoContent {
+  url_1?: string;
+  url_2?: string;
+  url_3?: string;
+  url_4?: string;
+  url_5?: string | null;
+}
+
+export const getVideoService = () => prisma.videoPerview.findFirst({ orderBy: { id: "desc" } });
+
+// The homepage has one content set. Reuse it when a client submits create again.
+export const createVideoService = async ({ payload }: { payload: VideoContent }) => {
+  const existing = await getVideoService();
+  return existing
+    ? prisma.videoPerview.update({ where: { id: existing.id }, data: payload })
+    : prisma.videoPerview.create({ data: payload });
 };
 
-// ฟังก์ชันสำหรับดึงข้อมูลล่าสุด 1 ชุด
-export const getVideoService = async () => {
-  return await prisma.videoPerview.findFirst({
-    orderBy: {
-      id: "desc", // ดึงอันที่เพิ่งสร้างล่าสุด
-    },
-  });
-};
-
-export const updateVideoService = async ({
-  payload,
-}: {
-  payload: {
-    id: string;
-    url_1: string;
-    url_2: string;
-    url_3: string;
-    url_4: string;
-    coverImage: string;
-  };
-}) => {
-  return await prisma.videoPerview.update({
-    where: {
-      id: payload.id,
-    },
-    data: {
-      url_1: payload.url_1,
-      url_2: payload.url_2,
-      url_3: payload.url_3,
-      url_4: payload.url_4,
-      url_5: payload.coverImage,
-    },
-  });
+export const updateVideoService = ({ payload }: { payload: VideoContent & { id: string } }) => {
+  const { id, ...data } = payload;
+  return prisma.videoPerview.update({ where: { id }, data });
 };

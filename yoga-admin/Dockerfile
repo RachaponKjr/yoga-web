@@ -13,8 +13,10 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # กำหนดตัวแปรแวดล้อมสำหรับการ Build
-ARG VITE_API_URL
+ARG VITE_API_URL=https://api.yogabyniti.com/api/v1
+ARG VITE_HOST_IMAGE=https://api.yogabyniti.com/
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_HOST_IMAGE=$VITE_HOST_IMAGE
 
 # บังคับ Build โดยข้ามการเช็ค TypeScript (แก้ปัญหา Exit Code 2)
 # เราจะเรียก npx vite build โดยตรงเพื่อไม่ให้ tsc -b มาสั่งหยุดการทำงาน

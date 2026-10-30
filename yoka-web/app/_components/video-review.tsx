@@ -1,9 +1,8 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { videoService } from "@/service/video.service";
 import { useEffect, useState } from "react";
-import { Play } from "lucide-react";
+import { instagramUrl } from "@/lib/video-content";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 
@@ -17,53 +16,13 @@ interface VideoType {
   url_4: string;
 }
 
-// --- คอมโพเนนต์ย่อยสำหรับแต่ละ Slide ---
-const VideoSlide = ({ url }: { url: string }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
-  // สร้าง URL สำหรับเล่นอัตโนมัติเมื่อกด
-  const videoSrc = isPlaying
-    ? `${url}${url.endsWith("/") ? "" : "/"}embed/?autoplay=1`
-    : `${url}${url.endsWith("/") ? "" : "/"}embed`;
-
-  return (
-    <div
-      className="group relative w-full aspect-12/16 rounded-3xl overflow-hidden bg-black cursor-pointer shadow-lg transition-all duration-500"
-      onClick={() => setIsPlaying(true)}
-    >
-      {/* 1. ตัววิดีโอ */}
-      <iframe
-        src={videoSrc}
-        className={`w-full h-full transition-transform duration-500 ${!isPlaying ? "group-hover:scale-105 pointer-events-none" : "pointer-events-auto"}`}
-        style={{
-          transform: isMobile ? "scale(1)" : "scale(1.3)",
-          marginTop: isMobile ? "0%" : "-10%",
-        }}
-        frameBorder="0"
-        scrolling="no"
-      ></iframe>
-
-      {/* 2. Overlay ปุ่ม Play */}
-      {!isPlaying && !isMobile && (
-        <>
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
-            <div className="w-16 h-16 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 shadow-xl">
-              <Play className="text-white fill-white" size={28} />
-            </div>
-          </div>
-
-          {/* 3. Gradient ด้านล่าง */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-        </>
-      )}
-    </div>
-  );
-};
+const VideoSlide = ({ url }: { url: string }) => (
+  <div className="w-full rounded-3xl overflow-hidden bg-white shadow-lg">
+    <iframe title="วิดีโอรีวิวจาก Instagram" src={`${url}embed/`} loading="lazy"
+      allow="autoplay; encrypted-media; fullscreen" className="w-full h-[480px] border-0" />
+    <a href={url} target="_blank" rel="noopener noreferrer" className="block p-3 text-center text-sm underline">ดูวิดีโอบน Instagram</a>
+  </div>
+);
 
 const VideoReview = () => {
   const [video, setVideo] = useState<VideoType>();
@@ -83,7 +42,8 @@ const VideoReview = () => {
 
   if (!video) return null;
 
-  const videoList = [video.url_1, video.url_2, video.url_3, video.url_4];
+  const videoList = [video.url_1, video.url_2, video.url_3, video.url_4].map((url) => instagramUrl(url || "")).filter(Boolean);
+  if (!videoList.length) return null;
 
   return (
     <div className="container mx-auto py-12 px-4">
