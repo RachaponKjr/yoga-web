@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { authMiddleware, restrictTo } from "../middlewares/auth.middleware";
 import {
+  createInstructor,
+  listInstructors,
   getBookingList,
   getDashboardStats,
   getMonitorCountryStats,
@@ -10,11 +12,16 @@ import { updateProfileController } from "../controllers/auth.controller";
 
 const router = Router();
 
+router.get("/instructors", authMiddleware, restrictTo("Admin"), listInstructors);
+router.post("/instructors", authMiddleware, restrictTo("Admin"), createInstructor);
+
 router.get("/stats", authMiddleware, restrictTo("Admin"), getDashboardStats);
 router.get(
   "/booking-last",
   authMiddleware,
   restrictTo("Admin"),
+  createInstructor,
+  listInstructors,
   getBookingList,
 );
 

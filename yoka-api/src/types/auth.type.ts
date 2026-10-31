@@ -5,7 +5,7 @@ export const RegisterInputSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
-  role: z.enum(["Student", "Instructor"]).default("Student"),
+  role: z.literal("Student").default("Student"),
 });
 
 export const LoginInputSchema = z.object({

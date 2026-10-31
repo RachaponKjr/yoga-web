@@ -113,7 +113,11 @@ const getAllBookingController = async (
   res: Response,
 ) => {
   try {
-    const { page, limit } = req.query;
+    const { page, limit, period = "active" } = req.query;
+    if (period !== "active" && period !== "past") {
+      sendResponse(res, { success: false, statusCode: 400, message: "Invalid booking period" });
+      return;
+    }
 
     const parsedPage = Number(page) > 0 ? Number(page) : 1;
     const parsedLimit = Number(limit) > 0 ? Number(limit) : 10;
@@ -122,7 +126,8 @@ const getAllBookingController = async (
 
     const getAllBookingRes = await getAllBookingService({
       limit: parsedLimit,
-      offset: calculatedOffset, // ส่งค่าที่คำนวณแล้วไปให้ Service
+      offset: calculatedOffset,
+      period,
     });
     if (!getAllBookingRes) {
       sendResponse(res, {

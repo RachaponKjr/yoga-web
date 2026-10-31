@@ -69,11 +69,16 @@ const createBookingService = async ({ payload }: { payload: any }) => {
 const getAllBookingService = async ({
   limit,
   offset,
+  period = "active",
 }: {
   limit: number;
   offset: number;
+  period?: "active" | "past";
 }) => {
+  const now = new Date();
+  const where = { round: { endDateTime: period === "past" ? { lte: now } : { gt: now } } };
   const res = await prisma.booking.findMany({
+    where,
     include: {
       round: {
         include: {
@@ -91,7 +96,7 @@ const getAllBookingService = async ({
     skip: offset,
   });
 
-  const total = await prisma.booking.count();
+  const total = await prisma.booking.count({ where });
 
   return { data: res, total };
 };

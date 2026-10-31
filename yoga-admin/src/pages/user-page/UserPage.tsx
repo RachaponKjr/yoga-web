@@ -6,32 +6,39 @@ import type { UserInfoType, UserType } from "@/types/auth.type";
 import EditUser from "./EditUser"; // Import Component ที่เราเพิ่งสร้าง
 import DelUser from "./DelUser";
 import RegisterUser from "./RegisterUser";
+import { adminService } from "@/service/admin.service";
 
 // กำหนด Base URL รูป
-const BASE_IMG_URL = import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/";
+const BASE_IMG_URL =
+  import.meta.env.VITE_HOST_IMAGE || "https://api.yogabyniti.com/";
 
 interface UserProps extends UserType {
   createdAt: string;
   userInfo: UserInfoType;
 }
 
-const UserPage = () => {
+const UserPage = ({ instructors = false }: { instructors?: boolean }) => {
   const [users, setUsers] = useState<UserProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const token = Cookies.get("token");
 
   const getUser = useCallback(async () => {
     setLoading(true);
+    setLoadError(false);
     try {
-      const response = await authService.getUserAll({ token });
+      const response = await (instructors
+        ? adminService.getInstructors()
+        : authService.getUserAll({ token }));
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, instructors]);
 
   useEffect(() => {
     getUser();
@@ -109,18 +116,28 @@ const UserPage = () => {
   };
 
   return (
-    <div className="bg-gray-50/50 min-h-max font-sans">
+    <div className="min-h-max font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
-            จัดการผู้ใช้ (User Management)
+            {instructors ? "จัดการครูผู้สอน" : "จัดการสมาชิก"}
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            กำหนดสิทธิ์การใช้งาน: Admin, Instructor, User
+            {instructors
+              ? "สร้างบัญชีครูผู้สอนและจัดการข้อมูลสำหรับหน้าเว็บไซต์และคลาสเรียน"
+              : "จัดการสมาชิกและผู้ดูแลระบบ"}
           </p>
         </div>
       </div>
 
+      {loadError && (
+        <p role="alert" className="mb-4 text-red-600">
+          โหลดข้อมูลไม่สำเร็จ{" "}
+          <button className="underline" onClick={getUser}>
+            ลองอีกครั้ง
+          </button>
+        </p>
+      )}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between gap-4 items-center">
           <div className="relative w-full sm:w-96">
@@ -133,7 +150,7 @@ const UserPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <RegisterUser getUser={() => getUser()} />
+          <RegisterUser getUser={() => getUser()} instructor={instructors} />
         </div>
 
         <div className="overflow-x-auto">
@@ -211,18 +228,20 @@ const UserPage = () => {
                     </td>
 
                     <td className="py-4 px-6 text-center">
-                      <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-center gap-2">
                         {/* ✅ ปุ่ม Edit อยู่ตรงนี้ (ส่ง user เข้าไป) */}
                         <EditUser user={user} onSuccess={getUser} />
 
-                        <DelUser
-                          userId={user.id}
-                          userName={
-                            user.userInfo.firstName +
-                            " " +
-                            user.userInfo.lastName
-                          }
-                        />
+                        {!instructors && (
+                          <DelUser
+                            userId={user.id}
+                            userName={
+                              user.userInfo.firstName +
+                              " " +
+                              user.userInfo.lastName
+                            }
+                          />
+                        )}
                       </div>
                     </td>
                   </tr>

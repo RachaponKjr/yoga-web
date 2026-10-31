@@ -21,7 +21,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#18281E] text-slate-300 rounded-t-[2.5rem] relative overflow-hidden font-sans mt-12">
+    <footer className="bg-[#18281E] text-slate-300 rounded-t-[2.5rem] relative overflow-hidden font-sans">
       {/* Decorative Gradient Top */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent opacity-50"></div>
 
@@ -141,9 +141,22 @@ const Footer = () => {
 
         {/* --- Footer Bottom --- */}
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} Yoga by Niti. All rights reserved.
-          </p>
+          <div className="space-y-2 text-center md:text-left">
+            <p className="text-sm text-slate-500">
+              © {new Date().getFullYear()} Yoga by Niti. All rights reserved.
+            </p>
+            <p className="text-sm text-slate-400">
+              สร้างโดย{" "}
+              <a
+                href="https://nocturadigital.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-slate-300 underline underline-offset-4 decoration-white/20 transition-colors hover:text-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-400"
+              >
+                Noctura Digital Studio
+              </a>
+            </p>
+          </div>
 
           {/* Social Icons */}
           <div className="flex items-center gap-4">

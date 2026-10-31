@@ -60,11 +60,11 @@ const registerController = async (
       return;
     }
 
-    await mailService.sendEmail(
-      email,
-      "Welcome to Yoga by Niti! 🎉",
-      getRegisterEmailTemplate(loginUrl),
-    );
+    // await mailService.sendEmail(
+    //   email,
+    //   "Welcome to Yoga by Niti! 🎉",
+    //   getRegisterEmailTemplate(loginUrl),
+    // );
 
     sendResponse(res, {
       success: true,
@@ -217,9 +217,10 @@ const updateProfileController = async (
     const { id } = req.params;
     const payload = req.body as UpdateProfileInput;
     const avatar = req.file;
+    if (user.role !== "Admin") delete payload.role;
 
     const checkAvatar = await getUserService({ id: id ? id : user.id });
-    if (checkAvatar?.userInfo?.avatar) {
+    if (avatar && checkAvatar?.userInfo?.avatar) {
       removeFile(checkAvatar.userInfo.avatar);
     }
 

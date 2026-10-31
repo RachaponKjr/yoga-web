@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import ArticleEditor from "@/components/blog/article-editor";
+import { MARKDOWN_PREFIX } from "@/components/blog/article-content";
 import type { FormEvent } from "react";
 import axios from "axios";
 import { Plus, Pencil, Trash2, BookOpen, Search, ImagePlus, Loader2 } from "lucide-react";
@@ -45,6 +47,7 @@ export default function BlogPage() {
   }
   async function save(event: FormEvent) {
     event.preventDefault(); if (!editor || busy || uploading) return;
+    if (!editor.input.content.replace(MARKDOWN_PREFIX, "").trim()) { toast.error("กรุณาเขียนเนื้อหาบทความ"); return; }
     setBusy(true);
     try { await blogService.save(editor.id, editor.input); toast.success("บันทึกบทความเรียบร้อย"); setEditor(null); refresh(); }
     catch (error) { toast.error(message(error)); }
@@ -87,14 +90,14 @@ export default function BlogPage() {
     {result && result.pagination.pages > 1 && <div className="flex items-center justify-between text-sm"><span>หน้า {page} / {result.pagination.pages} · {result.pagination.total} บทความ</span><div className="flex gap-3"><button disabled={loading || page <= 1} onClick={() => { setLoading(true); setPage(page - 1); }} className="rounded-lg border px-4 py-2 disabled:opacity-40">ก่อนหน้า</button><button disabled={loading || page >= result.pagination.pages} onClick={() => { setLoading(true); setPage(page + 1); }} className="rounded-lg border px-4 py-2 disabled:opacity-40">ถัดไป</button></div></div>}
 
     <Dialog open={!!editor} onOpenChange={open => { if (!open && !busy && !uploading) setEditor(null); }}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-3xl"><DialogHeader><DialogTitle>{editor?.id ? "แก้ไขบทความ" : "สร้างบทความใหม่"}</DialogTitle><DialogDescription>เขียนเรื่องราวของคุณ แล้วเลือกบันทึกฉบับร่างหรือเผยแพร่บนเว็บไซต์</DialogDescription></DialogHeader>
-        {editor && <form onSubmit={save} className="space-y-5"><fieldset disabled={busy || uploading} className="space-y-5 disabled:opacity-70">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-5xl"><DialogHeader><DialogTitle>{editor?.id ? "แก้ไขบทความ" : "สร้างบทความใหม่"}</DialogTitle><DialogDescription>เขียนเรื่องราวของคุณ แล้วเลือกบันทึกฉบับร่างหรือเผยแพร่บนเว็บไซต์</DialogDescription></DialogHeader>
+        {editor && <form onSubmit={save} className="space-y-5"><fieldset disabled={busy || uploading} className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] disabled:opacity-70"><div className="space-y-5">
           <label className="block space-y-2"><span className="text-sm font-medium">ชื่อบทความ *</span><input required maxLength={180} className={field} value={editor.input.title} onChange={event => change("title", event.target.value)} /></label>
           <label className="block space-y-2"><span className="text-sm font-medium">URL บทความ (slug) *</span><input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={180} placeholder="yoga-for-beginners" className={field} value={editor.input.slug} onChange={event => change("slug", event.target.value)} /><span className="block text-xs text-gray-500">ใช้ภาษาอังกฤษตัวเล็ก ตัวเลข และขีดกลาง เช่น yoga-for-beginners</span></label>
           <label className="block space-y-2"><span className="text-sm font-medium">คำโปรย *</span><textarea required maxLength={500} rows={3} className={field} value={editor.input.excerpt} onChange={event => change("excerpt", event.target.value)} /></label>
           <div className="space-y-3"><label className="block space-y-2"><span className="text-sm font-medium">รูปปก</span><input className={field} placeholder="https://… หรืออัปโหลดรูปภาพด้านล่าง" value={editor.input.coverImage} onChange={event => change("coverImage", event.target.value)} /></label><label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm"><ImagePlus size={18} />{uploading ? "กำลังอัปโหลด…" : "อัปโหลด JPG, PNG, WebP (ไม่เกิน 5 MB)"}<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={event => { void upload(event.target.files?.[0]); event.target.value = ""; }} /></label>{editor.input.coverImage && <div className="relative"><img src={blogImageUrl(editor.input.coverImage)} alt="ตัวอย่างรูปปก" className="max-h-52 w-full rounded-xl object-cover" /><button type="button" onClick={() => change("coverImage", "")} className="mt-2 text-sm text-red-600">นำรูปปกออก</button></div>}</div>
-          <label className="block space-y-2"><span className="text-sm font-medium">เนื้อหาบทความ *</span><textarea required maxLength={50000} rows={14} className={`${field} leading-relaxed`} value={editor.input.content} onChange={event => change("content", event.target.value)} /><span className="block text-xs text-gray-500">เว้นบรรทัดว่างเพื่อเริ่มย่อหน้าใหม่ เนื้อหาจะแสดงเป็นข้อความตามที่เขียน</span></label>
-          <label className="flex items-center gap-3 rounded-xl bg-indigo-50 p-4"><input type="checkbox" checked={editor.input.published} onChange={event => change("published", event.target.checked)} className="size-4 accent-indigo-600" /><span className="text-sm font-medium">เผยแพร่บทความบนเว็บไซต์ (ปิดเพื่อเก็บเป็นฉบับร่าง)</span></label>
+          </div><div className="min-w-0"><ArticleEditor value={editor.input.content} onChange={value => change("content", value)} disabled={busy || uploading} onUploading={setUploading} /></div>
+          <label className="flex items-center gap-3 rounded-xl bg-indigo-50 p-4 lg:col-span-2"><input type="checkbox" checked={editor.input.published} onChange={event => change("published", event.target.checked)} className="size-4 accent-indigo-600" /><span className="text-sm font-medium">เผยแพร่บทความบนเว็บไซต์ (ปิดเพื่อเก็บเป็นฉบับร่าง)</span></label>
         </fieldset><div className="flex justify-end gap-3 border-t pt-4"><button type="button" disabled={busy || uploading} onClick={() => setEditor(null)} className="rounded-xl border px-5 py-2.5 disabled:opacity-50">ยกเลิก</button><button disabled={busy || uploading} className="rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white disabled:opacity-50">{busy ? "กำลังบันทึก…" : editor.input.published ? "บันทึกและเผยแพร่" : "บันทึกฉบับร่าง"}</button></div></form>}
       </DialogContent>
     </Dialog>

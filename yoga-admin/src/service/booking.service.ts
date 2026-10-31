@@ -12,9 +12,9 @@ export const bookingService = {
     });
     return response.data;
   },
-  getAllBooking: async (page: number, limit: number) => {
+  getAllBooking: async (page: number, limit: number, period: "active" | "past" = "active") => {
     const response = await http.get(
-      `/booking/all-booking?page=${page}&limit=${limit}`,
+      `/booking/all-booking?page=${page}&limit=${limit}&period=${period}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

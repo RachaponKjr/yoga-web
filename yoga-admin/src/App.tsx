@@ -41,7 +41,11 @@ function App() {
               {/* หน้าเว็บต่างๆ ที่อยากให้มี Sidebar ใส่ในนี้ให้หมด */}
               <Route path="/" element={<HomePage />} />
               <Route path="/bookings" element={<BookingPage />} />
-              <Route path="/users" element={<UserPage />} />
+              <Route path="/users" element={<UserPage key="members" />} />
+              <Route
+                path="/instructors"
+                element={<UserPage key="instructors" instructors />}
+              />
               <Route path="/coupons" element={<CouponPage />} />
               <Route path="/classes" element={<CoursePage />} />
               <Route path="/video" element={<VideoPage />} />

@@ -56,13 +56,13 @@ const CouponPage = () => {
 
   // --- Filter Logic ---
   const filteredCoupons = coupons.filter((c) =>
-    c.code.toLowerCase().includes(searchTerm.toLowerCase())
+    c.code.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // --- Handlers ---
   const handleStatusToggle = (id: string) => {
     setCoupons((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, isActive: !c.isActive } : c))
+      prev.map((c) => (c.id === id ? { ...c, isActive: !c.isActive } : c)),
     );
   };
 
@@ -110,7 +110,7 @@ const CouponPage = () => {
   }, [fetchCoupons]);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-800">
+    <div className="min-h-screen  font-sans text-slate-800">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
@@ -148,7 +148,7 @@ const CouponPage = () => {
           value={coupons
             .filter(
               (c) =>
-                !c.isActive || (c.usageLimit && c.currentUses >= c.usageLimit)
+                !c.isActive || (c.usageLimit && c.currentUses >= c.usageLimit),
             )
             .length.toString()}
           icon={<Calendar className="text-red-500" />}
@@ -257,7 +257,7 @@ const CouponPage = () => {
                             style={{
                               width: `${Math.min(
                                 (coupon.currentUses / coupon.usageLimit) * 100,
-                                100
+                                100,
                               )}%`,
                             }}
                           ></div>

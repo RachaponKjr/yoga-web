@@ -17,10 +17,17 @@ interface VideoType {
 }
 
 const VideoSlide = ({ url }: { url: string }) => (
-  <div className="w-full rounded-3xl overflow-hidden bg-white shadow-lg">
-    <iframe title="วิดีโอรีวิวจาก Instagram" src={`${url}embed/`} loading="lazy"
-      allow="autoplay; encrypted-media; fullscreen" className="w-full h-[480px] border-0" />
-    <a href={url} target="_blank" rel="noopener noreferrer" className="block p-3 text-center text-sm underline">ดูวิดีโอบน Instagram</a>
+  <div className="relative aspect-[9/16] w-full overflow-hidden rounded-3xl bg-black shadow-lg">
+    {/* Instagram owns the iframe markup. Crop its header and footer outside
+        the portrait viewport while keeping the video itself interactive. */}
+    <iframe
+      title="วิดีโอรีวิวจาก Instagram"
+      src={`${url}embed/`}
+      loading="lazy"
+      allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+      allowFullScreen
+      className="absolute -top-[60px] left-0 h-[calc(100%+280px)] w-full border-0"
+    />
   </div>
 );
 

@@ -7,7 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { bookingService } from "@/service/booking.service";
 import type { BookingType } from "@/types/booking.type";
 import { formatDate } from "@/utils/format";
@@ -34,49 +34,55 @@ const BookingPage = () => {
     total: 0,
   });
 
-  console.log(pagination);
-
-  const [dialogInfo, setDialogInfo] = useState(false);
-  // 1. เพิ่ม State สำหรับคำค้นหา
+  const [period, setPeriod] = useState<"active" | "past">("active");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const requestId = useRef(0);
 
   const fetchBookings = useCallback(async (page: number, limit: number) => {
+    const id = ++requestId.current;
+    setLoading(true);
+    setLoadError(false);
     try {
-      // เรียกใช้ service ตาม page และ limit ที่กด
-      const response = await bookingService.getAllBooking(page, limit);
-
-      // อิงตามโครงสร้าง: response.data.data คือ array 10 รายการ
-      // และ response.data.total คือ 18
+      const response = await bookingService.getAllBooking(page, limit, period);
+      if (id !== requestId.current) return;
+      const lastPage = Math.max(1, Math.ceil(response.data.total / limit));
+      if (page > lastPage) {
+        setPagination({ page: lastPage, limit, total: response.data.total });
+        return;
+      }
       setBookings(response.data.data);
-      setPagination((prev) => ({
-        ...prev,
-        page: page,
-        limit: limit,
-        total: response.data.total,
-      }));
+      setPagination({ page, limit, total: response.data.total });
     } catch (error) {
+      if (id !== requestId.current) return;
       console.error("Error fetching bookings:", error);
+      setBookings([]);
+      setLoadError(true);
+    } finally {
+      if (id === requestId.current) setLoading(false);
     }
-  }, []);
+  }, [period]);
 
-  const fetchBookingById = useCallback(async (id: string) => {
-    try {
-      const response = await bookingService.getBookingById(id);
-      setBookings(response.data);
-    } catch (error) {
-      console.error("Error fetching bookings:", error);
-    }
-  }, []);
-
-  const handleOpenDialogInfo = (booking: BookingType) => {
-    setSelectedBooking(booking);
-    setDialogInfo(true);
-  };
+  const handleOpenDialogInfo = (booking: BookingType) => setSelectedBooking(booking);
 
   useEffect(() => {
-    // ส่ง pagination.page และ pagination.limit ไปจริงๆ
-    fetchBookings(pagination.page, pagination.limit);
+    void fetchBookings(pagination.page, pagination.limit);
+    const timer = window.setInterval(() => {
+      void fetchBookings(pagination.page, pagination.limit);
+    }, 60_000);
+    return () => { window.clearInterval(timer); requestId.current += 1; };
   }, [pagination.page, pagination.limit, fetchBookings]);
+
+  const changePeriod = (next: "active" | "past") => {
+    if (next === period) return;
+    requestId.current += 1;
+    setBookings([]);
+    setLoading(true);
+    setPeriod(next);
+    setSearchTerm("");
+    setPagination(prev => ({ ...prev, page: 1, total: 0 }));
+  };
 
   // ฟังก์ชันเปลี่ยนหน้าต้อง setPagination เพื่อให้ useEffect ข้างบนทำงาน
   const handlePageChange = (newPage: number) => {
@@ -142,7 +148,7 @@ const BookingPage = () => {
             รายการจอง (Booking List)
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            จัดการข้อมูลการจองคลาสทั้งหมด
+            แสดงรอบเรียนที่ยังไม่จบ รายการที่จบแล้วอยู่ในประวัติ
           </p>
         </div>
         <div className="flex gap-3">
@@ -150,6 +156,14 @@ const BookingPage = () => {
         </div>
       </div>
 
+      <div className="mb-5 flex gap-2" role="group" aria-label="ช่วงเวลาการจอง">
+        {([{ value: "active", label: "รายการปัจจุบัน" }, { value: "past", label: "ประวัติ (จบแล้ว)" }] as const).map(tab => (
+          <button key={tab.value} type="button" aria-pressed={period === tab.value} onClick={() => changePeriod(tab.value)}
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition-colors ${period === tab.value ? "bg-gray-900 text-white" : "bg-white text-gray-600 border border-gray-200"}`}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
       {/* 2. Table Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Toolbar: Search & Filter */}
@@ -179,7 +193,7 @@ const BookingPage = () => {
                   คลาสที่จอง
                 </th>
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  วัน-เวลา
+                  วัน-เวลาเรียน
                 </th>
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider text-center">
                   สถานะ
@@ -194,7 +208,11 @@ const BookingPage = () => {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {/* 4. ใช้ filteredBookings ในการ Map ข้อมูล */}
-              {filteredBookings.length > 0 ? (
+              {loading ? (
+                <tr><td colSpan={6} className="py-8 text-center text-gray-500">กำลังโหลดข้อมูล…</td></tr>
+              ) : loadError ? (
+                <tr><td colSpan={6} className="py-8 text-center text-red-600" role="alert">โหลดรายการจองไม่สำเร็จ <button className="underline" onClick={() => fetchBookings(pagination.page, pagination.limit)}>ลองอีกครั้ง</button></td></tr>
+              ) : filteredBookings.length > 0 ? (
                 filteredBookings.map((booking) => (
                   <tr
                     key={booking.id}
@@ -234,7 +252,7 @@ const BookingPage = () => {
                     {/* Date Column */}
                     <td className="py-4 px-6">
                       <div className="text-sm text-gray-600">
-                        <p>{formatDate(String(booking?.createdAt))}</p>
+                        <p>{formatDate(String(booking?.round?.startDateTime))}</p>
                       </div>
                     </td>
 
@@ -253,9 +271,9 @@ const BookingPage = () => {
 
                     {/* Action Column */}
                     <td className="py-4 px-6 text-center">
-                      <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-center gap-2">
                         <Dialog>
-                          <DialogTrigger>
+                          <DialogTrigger asChild>
                             <button
                               onClick={() => handleOpenDialogInfo(booking)}
                               className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
@@ -435,7 +453,7 @@ const BookingPage = () => {
 
                         <DialogEdit
                           booking={booking}
-                          onComplete={fetchBookings}
+                          onComplete={() => { void fetchBookings(pagination.page, pagination.limit); }}
                         />
                       </div>
                     </td>
@@ -445,7 +463,7 @@ const BookingPage = () => {
                 // 5. กรณีไม่พบข้อมูล
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-gray-400">
-                    ไม่พบข้อมูลที่ค้นหา "{searchTerm}"
+                    {searchTerm ? `ไม่พบข้อมูลที่ค้นหา "${searchTerm}"` : period === "past" ? "ยังไม่มีประวัติการจองที่จบแล้ว" : "ไม่มีรายการจองรอบเรียนที่ยังไม่จบ"}
                   </td>
                 </tr>
               )}
@@ -464,7 +482,7 @@ const BookingPage = () => {
             <button
               className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
+              disabled={loading || pagination.page === 1}
             >
               <ChevronLeft size={16} />
             </button>
@@ -477,7 +495,7 @@ const BookingPage = () => {
               className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={
-                pagination.page >=
+                loading || pagination.page >=
                 Math.ceil(pagination.total / pagination.limit)
               }
             >

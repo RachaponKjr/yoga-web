@@ -98,6 +98,7 @@ export const getBookingListService = async () => {
       status: {
         in: ["PAID", "PENDING"],
       },
+      round: { endDateTime: { gt: new Date() } },
     },
     take: 10,
     orderBy: {

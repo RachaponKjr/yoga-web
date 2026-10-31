@@ -112,7 +112,8 @@ const getInstructorService = async () => {
 
 const getUserAllService = async () => {
   const user = await prisma.user.findMany({
-    include: { userInfo: true, bookings: true },
+    where: { role: { not: "Instructor" } },
+    select: { id: true, email: true, role: true, createdAt: true, userInfo: true, bookings: true },
   });
 
   return user;
