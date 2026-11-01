@@ -25,15 +25,6 @@ export default function Footer() {
   return (
     <footer className="bg-[#303a2b] px-5 text-[#bdc5b1] sm:px-7 [&_a]:focus-visible:rounded-sm">
       <div className="mx-auto max-w-[1240px]">
-        {/* <div className="flex flex-col justify-between gap-8 border-b border-[#56614a] py-12 sm:py-16 md:flex-row md:items-center">
-          <div>
-            <p className="mb-5 flex items-center gap-3 text-[9px] tracking-[0.25em] text-[#b7c29e]"><Leaf className="size-4" strokeWidth={1} /> MAKE SPACE FOR YOURSELF</p>
-            <h2 className="font-serif text-4xl leading-[1.2] tracking-[-0.025em] text-[#f5f3e8] sm:text-5xl">A little pause.<br /><span className="italic text-[#bdc9a5]">A new beginning.</span></h2>
-            <p className="mt-5 text-xs leading-7 text-[#b5bfaa] sm:text-sm">ให้การดูแลตัวเอง เริ่มต้นจากช่วงเวลาเล็ก ๆ ในทุกวัน</p>
-          </div>
-          <Button asChild variant="outline" className="h-12 w-fit gap-10 rounded-sm border-[#a0ad8d] bg-transparent px-6 text-xs font-normal tracking-wide text-[#f5f3e8] shadow-none hover:border-[#f5f3e8] hover:bg-[#f5f3e8] hover:text-[#303a2b]"><Link href="/yoga-time">Find your next class <ArrowRight className="size-4" strokeWidth={1.5} /></Link></Button>
-        </div> */}
-
         <div className="grid gap-x-10 gap-y-12 py-12 sm:grid-cols-2 lg:grid-cols-[1.15fr_.65fr_1fr_1fr] lg:py-14">
           <div>
             <Link
@@ -89,24 +80,62 @@ export default function Footer() {
               </Button>
             </div>
           </div>
-          <nav aria-label="Footer navigation">
-            <h3 className="mb-6 text-[9px] tracking-[0.22em] text-[#e0e5d4]">
-              EXPLORE
-            </h3>
-            <ul className="space-y-4">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`inline-block py-0.5 text-xs ${linkStyle}`}
+          <div className="flex flex-row gap-12 flex-1 w-full">
+            <nav aria-label="Footer navigation">
+              <h3 className="mb-6 text-[9px] tracking-[0.22em] text-[#e0e5d4]">
+                EXPLORE
+              </h3>
+              <ul className="space-y-4">
+                {links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={`inline-block py-0.5 text-xs ${linkStyle}`}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div className="block md:hidden">
+              <h3 className="mb-6 text-[9px] tracking-[0.22em] text-[#e0e5d4]">
+                GET IN TOUCH
+              </h3>
+              <address className="space-y-5 text-xs leading-7 not-italic">
+                <p>
+                  39/6 Moo 1, Rawai
+                  <br />
+                  Mueang Phuket 83130
+                </p>
+                <div>
+                  <a
+                    href="tel:+66611754399"
+                    className={`block w-fit ${linkStyle}`}
                   >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div>
+                    +66 61 175 4399
+                  </a>
+                  <a
+                    href="tel:+66994494951"
+                    className={`block w-fit ${linkStyle}`}
+                  >
+                    +66 99 449 4951
+                  </a>
+                  <p className="mt-1 text-[10px] text-[#a7b39b]">
+                    Call us · 09:00 – 21:00
+                  </p>
+                </div>
+                <a
+                  href="mailto:Yogabyniti@gmail.com"
+                  className={`inline-block break-all ${linkStyle}`}
+                >
+                  Yogabyniti@gmail.com
+                </a>
+              </address>
+            </div>
+          </div>
+
+          <div className="hidden md:block">
             <h3 className="mb-6 text-[9px] tracking-[0.22em] text-[#e0e5d4]">
               GET IN TOUCH
             </h3>
@@ -141,6 +170,7 @@ export default function Footer() {
               </a>
             </address>
           </div>
+
           <div>
             <h3 className="mb-6 text-[9px] tracking-[0.22em] text-[#e0e5d4]">
               OUR LITTLE SANCTUARY

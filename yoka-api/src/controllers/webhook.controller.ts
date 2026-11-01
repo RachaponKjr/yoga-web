@@ -5,6 +5,7 @@ import { mailService } from "../utils/mail";
 import { generateBookingPDF } from "../utils/pdfGenerator";
 import { getBookingSuccessTemplate } from "../templates/booking-success";
 import { sendTelegramNotice } from "../utils/telegram.util";
+import { ownerPurchaseEmail } from "../templates/purchase-notification";
 
 export const omiseWebhookController = async (req: Request, res: Response) => {
   try {
@@ -14,7 +15,7 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
     if (event.key === "charge.complete" || event.key === "charge.create") {
       const charge = event.data;
 
-      const orderId = charge.metadata.orderId;
+      const orderId = charge?.metadata?.orderId;
 
       if (!orderId) {
         return res.status(StatusCodes.OK).send();
@@ -23,16 +24,13 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
       if (charge.status === "successful") {
         console.log(`Payment Successful for Order: ${orderId}`);
 
-        // ✅ อัปเดต Database ว่าจ่ายเงินแล้ว
-        await prisma.booking.update({
-          where: { id: orderId },
-          data: {
-            status: "PAID", // สถานะ Order
-            paidAt: new Date(), // เวลาที่จ่าย
-            // อาจจะเก็บ chargeId ไว้อ้างอิงด้วยก็ได้
-            paymentId: charge.id,
-          },
+        // Omise may send charge.create, charge.complete, and retries for one payment.
+        const transition = await prisma.booking.updateMany({
+          where: { id: orderId, status: { not: "PAID" } },
+          data: { status: "PAID", paidAt: new Date(), paymentId: charge.id },
         });
+        if (transition.count === 0) return res.status(StatusCodes.OK).send("Already processed");
+
         const orderDetail = await prisma.booking.findUnique({
           where: { id: orderId },
           include: {
@@ -60,28 +58,13 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
           return res.status(StatusCodes.OK).send();
         }
 
-        const userDetail = {
-          email: orderDetail.student?.email || "",
-          phone_number: orderDetail.student?.userInfo?.phone_number || "",
-          firstName: orderDetail.student?.userInfo?.firstName || "",
-          lastName: orderDetail.student?.userInfo?.lastName || "",
-        };
-
-        const bookingDetail = {
-          bookingId: orderDetail.id,
-          courseTitle: orderDetail.round?.course?.title || "",
-          startDate: orderDetail.round?.startDateTime || "",
-          endDate: orderDetail.round?.endDateTime || "",
-          totalAmount: orderDetail.price,
-        };
-
         const formatDate = (date: Date) => {
           return date.toLocaleDateString("en-US", {
-            // หรือ th-TH ถ้าอยากได้ภาษาไทย
             weekday: "long",
             day: "numeric",
             month: "long",
             year: "numeric",
+            timeZone: "Asia/Bangkok",
           });
         };
 
@@ -89,24 +72,28 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
           return date.toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
-            hour12: true, // เป็น AM/PM
+            hour12: true,
+            timeZone: "Asia/Bangkok",
           });
         };
-
-        // ... ตอนเรียกใช้ ...
 
         const startDate = new Date(
           orderDetail.round?.startDateTime || new Date(),
         );
         const endDate = new Date(orderDetail.round?.endDateTime || new Date());
 
-        const pdfBuffer = await generateBookingPDF({
-          customerName: `${orderDetail.student?.userInfo?.firstName} ${orderDetail.student?.userInfo?.lastName}`,
-          courseTitle: orderDetail.round?.course?.title || "",
-          roundDate: formatDate(startDate),
-          roundTime: formatTime(startDate) + " - " + formatTime(endDate),
-          bookingId: orderDetail.id,
-        });
+        let pdfBuffer: Buffer | undefined;
+        try {
+          pdfBuffer = await generateBookingPDF({
+            customerName: `${orderDetail.student?.userInfo?.firstName || ""} ${orderDetail.student?.userInfo?.lastName || ""}`.trim(),
+            courseTitle: orderDetail.round?.course?.title || "",
+            roundDate: formatDate(startDate),
+            roundTime: formatTime(startDate) + " - " + formatTime(endDate),
+            bookingId: orderDetail.id,
+          });
+        } catch (error) {
+          console.error("Booking PDF generation failed; sending email without attachment:", error);
+        }
 
         const message = `
 <b>🔔 มีรายการจองใหม่!</b>
@@ -122,32 +109,55 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
 <a href="https://admin.yogabyniti.com/bookings">ดูรายละเอียดในระบบ Admin</a>
     `;
 
-        await sendTelegramNotice(message);
+        const ownerEmail = process.env.BOOKING_NOTIFICATION_EMAIL || "Yogabyniti@gmail.com";
+        const customerEmail = orderDetail.student?.email || orderDetail.email;
+        const customerName = `${orderDetail.student?.userInfo?.firstName || ""} ${orderDetail.student?.userInfo?.lastName || ""}`.trim() || customerEmail || "Guest";
+        const notice = {
+          bookingId: orderDetail.id,
+          customerName,
+          customerEmail: customerEmail || "",
+          courseTitle: orderDetail.round?.course?.title || "Yoga class",
+          sessionDate: formatDate(startDate),
+          sessionTime: formatTime(startDate) + " - " + formatTime(endDate),
+          quantity: orderDetail.quantity,
+          totalAmount: orderDetail.price,
+        };
+        const customerNotification = customerEmail
+          ? getBookingSuccessTemplate({
+              customerName,
+              courseTitle: notice.courseTitle,
+              roundDate: notice.sessionDate,
+              roundTime: notice.sessionTime,
+              bookingId: notice.bookingId,
+            }).then((html) =>
+              mailService.sendEmail(
+                customerEmail,
+                `Booking confirmed: ${notice.courseTitle} | Yoga By Niti`,
+                html,
+                pdfBuffer
+                  ? [{ filename: `Booking-${orderDetail.id}.pdf`, content: pdfBuffer, contentType: "application/pdf" }]
+                  : undefined,
+              ),
+            )
+          : Promise.resolve();
 
-        await mailService.sendEmail(
-          orderDetail.student?.email || "",
-          "Thank you for booking with Yoka by Niti!",
-          await getBookingSuccessTemplate({
-            customerName: `${orderDetail.student?.userInfo?.firstName} ${orderDetail.student?.userInfo?.lastName}`,
-            courseTitle: orderDetail.round?.course?.title || "",
-            roundDate: formatDate(startDate),
-            roundTime: formatTime(startDate) + " - " + formatTime(endDate),
-            bookingId: orderDetail.id,
-          }),
-          [
-            {
-              filename: `Booking-${orderDetail.id}.pdf`,
-              content: pdfBuffer,
-              contentType: "application/pdf",
-            },
-          ],
-        );
+        const notifications = await Promise.allSettled([
+          sendTelegramNotice(message),
+          customerNotification,
+          mailService.sendEmail(
+            ownerEmail,
+            `New booking: ${notice.courseTitle} (${notice.bookingId})`,
+            ownerPurchaseEmail(notice),
+          ),
+        ]);
+        notifications.forEach((result, index) => {
+          if (result.status === "rejected") console.error(`Booking notification ${index} failed for ${orderId}:`, result.reason);
+        });
       } else if (charge.status === "failed") {
         console.log(`Payment Failed for Order: ${orderId}`);
 
-        // ❌ อัปเดต Database ว่าจ่ายไม่สำเร็จ (ถ้าต้องการ)
-        await prisma.booking.update({
-          where: { id: orderId },
+        await prisma.booking.updateMany({
+          where: { id: orderId, status: { not: "PAID" } },
           data: {
             status: "CANCELLED",
             paymentId: charge.id,
@@ -156,13 +166,9 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
       }
     }
 
-    // ⭐ สำคัญมาก: ต้องตอบกลับ 200 OK เสมอ
-    // ไม่งั้น Omise จะคิดว่าเราไม่ได้รับ และจะส่งซ้ำมาเรื่อยๆ
     res.status(StatusCodes.OK).send("Webhook received");
   } catch (error) {
     console.error("Webhook Error:", error);
-    // ต่อให้ Error ก็ควรตอบ 200 หรือ 500 ตามความเหมาะสม
-    // แต่ปกติถ้า Code พัง เราตอบ 500 เดี๋ยว Omise ส่งใหม่ให้
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
   }
 };

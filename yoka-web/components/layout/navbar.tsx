@@ -122,49 +122,28 @@ export default function Navbar() {
         )}
       >
         <div className="mx-auto flex h-(--nav-height) max-w-[1296px] items-center justify-between gap-5 px-5 sm:px-7">
-          <div className="flex gap-2 items-center">
-            <Button
-              ref={toggleRef}
-              variant="ghost"
-              size="icon"
-              aria-label={
-                isMobileMenuOpen ? "Close navigation" : "Open navigation"
-              }
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-navigation"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="size-11 rounded-full text-[#48533b] hover:bg-[#e9ecdf] min-[1200px]:hidden"
+          <Link
+            href="/"
+            aria-label="Yoga By Niti home"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#687552]"
+          >
+            <Image
+              src="/tlogo.png"
+              alt="Yoga By Niti"
+              width={88}
+              height={68}
+              priority
+              className="h-[64px] w-[84px] object-contain"
+            />
+            <span
+              aria-hidden="true"
+              className="hidden border-l border-[#d8dccd] pl-4 text-[8px] leading-[1.8] tracking-[0.24em] text-[#7c846f] min-[1400px]:block"
             >
-              {isMobileMenuOpen ? (
-                <X className="size-5" />
-              ) : (
-                <Menu className="size-5" />
-              )}
-            </Button>
-            <Link
-              href="/"
-              aria-label="Yoga By Niti home"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#687552]"
-            >
-              <Image
-                src="/tlogo.png"
-                alt="Yoga By Niti"
-                width={88}
-                height={68}
-                priority
-                className="h-16 w-[84px] object-contain"
-              />
-              <span
-                aria-hidden="true"
-                className="hidden border-l border-[#d8dccd] pl-4 text-[8px] leading-[1.8] tracking-[0.24em] text-[#7c846f] min-[1400px]:block"
-              >
-                MOVEMENT
-                <br />& MINDFULNESS
-              </span>
-            </Link>
-          </div>
-
+              MOVEMENT
+              <br />& MINDFULNESS
+            </span>
+          </Link>
           <nav
             aria-label="Main navigation"
             className="hidden items-center gap-7 min-[1200px]:flex"
@@ -207,6 +186,24 @@ export default function Navbar() {
                 </Button>
               </div>
             )}
+            <Button
+              ref={toggleRef}
+              variant="ghost"
+              size="icon"
+              aria-label={
+                isMobileMenuOpen ? "Close navigation" : "Open navigation"
+              }
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="size-11 rounded-full text-[#48533b] hover:bg-[#e9ecdf] min-[1200px]:hidden"
+            >
+              {isMobileMenuOpen ? (
+                <X className="size-5" />
+              ) : (
+                <Menu className="size-5" />
+              )}
+            </Button>
           </div>
         </div>
         <nav
