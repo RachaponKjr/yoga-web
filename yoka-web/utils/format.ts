@@ -6,14 +6,14 @@ const formatRoundTime = (startStr: string, endStr: string): string => {
     timeZone: "Asia/Bangkok", // บังคับให้เป็นเวลาไทย
   };
 
-  const start = new Intl.DateTimeFormat("th-TH", options).format(
+  const start = new Intl.DateTimeFormat("en-GB", options).format(
     new Date(startStr)
   );
-  const end = new Intl.DateTimeFormat("th-TH", options).format(
+  const end = new Intl.DateTimeFormat("en-GB", options).format(
     new Date(endStr)
   );
 
-  return `${start} - ${end} น.`;
+  return `${start} - ${end}`;
 };
 
 const formatRoundEnglish = (startStr: string, endStr: string) => {

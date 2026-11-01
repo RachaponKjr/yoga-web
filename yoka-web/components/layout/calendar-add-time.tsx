@@ -14,7 +14,7 @@ import {
   eachDayOfInterval,
   differenceInMinutes,
 } from "date-fns";
-import { th } from "date-fns/locale";
+import { enGB } from "date-fns/locale";
 import {
   ChevronLeft,
   ChevronRight,
@@ -82,7 +82,7 @@ const CalendarAddTime = () => {
     const endDate = endOfWeek(monthEnd);
 
     const calendarDays = eachDayOfInterval({ start: startDate, end: endDate });
-    const daysOfWeek = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
       <div className="w-full">
@@ -165,7 +165,7 @@ const CalendarAddTime = () => {
                         key={idx}
                         className="flex items-center gap-1 w-full text-[10px] bg-blue-50 text-blue-700 px-1.5 py-1 rounded border border-blue-100"
                       >
-                        <span>เวลาการสอน</span>
+                        <span>Teaching schedule</span>
                         <span className="w-px h-3 bg-blue-200 mx-0.5"></span>
                         {/* เวลา */}
                         <span className="font-bold shrink-0">
@@ -182,7 +182,7 @@ const CalendarAddTime = () => {
                     {/* ถ้ามีมากกว่า 2 คอร์ส ให้แสดงจำนวนที่เหลือ */}
                     {dailyCourses.length > 2 && (
                       <div className="text-[10px] text-gray-400 pl-1 font-medium">
-                        + อีก {dailyCourses.length - 2} คอร์ส
+                        + more {dailyCourses.length - 2} courses
                       </div>
                     )}
                   </div>
@@ -205,9 +205,9 @@ const CalendarAddTime = () => {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
-              {format(currentMonth, "MMMM yyyy", { locale: th })}
+              {format(currentMonth, "MMMM yyyy", { locale: enGB })}
             </h2>
-            <p className="text-sm text-gray-500">จัดการตารางสอนของคุณ</p>
+            <p className="text-sm text-gray-500">Manage your teaching schedule</p>
           </div>
         </div>
 
@@ -235,9 +235,9 @@ const CalendarAddTime = () => {
       <div className="mt-8 border-t pt-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-            รายละเอียดวันที่{" "}
+            Classes for{" "}
             <span className="text-blue-600 underline decoration-blue-300">
-              {format(selectedDate, "d MMMM yyyy", { locale: th })}
+              {format(selectedDate, "d MMMM yyyy", { locale: enGB })}
             </span>
           </h3>
           <DialogAddTime
@@ -249,7 +249,7 @@ const CalendarAddTime = () => {
         {loading ? (
           <div className="flex items-center justify-center py-10 text-blue-600">
             <Loader2 className="w-8 h-8 animate-spin mr-2" />
-            <span>กำลังโหลดข้อมูล...</span>
+            <span>Loading...</span>
           </div>
         ) : selectedDateRounds.length > 0 ? (
           <div className="space-y-3">
@@ -259,8 +259,8 @@ const CalendarAddTime = () => {
               const durationMinutes = differenceInMinutes(end, start);
               const hours = Math.floor(durationMinutes / 60);
               const minutes = durationMinutes % 60;
-              const formattedDuration = `${hours > 0 ? `${hours} ชม.` : ""} ${
-                minutes > 0 ? `${minutes} นาที` : ""
+              const formattedDuration = `${hours > 0 ? `${hours} hr` : ""} ${
+                minutes > 0 ? `${minutes} min` : ""
               }`.trim();
 
               return (
@@ -330,7 +330,7 @@ const CalendarAddTime = () => {
         ) : (
           <div className="text-center py-10 bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-200">
             <CalendarIcon className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-            <p className="text-gray-400">ไม่มีคอร์สเรียนในวันนี้</p>
+            <p className="text-gray-400">No classes scheduled for this date</p>
           </div>
         )}
       </div>

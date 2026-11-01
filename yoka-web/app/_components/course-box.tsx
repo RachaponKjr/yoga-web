@@ -47,7 +47,7 @@ const CourseBox = () => {
   if (activeCourses.length === 0) {
     return (
       <div className="flex items-center justify-center w-full h-40">
-        <p className="text-[#73766b]">ไม่พบคอร์สที่เปิดใช้งาน</p>
+        <p className="text-[#73766b]">No courses are currently available</p>
       </div>
     );
   }
@@ -56,8 +56,8 @@ const CourseBox = () => {
     <div className="w-full relative md:px-0">
       <Swiper
         modules={[Autoplay]}
-        spaceBetween={20}
-        slidesPerView={1.2} // ในมือถือให้เห็นขอบรูปถัดไปนิดนึง (User Experience ดีกว่า)
+        spaceBetween={12}
+        slidesPerView={1.4} // ในมือถือให้เห็นขอบรูปถัดไปนิดนึง (User Experience ดีกว่า)
         autoplay={{
           delay: 3000,
           disableOnInteraction: false,

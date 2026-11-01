@@ -32,10 +32,10 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
       if (fileRejections.length > 0) {
         const errors = fileRejections.map((rejection) => {
           if (rejection.errors[0].code === "file-too-large") {
-            return `ไฟล์ ${rejection.file.name} ใหญ่เกิน ${maxSizeInMB}MB`;
+            return `File ${rejection.file.name} is larger than ${maxSizeInMB}MB`;
           }
           if (rejection.errors[0].code === "too-many-files") {
-            return `เลือกได้สูงสุด ${maxFiles} ไฟล์`;
+            return `Select up to ${maxFiles} File`;
           }
           return rejection.errors[0].message;
         });
@@ -43,7 +43,7 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
       }
 
       if (files.length + acceptedFiles.length > maxFiles) {
-        setErrorMessage(`เลือกได้สูงสุด ${maxFiles} ไฟล์`);
+        setErrorMessage(`Select up to ${maxFiles} File`);
         return;
       }
 
@@ -120,13 +120,13 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
             }`}
           />
           {isDragActive ? (
-            <p className="text-blue-600 font-medium">ปล่อยไฟล์ที่นี่...</p>
+            <p className="text-blue-600 font-medium">Drop files here...</p>
           ) : (
             <>
               <p className="text-lg font-medium text-gray-700">
-                คลิกเพื่อเลือกรูป หรือลากไฟล์มาวางที่นี่
+                Click to choose images or drag files here
               </p>
-              <p className="text-sm">(JPG, PNG, WebP สูงสุด {maxFiles} รูป)</p>
+              <p className="text-sm">(JPG, PNG, WebP, up to {maxFiles} images)</p>
             </>
           )}
         </div>
@@ -145,14 +145,14 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
           <div className="flex justify-between items-center mb-4">
             <h4 className="font-medium text-gray-700 flex items-center gap-2">
               <ImageIcon className="w-5 h-5" />
-              รูปที่เลือก ({files.length}/{maxFiles})
+              Selected images ({files.length}/{maxFiles})
             </h4>
             <button
               onClick={clearAll}
               type="button"
               className="text-sm text-red-500 hover:text-red-700"
             >
-              ลบทั้งหมด
+              Remove all
             </button>
           </div>
 
@@ -179,7 +179,7 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
                       removeFile(file.id);
                     }}
                     className="bg-white/90 hover:bg-white text-gray-600 hover:text-red-600 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-                    title="ลบรูปนี้"
+                    title="Remove this image"
                   >
                     <X className="w-4 h-4" />
                   </button>

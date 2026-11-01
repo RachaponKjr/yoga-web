@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { cache } from "react";
 import axios from "axios";
 import Image from "next/image";
@@ -34,14 +35,14 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const post = await getPost((await params).slug);
+  const metadata = pageMetadata({ title: post.title, description: post.excerpt, path: `/blog/${encodeURIComponent(post.slug)}`, image: post.coverImage ? blogImageUrl(post.coverImage) : undefined });
   return {
-    title: `${post.title} | Yoga By Niti`,
-    description: post.excerpt,
+    ...metadata,
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      ...metadata.openGraph,
       type: "article",
-      ...(post.coverImage ? { images: [blogImageUrl(post.coverImage)] } : {}),
+      ...(post.publishedAt ? { publishedTime: post.publishedAt } : {}),
+      modifiedTime: post.updatedAt,
     },
   };
 }
@@ -66,7 +67,7 @@ export default async function BlogDetailPage({
     <main className="bg-[#fafaf6] px-5 pb-16 pt-8 text-[#233528] sm:px-8 md:pb-24 md:pt-12">
       <div className="mx-auto max-w-6xl">
         <nav
-          aria-label="เส้นทางบทความ"
+          aria-label="Article navigation"
           className="flex items-center justify-between"
         >
           <Link
@@ -74,7 +75,7 @@ export default async function BlogDetailPage({
             className="inline-flex items-center gap-2 text-sm text-[#68765c] transition-colors hover:text-[#233528]"
           >
             <ArrowLeft size={16} />
-            บทความทั้งหมด
+            All articles
           </Link>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[#7c866f]">
             <span className="font-medium text-[#48583e]">Yoga By Niti</span>
@@ -85,7 +86,7 @@ export default async function BlogDetailPage({
             <span aria-hidden="true">·</span>
             <span className="inline-flex items-center gap-1.5">
               <Clock3 size={13} />
-              อ่านประมาณ {readingMinutes} นาที
+              Read time: {readingMinutes} min
             </span>
           </div>
         </nav>
@@ -117,7 +118,7 @@ export default async function BlogDetailPage({
               <div>
                 <p className="text-sm font-medium">Yoga By Niti</p>
                 <p className="mt-1 text-xs leading-6 text-[#7b866e]">
-                  พื้นที่สำหรับโยคะ การดูแลตัวเอง และจังหวะชีวิตที่สมดุล
+                  A space for yoga, self-care, and a more balanced life
                 </p>
               </div>
             </div>
@@ -136,35 +137,35 @@ export default async function BlogDetailPage({
               id="booking-invitation"
               className="text-3xl font-medium leading-relaxed tracking-tight md:text-4xl md:leading-relaxed"
             >
-              ให้เวลาตัวเอง
+              Make time for yourself
               <br />
-              ได้กลับมาสมดุล
+              Return to balance
             </h2>
             <p className="mt-4 max-w-sm text-sm leading-7 text-[#6a795f]">
-              จากแรงบันดาลใจเล็ก ๆ สู่เวลาบนเสื่อโยคะ
+              From a little inspiration to time on the mat
               <br className="hidden sm:block" />
-              เลือกคลาสและช่วงเวลาที่เหมาะกับคุณ แล้วมาฝึกไปด้วยกัน
+              Find a class and a time that suits you, and join us on the mat
             </p>
             <div className="flex flex-row gap-8 items-center mt-4">
               <Link
                 href="/yoga-time"
                 className="inline-flex items-center gap-6 rounded-full bg-[#344b2c] px-6 py-3.5 text-sm text-white transition-colors hover:bg-[#21351b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#344b2c]"
               >
-                ดูตารางและจองคลาส
+                Explore classes and book
                 <ArrowUpRight size={18} />
               </Link>
               <Link
                 href="/contact"
                 className="text-xs text-[#6a795f] underline underline-offset-4"
               >
-                ครั้งแรกกับโยคะ? สอบถามเราได้
+                New to yoga? Get in touch
               </Link>
             </div>
           </div>
           <div className="relative min-h-64 md:min-h-96">
             <Image
               src={yoga.src}
-              alt="บรรยากาศการฝึกโยคะร่วมกันที่ Yoga By Niti"
+              alt="Practicing together at Yoga By Niti"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
@@ -185,14 +186,14 @@ export default async function BlogDetailPage({
                 id="more-stories"
                 className="text-2xl font-medium md:text-3xl"
               >
-                เรื่องราวให้อ่านต่อ
+                More stories to explore
               </h2>
             </div>
             <Link
               href="/blog"
               className="inline-flex items-center gap-3 text-sm text-[#68765c] hover:text-[#233528]"
             >
-              ดูบทความทั้งหมด
+              View all articles
               <ArrowRight size={17} />
             </Link>
           </div>
@@ -228,7 +229,7 @@ export default async function BlogDetailPage({
                         {item.excerpt}
                       </p>
                       <span className="mt-4 inline-flex items-center gap-2 text-xs text-[#526749]">
-                        อ่านเรื่องราว
+                        Read the story
                         <ArrowUpRight size={14} />
                       </span>
                     </div>
@@ -238,7 +239,7 @@ export default async function BlogDetailPage({
             </div>
           ) : (
             <p className="py-5 text-sm leading-7 text-[#7b866e]">
-              ติดตามเรื่องราวและแรงบันดาลใจใหม่ ๆ ได้ที่หน้าบทความของเรา
+              Explore fresh stories and inspiration in our journal
             </p>
           )}
         </section>

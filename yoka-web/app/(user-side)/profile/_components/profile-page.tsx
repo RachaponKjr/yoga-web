@@ -56,13 +56,13 @@ const ProfilePage = () => {
 
       const resUpdate = await authService.updateProfile(formData);
       if (resUpdate.success) {
-        toast.success("บันทึกข้อมูลโปรไฟล์เรียบร้อยแล้ว!");
+        toast.success("Profile saved successfully!");
       } else {
-        toast.error("ไม่สามารถอัปเดตโปรไฟล์ได้");
+        toast.error("Unable to update your profile");
       }
     } catch (error) {
       console.error("Error saving profile:", error);
-      toast.error("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+      toast.error("A connection error occurred");
     } finally {
       setIsLoading(false);
     }

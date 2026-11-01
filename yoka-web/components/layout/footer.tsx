@@ -50,11 +50,11 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-6 max-w-[270px] text-xs leading-7 text-[#b5bfaa]">
-              พื้นที่แห่งการเคลื่อนไหวและความสมดุล
+              A space for movement and balance
               <br />
-              ฝึกโยคะเพื่อสุขภาพ พร้อมอาหารที่ใส่ใจ
+              Mindful yoga and thoughtfully prepared food
               <br />
-              กับ Yoga By Niti จังหวัดภูเก็ต
+              at Yoga By Niti, Phuket
             </p>
             <div className="mt-6 flex gap-3">
               <Button

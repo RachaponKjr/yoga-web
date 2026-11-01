@@ -146,7 +146,7 @@ const BookingCard = ({
 
   const handleCancelBooking = async () => {
     if (!message.trim()) {
-      toast.error("กรุณาระบุเหตุผลในการยกเลิก");
+      toast.error("Please provide a reason for cancellation");
       return;
     }
     const res = await bookingService.cancelBooking(booking.id, message);
@@ -221,8 +221,8 @@ const BookingCard = ({
                 className={`text-[10px] md:text-xs ${isWithinTwoHours ? "text-gray-400" : "text-red-400 font-medium"}`}
               >
                 {isWithinTwoHours
-                  ? "* ยกเลิกได้ภายใน 2 ชม. หลังการจอง"
-                  : "เกินกำหนดเวลา 2 ชม. ไม่สามารถยกเลิกได้"}
+                  ? "* Cancellation is available within 2 hours of booking"
+                  : "The 2-hour cancellation window has expired"}
               </span>
 
               <Dialog open={open} onOpenChange={setOpen}>
@@ -237,22 +237,22 @@ const BookingCard = ({
                         : ""
                     }`}
                   >
-                    ขอยกเลิกการจอง
+                    Request cancellation
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>ยืนยันการยกเลิกการจอง</DialogTitle>
+                    <DialogTitle>Confirm booking cancellation</DialogTitle>
                     <DialogDescription>
-                      ระบบจะดำเนินการตรวจสอบคำขอของคุณตามนโยบายการคืนเงิน
+                      We will review your request in accordance with our refund policy
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex flex-col gap-2 my-4">
                     <p className="text-sm font-semibold text-zinc-700">
-                      เหตุผลในการยกเลิก <span className="text-red-500">*</span>
+                      Reason for cancellation <span className="text-red-500">*</span>
                     </p>
                     <Textarea
-                      placeholder="เช่น ติดธุระด่วน, จองผิดรอบ..."
+                      placeholder="For example, a schedule conflict or an incorrect session..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       className="min-h-[100px]"
@@ -264,19 +264,19 @@ const BookingCard = ({
                       target="_blank"
                       className="text-xs text-indigo-600 hover:underline"
                     >
-                      อ่านนโยบายการคืนเงินอย่างละเอียด
+                      Read the full refund policy
                     </Link>
                   </div>
                   <DialogFooter className="gap-2 sm:gap-0">
                     <DialogClose asChild>
-                      <Button variant="ghost">ปิดหน้าต่าง</Button>
+                      <Button variant="ghost">Close</Button>
                     </DialogClose>
                     <Button
                       variant="destructive"
                       onClick={handleCancelBooking}
                       disabled={!message.trim()}
                     >
-                      ยืนยันการยกเลิก
+                      Confirm cancellation
                     </Button>
                   </DialogFooter>
                 </DialogContent>

@@ -90,7 +90,7 @@ const DialogCourse = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <Button className="rounded-full px-6 bg-primary text-white cursor-pointer">
-          เพิ่มคอร์ส
+          Add course
         </Button>
       </DialogTrigger>
       <DialogContent className="md:max-w-2xl! max-h-[calc(100vh-15rem)]! overflow-hidden overflow-y-scroll!">

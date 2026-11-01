@@ -2,8 +2,8 @@ import CourseBox from "./course-box";
 
 const ProductCourse = () => {
   return (
-    <div className="md:pt-12 pt-0 px-4 md:px-0 pb-16 md:pb-24 bg-[#f8f7f3]">
-      <div className="container mx-auto flex flex-col justify-between gap-6 items-center w-full z-10">
+    <div className="pt-0 px-4 md:px-0 pb-4 bg-[#f8f7f3]">
+      <div className="container mx-auto flex flex-col justify-between gap-2 items-center w-full z-10">
         <div className="flex flex-col justify-center items-center gap-2 w-full">
           <div className="border border-[#c3ccb2] rounded-full p-2">
             <div className="w-3 aspect-square rounded-full bg-[#8c9778]"></div>

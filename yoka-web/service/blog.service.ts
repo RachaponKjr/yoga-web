@@ -21,5 +21,5 @@ export const blogService = {
 };
 export const blogImageUrl = imageUrl;
 export function blogDate(value: string | null) {
-  return value ? new Date(value).toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Bangkok" }) : "";
+  return value ? new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Bangkok" }) : "";
 }

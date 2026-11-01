@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod"; // เพิ่ม z เข้ามา
@@ -76,46 +76,37 @@ const DialogAddTime = ({ date }: { date: string }) => {
     const res = await courseService.createRound(payload);
     if (res.success) {
       setOpen(false);
-      toast.success("เพิ่มรอบการเรียนสำเร็จ");
+      toast.success("Class session added successfully");
       form.reset();
     } else {
-      toast.error("เพิ่มรอบการเรียนไม่สำเร็จ");
+      toast.error("Unable to add class session");
     }
   }
 
-  const getMyCourse = useCallback(async () => {
-    try {
-      // เช็คว่ามี user และมี id หรือไม่
-      console.log(user, "user");
-
-      if (!user?.id) return;
-
-      const response = await courseService.getMyCourse(user.id, 1);
-      setCourses(response.data.courses);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [user]);
-
   useEffect(() => {
-    void getMyCourse();
-  }, [getMyCourse]);
+    if (!user?.id) return;
+    let active = true;
+    courseService.getMyCourse(user.id, 1)
+      .then((response) => { if (active) setCourses(response.data.courses); })
+      .catch((error) => { console.error(error); });
+    return () => { active = false; };
+  }, [user?.id]);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="bg-slate-900 cursor-pointer text-white hover:bg-slate-800 shadow-sm gap-2">
           <Clock className="w-4 h-4" />
-          เพิ่มรอบเรียน
+          Add session
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            เพิ่มรอบเวลาเรียน (Add Time)
+            Add class session
           </DialogTitle>
           <DialogDescription>
-            วันที่: <span className="font-bold text-primary">{date}</span>
+            Date: <span className="font-bold text-primary">{date}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -130,14 +121,14 @@ const DialogAddTime = ({ date }: { date: string }) => {
               name="courseId"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>คอร์สเรียน</FormLabel>
+                  <FormLabel>Course</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="เลือกคอร์ส" />
+                        <SelectValue placeholder="Select a course" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -148,7 +139,7 @@ const DialogAddTime = ({ date }: { date: string }) => {
                       ))}
                       {(!courses || courses.length === 0) && (
                         <div className="p-2 text-sm text-muted-foreground text-center">
-                          ไม่พบคอร์สเรียน
+                          No courses found
                         </div>
                       )}
                     </SelectContent>
@@ -165,7 +156,7 @@ const DialogAddTime = ({ date }: { date: string }) => {
                 name="startDateTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>เวลาเริ่ม (Start)</FormLabel>
+                    <FormLabel>Start time</FormLabel>
                     <FormControl>
                       {/* ใส่ {...field} ได้เลย ไม่ต้องแปลง format เองแล้ว */}
                       <Input type="time" {...field} />
@@ -179,7 +170,7 @@ const DialogAddTime = ({ date }: { date: string }) => {
                 name="endDateTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>เวลาเลิก (End)</FormLabel>
+                    <FormLabel>End time</FormLabel>
                     <FormControl>
                       <Input type="time" {...field} />
                     </FormControl>
@@ -232,7 +223,7 @@ const DialogAddTime = ({ date }: { date: string }) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>รายละเอียด</FormLabel>
+                  <FormLabel>Details</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -250,7 +241,7 @@ const DialogAddTime = ({ date }: { date: string }) => {
                 variant={"outline"}
                 className="w-full cursor-pointer bg-slate-900 text-white hover:bg-slate-800"
               >
-                บันทึกข้อมูล
+                Save
               </Button>
             </DialogFooter>
           </form>

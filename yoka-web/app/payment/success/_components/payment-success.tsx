@@ -29,7 +29,7 @@ const PaymentSuccessPage = () => {
   const [booking, setBooking] = useState<BookingType | null>(null);
 
   const formatThaiDate = (date: string | Date, showTime = true) => {
-    return new Date(date).toLocaleString("th-TH", {
+    return new Date(date).toLocaleString("en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -38,7 +38,7 @@ const PaymentSuccessPage = () => {
   };
 
   const formatTime = (dateTime: string | Date) => {
-    return new Date(dateTime).toLocaleTimeString("th-TH", {
+    return new Date(dateTime).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
@@ -100,10 +100,10 @@ const PaymentSuccessPage = () => {
               />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">
-              กำลังตรวจสอบยอดชำระ
+              Checking your payment
             </h2>
             <p className="text-gray-500 text-sm">
-              กรุณารอสักครู่ ระบบกำลังดึงข้อมูลการจองของคุณ...
+              Please wait while we retrieve your booking details...
             </p>
           </motion.div>
         )}
@@ -129,10 +129,10 @@ const PaymentSuccessPage = () => {
                   <Check className="w-10 h-10 text-white" strokeWidth={3} />
                 </motion.div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
-                  ชำระเงินสำเร็จ
+                  Payment successful
                 </h1>
                 <p className="text-gray-500 text-xs">
-                  จองคลาสเรียนของคุณเรียบร้อยแล้ว
+                  Your class booking is confirmed
                 </p>
               </div>
 
@@ -142,7 +142,7 @@ const PaymentSuccessPage = () => {
                   {/* Amount Section */}
                   <div className="text-center pb-6 mb-6 border-b border-dashed border-gray-200">
                     <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">
-                      ยอดชำระรวม
+                      Total paid
                     </p>
                     <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
                       <span className="text-xl font-medium mr-1 text-gray-500">
@@ -157,14 +157,14 @@ const PaymentSuccessPage = () => {
                   {/* Details List */}
                   <div className="space-y-4">
                     <div className="flex justify-between items-start text-sm">
-                      <span className="text-gray-400 shrink-0">คลาสเรียน</span>
+                      <span className="text-gray-400 shrink-0">Class</span>
                       <span className="text-gray-900 font-semibold text-right leading-tight">
                         {booking.round.course.title}
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-400">หมายเลขอ้างอิง</span>
+                      <span className="text-gray-400">Reference number</span>
                       <span className="text-gray-900 font-mono text-[10px]">
                         {booking.id.slice(0, 6)}******
                       </span>
@@ -173,7 +173,7 @@ const PaymentSuccessPage = () => {
                     {/* Schedule Row: Clean Minimalist Style */}
                     <div className="pt-4 mt-2 border-t flex justify-between border-gray-100">
                       <span className="text-gray-400 text-sm">
-                        วันเวลาเรียน
+                        Class date &amp; time
                       </span>
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5">
@@ -186,7 +186,7 @@ const PaymentSuccessPage = () => {
                           <p className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5">
                             <Clock className="w-3.5 h-3.5" />
                             {formatTime(booking.round.startDateTime)} -{" "}
-                            {formatTime(booking.round.endDateTime)} น.
+                            {formatTime(booking.round.endDateTime)}
                           </p>
                         </div>
                       </div>
@@ -199,7 +199,7 @@ const PaymentSuccessPage = () => {
                   <Link href="/my-booking">
                     <Button className="w-full h-14 rounded-2xl bg-gray-900 hover:bg-black text-white text-sm font-semibold shadow-lg shadow-gray-200 transition-all active:scale-95">
                       <Calendar className="w-4 h-4 mr-2" />
-                      เช็คตารางเรียนทั้งหมด
+                      View all classes
                     </Button>
                   </Link>
                   <Link href="/">
@@ -207,20 +207,20 @@ const PaymentSuccessPage = () => {
                       variant="outline"
                       className="w-full h-12 rounded-2xl border-gray-200 text-gray-600 text-sm hover:bg-gray-50"
                     >
-                      <Home className="w-4 h-4 mr-2" /> หน้าหลัก
+                      <Home className="w-4 h-4 mr-2" /> Home
                     </Button>
                   </Link>
                 </div>
 
                 <p className="text-center mt-8 text-xs text-gray-400 leading-relaxed">
-                  ระบบได้ส่งอีเมลยืนยันการจองไปให้คุณเรียบร้อยแล้ว
+                  A booking confirmation has been sent to your email
                   <br />
-                  หากมีข้อสงสัย{" "}
+                  Have a question?{" "}
                   <Link
                     href="/contact"
                     className="text-indigo-600 hover:underline"
                   >
-                    ติดต่อเรา
+                    Contact us
                   </Link>
                 </p>
               </div>
@@ -240,12 +240,10 @@ const PaymentSuccessPage = () => {
               <AlertCircle className="w-8 h-8" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-3">
-              ไม่พบข้อมูลการชำระเงิน
+              Payment information not found
             </h2>
             <p className="text-gray-500 text-sm mb-8 leading-relaxed">
-              เรายังไม่ได้รับการยืนยันรายการในเวลาที่กำหนด
-              หากคุณมั่นใจว่าชำระเงินเรียบร้อยแล้ว
-              กรุณากดตรวจสอบอีกครั้งหรือเตรียมหลักฐานเพื่อติดต่อเจ้าหน้าที่
+              We have not received payment confirmation within the expected time. If you have already paid, please check again or contact our team with your payment receipt.
             </p>
             <div className="flex flex-col gap-3">
               <Button
@@ -255,13 +253,13 @@ const PaymentSuccessPage = () => {
                 }}
                 className="w-full h-14 rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-100"
               >
-                <RefreshCw className="w-4 h-4 mr-2" /> ตรวจสอบอีกครั้ง
+                <RefreshCw className="w-4 h-4 mr-2" /> Check again
               </Button>
               <Link
                 href="/contact"
                 className="text-sm text-gray-400 hover:text-gray-600 transition-colors pt-2"
               >
-                ต้องการความช่วยเหลือ?
+                Need help?
               </Link>
             </div>
           </motion.div>

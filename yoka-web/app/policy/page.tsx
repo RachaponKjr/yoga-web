@@ -1,9 +1,18 @@
+import { pageMetadata } from "@/lib/seo";
 import React from "react";
 import { ArrowLeft, ShieldCheck, Lock, Eye, Database } from "lucide-react";
 import Link from "next/link";
 
+export const metadata = pageMetadata({
+  title: "Privacy & Data Security Policy",
+  description:
+    "Learn how Yoga By Niti collects, uses, and protects your personal information, and how to exercise your privacy rights.",
+  path: "/policy",
+  noIndex: false,
+});
+
 const PrivacyPolicyPage = () => {
-  const lastUpdated = "20 มีนาคม 2026";
+  const lastUpdated = "20 March 2026";
 
   return (
     <div className=" pt-4 px-4 sm:px-6 lg:px-8">
@@ -13,7 +22,7 @@ const PrivacyPolicyPage = () => {
           href="/"
           className="flex items-center gap-2 text-slate-500 hover:text-[#3D552F] transition-colors mb-4 text-sm font-medium"
         >
-          <ArrowLeft size={16} /> กลับสู่หน้าหลัก
+          <ArrowLeft size={16} /> Back to home
         </Link>
 
         {/* Header */}
@@ -24,11 +33,9 @@ const PrivacyPolicyPage = () => {
           <h1 className="text-3xl font-bold text-slate-900 mb-2 font-sans">
             Privacy Policy
           </h1>
-          <p className="text-slate-500">
-            นโยบายความเป็นส่วนตัวและความปลอดภัยของข้อมูล
-          </p>
+          <p className="text-slate-500">Privacy &amp; Data Security Policy</p>
           <div className="mt-4 inline-block px-3 py-1 bg-slate-100 rounded-full text-[10px] text-slate-500 font-medium">
-            อัปเดตล่าสุด: {lastUpdated}
+            Last updated: {lastUpdated}
           </div>
         </div>
 
@@ -39,27 +46,27 @@ const PrivacyPolicyPage = () => {
             <div className="flex items-center gap-3 mb-4">
               <Database className="text-[#3D552F]" size={20} />
               <h2 className="text-xl font-semibold text-slate-800">
-                1. ข้อมูลที่เราจัดเก็บ
+                1. Information we collect
               </h2>
             </div>
             <p className="text-slate-600 mb-3 leading-relaxed">
-              เพื่อให้การให้บริการจองคอร์สโยคะเป็นไปอย่างราบรื่น
-              เรามีความจำเป็นต้องจัดเก็บข้อมูลดังต่อไปนี้:
+              To provide a smooth yoga booking service, we need to collect the
+              following information:
             </p>
             <ul className="list-disc list-inside text-slate-600 space-y-2 pl-2 text-sm leading-relaxed">
               <li>
-                <span className="font-semibold">ข้อมูลระบุตัวตน:</span>{" "}
-                ชื่อ-นามสกุล, ที่อยู่อีเมล, หมายเลขโทรศัพท์
+                <span className="font-semibold">Identity information:</span>{" "}
+                Full name, email address, and telephone number
               </li>
               <li>
-                <span className="font-semibold">ข้อมูลการจอง:</span>{" "}
-                รายละเอียดคอร์สที่เลือก, วันและเวลาเรียน, ประเภทการจอง
+                <span className="font-semibold">Booking information:</span> The
+                selected course, class date and time, and booking type
                 (Online/Walk-in)
               </li>
               <li>
-                <span className="font-semibold">ข้อมูลการชำระเงิน:</span>{" "}
-                หลักฐานการโอนเงิน (Slip) หรือสถานะการจ่ายเงิน
-                (เราไม่เก็บรหัสผ่านบัตรเครดิตของคุณในระบบ)
+                <span className="font-semibold">Payment information:</span>{" "}
+                Transfer receipts or payment status. We do not store your credit
+                card password in our system.
               </li>
             </ul>
           </section>
@@ -69,21 +76,21 @@ const PrivacyPolicyPage = () => {
             <div className="flex items-center gap-3 mb-4">
               <Eye className="text-[#3D552F]" size={20} />
               <h2 className="text-xl font-semibold text-slate-800">
-                2. การนำข้อมูลไปใช้งาน
+                2. How we use your information
               </h2>
             </div>
             <p className="text-slate-600 text-sm leading-relaxed">
-              เราจะใช้ข้อมูลของคุณเพื่อวัตถุประสงค์ดังนี้เท่านั้น:
+              We use your information only for the following purposes:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
               <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs text-slate-600">
-                ✔️ ใช้ยืนยันตัวตนในการเข้าคลาสเรียน
+                ✔️ To verify your identity when attending classes
               </div>
               <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs text-slate-600">
-                ✔️ แจ้งเตือนสถานะการชำระเงินและแจ้งเลื่อนคลาส
+                ✔️ To notify you of payment status and class schedule changes
               </div>
               <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs text-slate-600">
-                ✔️ ปรับปรุงคุณภาพการสอนและการให้บริการ
+                ✔️ To improve our teaching and services
               </div>
             </div>
           </section>
@@ -93,36 +100,36 @@ const PrivacyPolicyPage = () => {
             <div className="flex items-center gap-3 mb-4">
               <Lock className="text-[#3D552F]" size={20} />
               <h2 className="text-xl font-semibold text-slate-800">
-                3. มาตรฐานความปลอดภัย
+                3. Security standards
               </h2>
             </div>
             <p className="text-slate-600 text-sm leading-relaxed">
-              ข้อมูลของคุณจะถูกเก็บรักษาเป็นความลับ
-              และถูกจัดเก็บด้วยเทคโนโลยีการเข้ารหัส (Encryption) ที่ได้มาตรฐาน
-              เราไม่มีนโยบายการขายหรือเผยแพร่ข้อมูลส่วนตัวให้แก่บุคคลภายนอกเพื่อวัตถุประสงค์ทางการตลาดอย่างเด็ดขาด
+              Your information is kept confidential and stored using standard
+              encryption technology. We do not sell or disclose personal
+              information to third parties for marketing purposes.
             </p>
           </section>
 
           {/* Section 4: สิทธิ์ของผู้ใช้งาน */}
           <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 ">
             <h2 className="text-xl font-semibold text-slate-800 mb-3">
-              4. สิทธิ์ของคุณ (PDPA)
+              4. Your rights (PDPA)
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed ">
-              คุณมีสิทธิ์ในการขอตรวจสอบ แก้ไข
-              หรือขอลบข้อมูลส่วนตัวของคุณออกจากระบบของเราได้ตลอดเวลา
-              โดยสามารถติดต่อแอดมินผ่านช่องทางติดต่อหลักของเว็บไซต์
+              You may request access to, correction of, or deletion of your
+              personal information at any time by contacting our administrator
+              through the main contact channels on this website.
             </p>
             <div className="bg-slate-50 p-4 rounded-xl text-xs text-slate-400">
-              หมายเหตุ:
-              การลบข้อมูลอาจส่งผลกระทบต่อประวัติการจองหรือสิทธิ์การเข้าเรียนในคลาสที่ยังเหลืออยู่
+              Note: Deleting your information may affect your booking history or
+              eligibility to attend remaining classes.
             </div>
           </section>
 
           {/* Contact Footer */}
           <div className="text-center pt-4">
             <p className="text-xs text-slate-400 mb-1">
-              ยินดีที่ได้ดูแลความเป็นส่วนตัวของคุณ
+              Your privacy matters to us
             </p>
             <p className="text-slate-800 font-bold font-sans tracking-wide">
               YogabyNiti Security Team

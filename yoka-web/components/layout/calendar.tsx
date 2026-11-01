@@ -15,7 +15,7 @@ import {
   eachDayOfInterval,
   differenceInMinutes,
 } from "date-fns";
-import { th } from "date-fns/locale";
+import { enGB } from "date-fns/locale";
 import {
   ChevronLeft,
   ChevronRight,
@@ -47,10 +47,10 @@ const Calendar = () => {
     // เช็คว่าเลยเวลาเริ่มคลาสหรือยัง
     if (now > eventStart) {
       return {
-        label: "ปิดรับสมัคร",
+        label: "Booking closed",
         color: "bg-[#e9ebe3] text-[#737b62]",
         disabled: true,
-        btnText: "สิ้นสุดแล้ว",
+        btnText: "Ended",
       };
     }
 
@@ -60,18 +60,18 @@ const Calendar = () => {
 
     if (isFullOnline && isFullWalkIn) {
       return {
-        label: "คลาสเต็มแล้ว",
+        label: "Class is full",
         color: "bg-[#f1e9df] text-[#8e7457]",
         disabled: true,
-        btnText: "ที่ว่างเต็ม",
+        btnText: "Fully booked",
       };
     }
 
     return {
-      label: "เปิดรับจอง",
+      label: "Open for booking",
       color: "bg-[#e8eddd] text-[#65734f]",
       disabled: false,
-      btnText: "จองเลย",
+      btnText: "Book now",
     };
   };
 
@@ -107,7 +107,7 @@ const Calendar = () => {
     const endDate = endOfWeek(monthEnd);
 
     const calendarDays = eachDayOfInterval({ start: startDate, end: endDate });
-    const daysOfWeek = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
       <div className="w-full">
@@ -138,7 +138,7 @@ const Calendar = () => {
                 key={day.toString()}
                 aria-pressed={isSelected}
                 aria-current={isToday ? "date" : undefined}
-                aria-label={`${format(day, "d MMMM yyyy", { locale: th })}${hasEvents ? ` มี ${dailyCourses.length} คลาส` : ""}`}
+                aria-label={`${format(day, "d MMMM yyyy", { locale: enGB })}${hasEvents ? ` with ${dailyCourses.length} classes` : ""}`}
                 disabled={!isCurrentMonth}
                 onClick={() => setSelectedDate(day)}
                 className={`
@@ -160,7 +160,7 @@ const Calendar = () => {
                     </div>
                     {dailyCourses.length > 1 && (
                       <div className="hidden md:block text-[10px] text-[#858d79] pl-1">
-                        + {dailyCourses.length - 1} คอร์ส
+                        + {dailyCourses.length - 1} courses
                       </div>
                     )}
                     <div className="md:hidden flex justify-center gap-0.5 mt-1">
@@ -187,13 +187,13 @@ const Calendar = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg md:text-2xl font-normal text-[#454d39] flex items-center gap-3">
           <CalendarIcon className="w-6 h-6 text-[#737f5f]" />
-          {format(currentMonth, "MMMM yyyy", { locale: th })}
+          {format(currentMonth, "MMMM yyyy", { locale: enGB })}
         </h2>
         <div className="flex gap-2">
           <Button
             variant="outline"
             size="icon"
-            aria-label="เดือนก่อนหน้า"
+            aria-label="Previous month"
             onClick={prevMonth}
             className="size-10 rounded-full bg-transparent hover:bg-[#eef0e5] border border-[#d5dcc7] shadow-none transition-colors"
           >
@@ -202,7 +202,7 @@ const Calendar = () => {
           <Button
             variant="outline"
             size="icon"
-            aria-label="เดือนถัดไป"
+            aria-label="Next month"
             onClick={nextMonth}
             className="size-10 rounded-full bg-transparent hover:bg-[#eef0e5] border border-[#d5dcc7] shadow-none transition-colors"
           >
@@ -216,19 +216,19 @@ const Calendar = () => {
       {/* Details Section */}
       <div className="mt-8 border-t border-[#dedfd4] pt-6">
         <h3 className="text-base font-normal text-[#454d39] mb-5 flex flex-wrap items-center gap-2">
-          รายละเอียดวันที่{" "}
+          Classes for{" "}
           <span className="text-[#737f5f]">
-            {format(selectedDate, "d MMMM yyyy", { locale: th })}
+            {format(selectedDate, "d MMMM yyyy", { locale: enGB })}
           </span>
         </h3>
 
         {loading ? (
           <div role="status" className="flex items-center justify-center gap-3 py-10 text-sm text-[#737f5f]">
-            <span>กำลังโหลดตารางเรียน…</span>
+            <span>Loading the timetable…</span>
             <Loader2 className="w-8 h-8 text-[#737f5f] animate-spin" />
           </div>
         ) : error ? (
-          <p role="alert" className="rounded-sm border border-[#e2d7c9] bg-[#f5f0e8] px-5 py-10 text-center text-sm text-[#8e7457]">ไม่สามารถโหลดตารางเรียนได้ กรุณาลองใหม่ภายหลัง</p>
+          <p role="alert" className="rounded-sm border border-[#e2d7c9] bg-[#f5f0e8] px-5 py-10 text-center text-sm text-[#8e7457]">Unable to load the timetable. Please try again later.</p>
         ) : roundCourse.length > 0 ? (
           <div className="space-y-4">
             {roundCourse.map((event) => {
@@ -237,7 +237,7 @@ const Calendar = () => {
               const end = new Date(event.endDateTime);
               const diffInMinutes = differenceInMinutes(end, start);
               const formattedDuration =
-                `${Math.floor(diffInMinutes / 60) > 0 ? `${Math.floor(diffInMinutes / 60)} ชม. ` : ""}${diffInMinutes % 60 > 0 ? `${diffInMinutes % 60} นาที` : ""}`.trim();
+                `${Math.floor(diffInMinutes / 60) > 0 ? `${Math.floor(diffInMinutes / 60)} hr ` : ""}${diffInMinutes % 60 > 0 ? `${diffInMinutes % 60} min` : ""}`.trim();
 
               return (
                 <div
@@ -267,7 +267,7 @@ const Calendar = () => {
                         {event.course.title}
                       </h4>
                       <span className="text-xs font-normal text-[#737f5f] bg-[#edf1e4] px-2 py-1 rounded-md whitespace-nowrap">
-                        เริ่ม: {format(start, "HH:mm น.")}
+                        Starts: {format(start, "HH:mm")}
                       </span>
                     </div>
 
@@ -277,11 +277,11 @@ const Calendar = () => {
 
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-[#73766b]">
                       <div className="flex items-center gap-1">
-                        <span className="font-medium">ผู้สอน:</span>{" "}
+                        <span className="font-medium">Instructor:</span>{" "}
                         {event.course.teacher.userInfo.firstName}
                       </div>
                       <div className="flex items-center gap-1">
-                        <span className="font-medium">เวลา:</span>{" "}
+                        <span className="font-medium">Duration:</span>{" "}
                         {formattedDuration}
                       </div>
 
@@ -294,7 +294,7 @@ const Calendar = () => {
                         ></span>
                         Online:{" "}
                         {event.max_online - event.current_online <= 0
-                          ? "เต็ม"
+                          ? "Full"
                           : event.max_online - event.current_online}
                       </div>
 
@@ -307,7 +307,7 @@ const Calendar = () => {
                         ></span>
                         Walk-in:{" "}
                         {event.max_walk_in - event.current_walk_in <= 0
-                          ? "เต็ม"
+                          ? "Full"
                           : event.max_walk_in - event.current_walk_in}
                       </div>
                     </div>
@@ -315,7 +315,7 @@ const Calendar = () => {
                     <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#dedfd4]">
                       <div className="flex flex-col">
                         <span className="text-[10px] font-medium uppercase tracking-wider text-[#858d79] mb-0.5">
-                          ราคาต่อท่าน
+                          Price per person
                         </span>
                         <div className="flex items-baseline gap-2">
                           {event.course.discount_price ? (
@@ -355,7 +355,7 @@ const Calendar = () => {
           </div>
         ) : (
           <div className="text-center py-12 bg-[#f5f6ef] rounded-sm border border-[#dedfd4]">
-            <p className="text-[#858d79] text-sm font-normal">ไม่มีคอร์สเรียนในวันนี้</p>
+            <p className="text-[#858d79] text-sm font-normal">No classes scheduled for this date</p>
           </div>
         )}
       </div>

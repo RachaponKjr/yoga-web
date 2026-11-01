@@ -21,7 +21,7 @@ const VideoSlide = ({ url }: { url: string }) => (
     {/* Instagram owns the iframe markup. Crop its header and footer outside
         the portrait viewport while keeping the video itself interactive. */}
     <iframe
-      title="วิดีโอรีวิวจาก Instagram"
+      title="Instagram review video"
       src={`${url}embed/`}
       loading="lazy"
       allow="autoplay; encrypted-media; fullscreen; picture-in-picture"

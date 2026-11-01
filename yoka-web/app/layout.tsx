@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL, SITE_NAME, DEFAULT_DESCRIPTION } from "@/lib/seo";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/navbar";
@@ -20,18 +21,41 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yoga By Niti | สอนโยคะ และอาหารเพื่อสุขภาพ",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Yoga By Niti | Yoga Studio & Wholesome Kitchen",
+    template: `%s | ${SITE_NAME}`,
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_GB",
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
   icons: {
     icon: "/logoyoga.png",
   },
   description:
-    "ฝึกโยคะเพื่อสุขภาพกับ Yoga By Niti คลาสสำหรับมือใหม่และผู้เชี่ยวชาญ พร้อมบริการอาหารคลีน อาหารเพื่อสุขภาพที่คัดสรรวัตถุดิบอย่างดี",
+    "Practice yoga at Yoga By Niti, with classes for beginners and experienced practitioners, plus wholesome food made with carefully selected ingredients.",
   keywords: [
-    "สอนโยคะ",
-    "ร้านอาหารสุขภาพ",
+    "Yoga classes",
+    "Healthy restaurant",
     "Yoga Studio",
-    "อาหารคลีน",
-    "ฝึกโยคะมือใหม่",
+    "Wholesome food",
+    "Yoga for beginners",
+    "yoga by niti",
+    "yoga near me",
+    "yoga rawai",
+    "yoga phuket",
+    "pilates rawai",
   ],
 };
 

@@ -98,10 +98,10 @@ export default function CourseDetailPage({
       <div className={styles.container}>
         <nav className={styles.breadcrumb} aria-label="Breadcrumb">
           <Link href="/">
-            <ArrowLeft size={14} /> หน้าหลัก
+            <ArrowLeft size={14} /> Home
           </Link>
           <span>/</span>
-          <span>คอร์สโยคะ</span>
+          <span>Yoga classes</span>
         </nav>
         <header className={`${styles.header} py-8! items-end!`}>
           <div>
@@ -126,7 +126,7 @@ export default function CourseDetailPage({
               <button
                 className={styles.cover}
                 onClick={() => setSelectedImg(course.cover_image)}
-                aria-label={`ดูภาพ ${course.title} ขนาดเต็ม`}
+                aria-label={`View image ${course.title} in full size`}
               >
                 <Image
                   src={imageUrl(course.cover_image)}
@@ -148,11 +148,11 @@ export default function CourseDetailPage({
                     <button
                       key={photo}
                       onClick={() => setSelectedImg(photo)}
-                      aria-label={`ดูภาพคอร์สที่ ${index + 1}`}
+                      aria-label={`View course image ${index + 1}`}
                     >
                       <Image
                         src={imageUrl(photo)}
-                        alt={`${course.title} ภาพที่ ${index + 1}`}
+                        alt={`${course.title} Image ${index + 1}`}
                         fill
                         sizes="100px"
                       />
@@ -172,11 +172,11 @@ export default function CourseDetailPage({
             </div>
             <section className={styles.about}>
               <p className={styles.eyebrow}>THE EXPERIENCE</p>
-              <h2>เกี่ยวกับคอร์สนี้</h2>
+              <h2>About this course</h2>
               <p className={styles.description}>
                 {course.about ||
                   course.description ||
-                  "รายละเอียดคอร์สจะอัปเดตเร็ว ๆ นี้"}
+                  "Course details will be available soon"}
               </p>
             </section>
             <section className={styles.instructor}>
@@ -193,13 +193,13 @@ export default function CourseDetailPage({
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <span className={styles.muted}>ผู้สอนของคุณ</span>
+                  <span className={styles.muted}>Your instructor</span>
                   <h2>{teacherName}</h2>
                 </div>
                 <Link
                   href="/instructors"
                   className={styles.profileLink}
-                  aria-label="ดูข้อมูลผู้สอน"
+                  aria-label="View instructor profile"
                 >
                   <ArrowUpRight size={22} />
                 </Link>
@@ -210,28 +210,28 @@ export default function CourseDetailPage({
             </section>
           </div>
 
-          <aside className={styles.sidebar} aria-label="จองคอร์สเรียน">
+          <aside className={styles.sidebar} aria-label="Book a class">
             <div className={styles.booking}>
               <div className={styles.bookingHeading}>
                 <p className={styles.eyebrow}>YOUR NEXT MOMENT</p>
                 <Leaf size={20} strokeWidth={1} />
               </div>
-              <h2>เริ่มต้นเวลาของคุณ</h2>
+              <h2>Your practice begins here</h2>
               <div className={styles.priceRow}>
                 <strong>฿{displayPrice.toLocaleString()}</strong>
-                <span>/ ท่าน</span>
+                <span>/ person</span>
                 {hasDiscount && (
-                  <span className={styles.discount}>ประหยัด {discount}%</span>
+                  <span className={styles.discount}>Save {discount}%</span>
                 )}
               </div>
               {hasDiscount && (
                 <p className={styles.originalPrice}>
-                  จากปกติ <s>฿{course.price.toLocaleString()}</s>
+                  Regular price <s>฿{course.price.toLocaleString()}</s>
                 </p>
               )}
               <div className={styles.divider} />
               <div className={styles.sectionHeading}>
-                <h3>เลือกวันเรียน</h3>
+                <h3>Choose a date</h3>
                 <span>01 — SELECT DATE</span>
               </div>
               {course.rounds.length > 0 ? (
@@ -245,10 +245,10 @@ export default function CourseDetailPage({
                   />
                 </div>
               ) : (
-                <p className={styles.empty}>ยังไม่มีรอบเรียนในขณะนี้</p>
+                <p className={styles.empty}>No sessions are available at the moment</p>
               )}
               {sameDayRounds.length > 1 && (
-                <div className={styles.rounds} aria-label="เลือกรอบเวลา">
+                <div className={styles.rounds} aria-label="Choose a session">
                   {sameDayRounds.map((round) => (
                     <button
                       key={round.id}
@@ -264,26 +264,26 @@ export default function CourseDetailPage({
                 <div className={styles.details}>
                   <div>
                     <CalendarDays size={17} />
-                    <span>วันที่เรียน</span>
+                    <span>Date</span>
                     <strong>{labels.dateLabel}</strong>
                   </div>
                   <div>
                     <Clock3 size={17} />
-                    <span>เวลา</span>
-                    <strong>{labels.timeLabel} น.</strong>
+                    <span>Time</span>
+                    <strong>{labels.timeLabel} </strong>
                   </div>
                   <div>
                     <Users size={17} />
-                    <span>ที่ว่าง</span>
+                    <span>Availability</span>
                     <strong className={styles.availability}>
-                      {seats > 0 ? `${seats} ที่นั่ง` : "เต็มแล้ว"}
+                      {seats > 0 ? `${seats} seats` : "Fully booked"}
                     </strong>
                   </div>
                 </div>
               )}
               {(selectRound?.description || selectRound?.about) && (
                 <details className={styles.notes}>
-                  <summary>รายละเอียดรอบเรียน</summary>
+                  <summary>Session details</summary>
                   {selectRound.description && <p>{selectRound.description}</p>}
                   {selectRound.about && <p>{selectRound.about}</p>}
                 </details>
@@ -294,19 +294,19 @@ export default function CourseDetailPage({
                   onClick={handleBooking}
                   className={styles.bookButton}
                 >
-                  จองคลาสนี้ <ArrowRight size={19} />
+                  Book this class <ArrowRight size={19} />
                 </Link>
               ) : (
                 <button className={styles.bookButton} disabled>
                   {!selectRound
-                    ? "ยังไม่เปิดจอง"
+                    ? "Bookings not yet open"
                     : seats === 0
-                      ? "รอบนี้เต็มแล้ว"
-                      : "รอบเรียนนี้สิ้นสุดแล้ว"}
+                      ? "This session is full"
+                      : "This session has ended"}
                 </button>
               )}
               <p className={styles.bookingFootnote}>
-                เลือกวันและเวลาที่เหมาะกับคุณ แล้วพบกันบนเสื่อโยคะ
+                Choose your date and time. We will see you on the mat.
               </p>
             </div>
             <p className={styles.sideNote}>

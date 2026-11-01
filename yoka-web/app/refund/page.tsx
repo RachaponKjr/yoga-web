@@ -1,6 +1,15 @@
+import { pageMetadata } from "@/lib/seo";
 import React from "react";
 import { ArrowLeft, RefreshCcw, ShieldCheck, Clock } from "lucide-react"; // ใช้ lucide-react สำหรับ icon สวยๆ
 import Link from "next/link";
+
+export const metadata = pageMetadata({
+  title: "Refund & Cancellation Policy",
+  description:
+    "Read the Yoga By Niti refund and cancellation policy, including cancellation deadlines, refund processing times, and class schedule changes.",
+  path: "/refund",
+  noIndex: false,
+});
 
 const RefundPolicyPage = () => {
   return (
@@ -11,7 +20,7 @@ const RefundPolicyPage = () => {
           href="/"
           className="flex items-center gap-2 text-slate-500 hover:text-[#3D552F] transition-colors mb-4 text-sm font-medium"
         >
-          <ArrowLeft size={16} /> กลับสู่หน้าหลัก
+          <ArrowLeft size={16} /> Back to home
         </Link>
 
         {/* Header */}
@@ -22,7 +31,7 @@ const RefundPolicyPage = () => {
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Refund Policy
           </h1>
-          <p className="text-slate-500">นโยบายการคืนเงินและการยกเลิกการจอง</p>
+          <p className="text-slate-500">Refund &amp; Cancellation Policy</p>
         </div>
 
         {/* Content Section */}
@@ -32,22 +41,22 @@ const RefundPolicyPage = () => {
             <div className="flex items-center gap-3 mb-4">
               <Clock className="text-[#3D552F]" size={20} />
               <h2 className="text-xl font-semibold text-slate-800">
-                1. การยกเลิกการจอง
+                1. Booking cancellations
               </h2>
             </div>
             <ul className="list-disc list-inside text-slate-600 space-y-3 pl-2 leading-relaxed">
               <li>
-                สามารถยกเลิกการจองได้ล่วงหน้าอย่างน้อย{" "}
-                <span className="font-bold text-slate-900">24 ชั่วโมง</span>{" "}
-                ก่อนเริ่มคลาสเรียน
+                Bookings may be cancelled at least{" "}
+                <span className="font-bold text-slate-900">24 hours</span>{" "}
+                before the class begins
               </li>
               <li>
-                กรณีแจ้งยกเลิกน้อยกว่า 24 ชั่วโมง
-                ทางเราขอสงวนสิทธิ์ในการคืนเงินทุกกรณี
+                Cancellations made less than 24 hours in advance are not
+                eligible for a refund.
               </li>
               <li>
-                สำหรับการจองแบบ Walk-in
-                ไม่สามารถขอคืนเงินได้หากชำระเงินเรียบร้อยแล้ว
+                Walk-in bookings are not refundable once payment has been
+                completed.
               </li>
             </ul>
           </section>
@@ -57,28 +66,29 @@ const RefundPolicyPage = () => {
             <div className="flex items-center gap-3 mb-4">
               <ShieldCheck className="text-[#3D552F]" size={20} />
               <h2 className="text-xl font-semibold text-slate-800">
-                2. เงื่อนไขการคืนเงิน
+                2. Refund conditions
               </h2>
             </div>
             <p className="text-slate-600 mb-4 leading-relaxed">
-              เมื่อทำการยกเลิกตามเงื่อนไขที่กำหนด
-              ระบบจะดำเนินการคืนเงินตามช่องทางเดิมที่ชำระมา ดังนี้:
+              For cancellations that meet the stated conditions, refunds will be
+              issued through the original payment method as follows:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200">
                 <p className="text-sm font-bold text-slate-800 mb-1 font-sans">
-                  โอนเงินผ่านธนาคาร
+                  Bank transfer
                 </p>
                 <p className="text-xs text-slate-500">
-                  ดำเนินการคืนภายใน 3-5 วันทำการ
+                  Refunds are processed within 3–5 business days
                 </p>
               </div>
               <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200">
                 <p className="text-sm font-bold text-slate-800 mb-1 font-sans">
-                  บัตรเครดิต/เดบิต
+                  Credit / debit card
                 </p>
                 <p className="text-xs text-slate-500">
-                  ดำเนินการคืนภายใน 7-14 วันทำการ (ขึ้นอยู่กับธนาคารเจ้าของบัตร)
+                  Refunds are processed within 7–14 business days, depending on
+                  your card issuer
                 </p>
               </div>
             </div>
@@ -87,28 +97,28 @@ const RefundPolicyPage = () => {
           {/* Section 3: หมายเหตุ */}
           <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 font-sans">
-              3. กรณีเลื่อนคลาสเรียน
+              3. Changes to scheduled classes
             </h2>
             <p className="text-slate-600 leading-relaxed">
-              หากทางสถาบันมีความจำเป็นต้องยกเลิกคลาสเรียนเนื่องจากเหตุสุดวิสัย
-              ผู้สมัครจะได้รับสิทธิ์ในการ
+              If the studio needs to cancel a class due to circumstances beyond
+              our control, participants may
               <span className="text-[#3D552F] font-medium italic">
                 {" "}
-                เลือกวันเรียนใหม่
+                choose a new class date
               </span>{" "}
-              หรือ
+              or
               <span className="text-[#3D552F] font-medium italic">
                 {" "}
-                รับเงินคืนเต็มจำนวน (100%)
+                receive a full refund (100%)
               </span>{" "}
-              ทันที
+              immediately
             </p>
           </section>
 
           {/* Contact Footer */}
           <div className="text-center pt-4">
             <p className="text-sm text-slate-400 mb-2 font-sans">
-              หากมีข้อสงสัยเพิ่มเติมกรุณาติดต่อเรา
+              Please contact us if you have any further questions
             </p>
             <Link
               href="mailto:yogabyniti@gmail.com"

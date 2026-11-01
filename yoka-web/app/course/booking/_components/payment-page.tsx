@@ -267,15 +267,15 @@ const PaymentPage = () => {
   return (
     <main className="min-h-screen bg-[#f8f7f3] text-[#30372c] py-8 md:pb-20">
       <div className="max-w-[1240px] mx-auto px-5 sm:px-7">
-        <Link href={`/course?courseId=${booking.courseId}&date=${encodeURIComponent(booking.startDateTime)}`} className="inline-flex items-center gap-2 rounded-sm text-xs text-[#737b62] hover:text-[#454d39] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#788461]"><ArrowLeft className="size-3.5" /> กลับไปหน้าคอร์ส</Link>
+        <Link href={`/course?courseId=${booking.courseId}&date=${encodeURIComponent(booking.startDateTime)}`} className="inline-flex items-center gap-2 rounded-sm text-xs text-[#737b62] hover:text-[#454d39] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#788461]"><ArrowLeft className="size-3.5" /> Back to the course</Link>
         <header className="flex items-end justify-between gap-6 py-9 md:py-12">
-          <div><p className="mb-4 flex items-center gap-3 text-[9px] tracking-[0.24em] text-[#737b62]"><span className="size-1.5 rounded-full bg-[#8c9778]" /> YOUR NEXT MOMENT</p><h1 className="font-serif text-4xl font-normal leading-tight tracking-[-0.035em] md:text-6xl">Make time for yourself.</h1><p className="mt-4 text-sm leading-relaxed text-[#73766b]">ตรวจสอบรายละเอียดการจอง แล้วเริ่มต้นช่วงเวลาดี ๆ ของคุณ</p></div>
+          <div><p className="mb-4 flex items-center gap-3 text-[9px] tracking-[0.24em] text-[#737b62]"><span className="size-1.5 rounded-full bg-[#8c9778]" /> YOUR NEXT MOMENT</p><h1 className="font-serif text-4xl font-normal leading-tight tracking-[-0.035em] md:text-6xl">Make time for yourself.</h1><p className="mt-4 text-sm leading-relaxed text-[#73766b]">Review your booking and take a little time for yourself</p></div>
           <Leaf className="mb-2 hidden size-10 shrink-0 text-[#929d7f] sm:block" strokeWidth={1} aria-hidden="true" />
         </header>
-        <ol aria-label="ขั้นตอนการจอง" className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-[#dedfd4] py-4 text-[11px] md:gap-x-10">
-          <li className="flex items-center gap-2 text-[#737b62]"><span className="text-[9px]">01</span> เลือกคลาส</li>
-          <li aria-current="step" className="flex items-center gap-2 text-[#454d39]"><span className="flex size-5 items-center justify-center rounded-full bg-[#48533b] text-[9px] text-[#fffef5]">02</span> จองและชำระเงิน</li>
-          <li className="flex items-center gap-2 text-[#858d79]"><span className="text-[9px]">03</span> ยืนยันการจอง</li>
+        <ol aria-label="Booking steps" className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-[#dedfd4] py-4 text-[11px] md:gap-x-10">
+          <li className="flex items-center gap-2 text-[#737b62]"><span className="text-[9px]">01</span> Choose a class</li>
+          <li aria-current="step" className="flex items-center gap-2 text-[#454d39]"><span className="flex size-5 items-center justify-center rounded-full bg-[#48533b] text-[9px] text-[#fffef5]">02</span> Booking &amp; payment</li>
+          <li className="flex items-center gap-2 text-[#858d79]"><span className="text-[9px]">03</span> Booking confirmation</li>
         </ol>
         <div className="flex flex-col-reverse lg:flex-row gap-8 max-w-7xl mx-auto relative">
           {/* --- Left Column: Payment Form --- */}
@@ -439,11 +439,11 @@ const PaymentPage = () => {
               <div className="bg-[#f5f6ef] rounded-sm p-4 border border-[#d5dcc7]">
                 <label htmlFor="booking-note" className="flex items-center gap-2 mb-2 font-medium text-[#454d39] text-sm">
                   <HeartPulse size={16} className="text-[#7d8867]" />{" "}
-                  ข้อมูลสุขภาพ & ความต้องการเพิ่มเติม
+                  Health information &amp; additional requests
                 </label>
                 <Textarea
                   id="booking-note"
-                  placeholder="เช่น มีอาการปวดหลัง, ผ่าตัดเข่ามา หรืออยากเน้นส่วนไหนเป็นพิเศษ..."
+                  placeholder="Tell us about any injuries, recent surgery, or areas you would like to focus on..."
                   className="min-h-28 rounded-sm bg-[#fffefa] border-[#d5dcc7] text-sm shadow-none focus-visible:border-[#788461] focus-visible:ring-[#788461]/20"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
@@ -470,7 +470,7 @@ const PaymentPage = () => {
                         target="_blank"
                         className="text-[#737b62] underline underline-offset-4 hover:text-[#454d39]"
                       >
-                        อ่านนโยบายความเป็นส่วนตัว
+                        Read our privacy policy
                       </Link>
                       <p className="text-[#858d79] hidden md:flex">/</p>
                       <Link
@@ -478,7 +478,7 @@ const PaymentPage = () => {
                         target="_blank"
                         className="text-[#737b62] underline underline-offset-4 hover:text-[#454d39]"
                       >
-                        อ่านนโยบายการคืนเงิน
+                        Read our refund policy
                       </Link>
                     </div>
                   </div>
@@ -492,9 +492,9 @@ const PaymentPage = () => {
                 className="w-full h-13 text-base font-normal rounded-sm bg-[#48533b] hover:bg-[#303c26] text-[#fffef5] shadow-none"
               >
                 {isProcessing ? (
-                  <><Loader2 className="animate-spin size-4" /> กำลังดำเนินการ…</>
+                  <><Loader2 className="animate-spin size-4" /> Processing…</>
                 ) : (
-                  `ชำระเงิน ฿${Math.round(amountToPay).toLocaleString()}`
+                  `Pay ฿${Math.round(amountToPay).toLocaleString()}`
                 )}
               </Button>
             </form>
@@ -529,11 +529,11 @@ const PaymentPage = () => {
                 {/* Quantity */}
                 <div className="flex items-center justify-between mb-6 p-3 bg-[#f0f2e8] rounded-sm">
                   <span className="text-sm font-medium text-[#73766b]">
-                    จำนวนผู้เข้าใช้งาน
+                    Participants
                   </span>
                   <div className="flex items-center gap-2 bg-[#fffefa] rounded-sm border border-[#d5dcc7] p-1">
                     <button
-                      aria-label="ลดจำนวนผู้เรียน"
+                      aria-label="Decrease participants"
                       disabled={quantity <= 1}
                       onClick={() => decrementQuantity()}
                       className="p-2 rounded-sm hover:bg-[#eef0e5] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-[#788461]"
@@ -542,7 +542,7 @@ const PaymentPage = () => {
                     </button>
                     <span className="font-medium text-sm px-2">{quantity}</span>
                     <button
-                      aria-label="เพิ่มจำนวนผู้เรียน"
+                      aria-label="Increase participants"
                       onClick={() => incrementQuantity()}
                       className="p-2 rounded-sm hover:bg-[#eef0e5] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-[#788461]"
                     >
@@ -553,7 +553,7 @@ const PaymentPage = () => {
 
                 {/* Coupon Input */}
                 <div className="mb-6">
-                  <label htmlFor="couponCode" className="mb-2 block text-xs text-[#737b62]">โค้ดส่วนลด</label>
+                  <label htmlFor="couponCode" className="mb-2 block text-xs text-[#737b62]">Promo code</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -562,7 +562,7 @@ const PaymentPage = () => {
                       onChange={(e) =>
                         setCouponCode(e.target.value.toUpperCase())
                       }
-                      placeholder="โค้ดส่วนลด"
+                      placeholder="Promo code"
                       className="min-w-0 flex-1 border border-[#d5dcc7] bg-[#fafbf6] rounded-sm px-3 py-2 uppercase font-mono text-sm outline-none focus:border-[#788461] focus:ring-2 focus:ring-[#788461]/15"
                     />
                     <Button
@@ -574,14 +574,14 @@ const PaymentPage = () => {
                       {isValidatingCoupon ? (
                         <Loader2 className="animate-spin w-4 h-4" />
                       ) : (
-                        "ใช้โค้ด"
+                        "Apply code"
                       )}
                     </Button>
                   </div>
                   {couponUsed && (
                     <div className="mt-2 text-xs text-[#65734f] flex justify-between items-center bg-[#e8eddd] p-2 rounded">
-                      <span>ใช้โค้ด {appliedCode} สำเร็จ</span>
-                      <button aria-label="นำโค้ดส่วนลดออก" className="p-1 rounded-sm focus-visible:outline-2 focus-visible:outline-[#788461]" onClick={removeCoupon}>
+                      <span>Code {appliedCode} applied successfully</span>
+                      <button aria-label="Remove promo code" className="p-1 rounded-sm focus-visible:outline-2 focus-visible:outline-[#788461]" onClick={removeCoupon}>
                         <X size={14} />
                       </button>
                     </div>
@@ -591,19 +591,19 @@ const PaymentPage = () => {
                 {/* Breakdown THB */}
                 <div className="space-y-3 text-sm border-t pt-4">
                   <div className="flex justify-between text-[#73766b]">
-                    <span>ราคาปกติ (x{quantity})</span>
+                    <span>Regular price (x{quantity})</span>
                     <span>฿{subtotal.toLocaleString()}</span>
                   </div>
 
                   {itemDiscountTotal > 0 && (
                     <div className="flex justify-between text-[#7d8867]">
-                      <span>ส่วนลดพิเศษ</span>
+                      <span>Special discount</span>
                       <span>- ฿{itemDiscountTotal.toLocaleString()}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between text-[#73766b]">
-                    <span>ภาษี (7%)</span>
+                    <span>Tax (7%)</span>
                     <span>
                       ฿
                       {taxAmount.toLocaleString(undefined, {
@@ -614,7 +614,7 @@ const PaymentPage = () => {
 
                   {couponUsed && (
                     <div className="flex justify-between text-[#737f5f] font-medium">
-                      <span>ส่วนลดคูปอง</span>
+                      <span>Promo discount</span>
                       <span>- ฿{couponDiscount.toLocaleString()}</span>
                     </div>
                   )}
@@ -622,7 +622,7 @@ const PaymentPage = () => {
                   <div className="pt-4 mt-4 border-t border-[#dedfd4] flex justify-between items-end">
                     <div>
                       <span className="text-[#737b62] text-xs">
-                        ยอดรวมสุทธิ
+                        Total
                       </span>
                       <div className="text-4xl font-serif font-normal text-[#454d39] mt-1">
                         ฿{Math.round(amountToPay).toLocaleString()}

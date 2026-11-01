@@ -35,9 +35,9 @@ export default function ReviewSection() {
               whileInView={{ opacity: 1, y: 0 }}
               className="text-3xl md:text-5xl font-normal text-[#30372c] leading-[1.3] tracking-[-0.025em]"
             >
-              เสียงจาก <span className="italic opacity-80">ความประทับใจ</span>{" "}
+              Stories from <span className="italic opacity-80">our community</span>{" "}
               <br />
-              ของคนรักสุขภาพ
+              A shared love of wellbeing
             </motion.h2>
           </div>
 
@@ -118,7 +118,7 @@ export default function ReviewSection() {
                         {item.name}
                       </h4>
                       <p className="text-[10px] text-[#858d79]">
-                        Google Reviewer
+                        Google Reviewer{("translated" in item && item.translated) ? " · Translated from Thai" : ""}
                       </p>
                     </div>
                   </div>

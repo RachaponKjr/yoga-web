@@ -170,7 +170,7 @@ const CourseList = () => {
   if (!isLoading && courses.length === 0) {
     return (
       <div className="text-center py-20 text-muted-foreground border-2 border-dashed rounded-xl">
-        ไม่พบคอร์สเรียนของคุณ
+        You have no courses yet
       </div>
     );
   }

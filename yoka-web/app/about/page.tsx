@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/seo";
 import React from "react";
 import StudioPageLayout from "@/components/layout/studio-page-layout";
 import Image from "next/image";
@@ -9,6 +10,14 @@ import yoga2 from "@/assets/images/gallory/CC__2048.jpg";
 import yoga3 from "@/assets/images/gallory/CC__2231.jpg";
 import yoga4 from "@/assets/images/gallory/CC__2244.jpg";
 import yoga5 from "@/assets/images/gallory/CC__2427.jpg";
+
+export const metadata = pageMetadata({
+  title: "About Us",
+  description:
+    "Discover the story of Nitikarn Thachina, Yoga By Niti, and Go Vegan. A welcoming community for mindful movement and plant-based food in Rawai, Phuket.",
+  path: "/about",
+  noIndex: false,
+});
 
 const Page = () => {
   return (
