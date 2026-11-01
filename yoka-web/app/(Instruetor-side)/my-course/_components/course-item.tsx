@@ -1,4 +1,5 @@
 "use client";
+import { imageUrl } from "@/lib/image-url";
 import React, { useCallback, useState } from "react";
 import { Course } from "./course-list";
 import Image from "next/image";
@@ -48,7 +49,7 @@ const CourseItem = ({ course }: { course: Course }) => {
       <div className="relative w-full aspect-video bg-gray-100 overflow-hidden">
         {course.cover_image ? (
           <Image
-            src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${course.cover_image}`}
+            src={imageUrl(course.cover_image)}
             alt={course.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"

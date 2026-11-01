@@ -1,43 +1,29 @@
 import Hero from "./_components/hero";
-import Social from "@/components/layout/social";
 import ProductCourse from "./_components/product-course";
-import Instructors from "./_components/instructor";
 import StepService from "./_components/step-service";
 import DetailRestaurant from "./_components/detail-restaurant";
 import Story from "./_components/story";
-import { authService } from "@/service/auth.service";
-import { UserInfoType, UserType } from "@/types/auth.type";
-import PortfolioGallery from "./_components/gallory";
 import About from "./_components/about";
 import ReviewSection from "@/components/Review";
 import VideoReview from "./_components/video-review";
 import YogaSchedule from "@/components/YogaSchedule";
 
-interface InstructorProps extends UserType {
-  userInfo: UserInfoType;
-}
-
 export default async function Home() {
-  // const data = (await authService.getInstructor()) as InstructorProps[];
   return (
-    <main className="relative flex flex-col overflow-hidden">
-      {/* <Social /> */}
+    <main className="relative flex flex-col overflow-hidden bg-[#f8f7f3] text-[#30372c]">
       <Hero />
-      <div className="bg-[#283618] py-4 flex flex-col gap-8 relative">
+      <div className="bg-[#303a2b] flex flex-col pt-16 gap-0 relative">
         <Story />
-        <div className="flex flex-col gap-4 md:gap-12 bg-[#FDFCF8] py-8 md:py-24">
+        <div className="flex flex-col gap-4 md:gap-12 bg-[#f8f7f3] py-8 md:py-24">
           <DetailRestaurant />
           <VideoReview />
           <About />
           <ReviewSection />
           <YogaSchedule />
         </div>
-        {/* <Instructors data={data} /> */}
       </div>
       <StepService />
       <ProductCourse />
-      {/* <Banner /> */}
-      {/* <PortfolioGallery /> */}
     </main>
   );
 }

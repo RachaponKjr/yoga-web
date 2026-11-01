@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { imageUrl } from "@/lib/image-url";
 import { useBooking } from "@/store/useBooking";
 import { formatRoundEnglish } from "@/utils/format";
 import { useEffect, useState, useCallback } from "react";
@@ -9,21 +10,15 @@ import { Button } from "@/components/ui/button";
 import { OmiseCardInputs, useOmise } from "@/hooks/useOmise";
 import {
   Loader2,
-  Tag,
   CreditCard,
+  ArrowLeft,
+  Leaf,
   Calendar,
   User,
-  Lock,
-  Check,
-  ShieldCheck,
   Minus,
   Plus,
-  RefreshCw,
   X,
-  Camera,
-  FileText,
   HeartPulse,
-  MessageSquarePlus,
 } from "lucide-react";
 import { bookingService } from "@/service/booking.service";
 import { toast } from "sonner";
@@ -31,7 +26,6 @@ import { paymentService } from "@/service/payment.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { CouponService, VerifyCouponPayload } from "@/service/coupon.service";
 import { Textarea } from "@/components/ui/textarea";
-import Policy from "./policy";
 import Link from "next/link";
 
 const PaymentPage = () => {
@@ -40,7 +34,7 @@ const PaymentPage = () => {
   const { createToken, loading: isScriptLoading } = useOmise();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
-  const [isAgree, setIsAgree] = useState(false);
+  const [isAgree] = useState(false);
   const [isConsentAccepted, setIsConsentAccepted] = useState(false);
   const [isPolicyAccepted, setIsPolicyAccepted] = useState(false);
 
@@ -271,50 +265,60 @@ const PaymentPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white flex justify-center items-start py-10 md:pt-20 md:pb-20">
-      <div className="container mx-auto px-4 lg:px-8">
+    <main className="min-h-screen bg-[#f8f7f3] text-[#30372c] py-8 md:pb-20">
+      <div className="max-w-[1240px] mx-auto px-5 sm:px-7">
+        <Link href={`/course?courseId=${booking.courseId}&date=${encodeURIComponent(booking.startDateTime)}`} className="inline-flex items-center gap-2 rounded-sm text-xs text-[#737b62] hover:text-[#454d39] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#788461]"><ArrowLeft className="size-3.5" /> กลับไปหน้าคอร์ส</Link>
+        <header className="flex items-end justify-between gap-6 py-9 md:py-12">
+          <div><p className="mb-4 flex items-center gap-3 text-[9px] tracking-[0.24em] text-[#737b62]"><span className="size-1.5 rounded-full bg-[#8c9778]" /> YOUR NEXT MOMENT</p><h1 className="font-serif text-4xl font-normal leading-tight tracking-[-0.035em] md:text-6xl">Make time for yourself.</h1><p className="mt-4 text-sm leading-relaxed text-[#73766b]">ตรวจสอบรายละเอียดการจอง แล้วเริ่มต้นช่วงเวลาดี ๆ ของคุณ</p></div>
+          <Leaf className="mb-2 hidden size-10 shrink-0 text-[#929d7f] sm:block" strokeWidth={1} aria-hidden="true" />
+        </header>
+        <ol aria-label="ขั้นตอนการจอง" className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-[#dedfd4] py-4 text-[11px] md:gap-x-10">
+          <li className="flex items-center gap-2 text-[#737b62]"><span className="text-[9px]">01</span> เลือกคลาส</li>
+          <li aria-current="step" className="flex items-center gap-2 text-[#454d39]"><span className="flex size-5 items-center justify-center rounded-full bg-[#48533b] text-[9px] text-[#fffef5]">02</span> จองและชำระเงิน</li>
+          <li className="flex items-center gap-2 text-[#858d79]"><span className="text-[9px]">03</span> ยืนยันการจอง</li>
+        </ol>
         <div className="flex flex-col-reverse lg:flex-row gap-8 max-w-7xl mx-auto relative">
           {/* --- Left Column: Payment Form --- */}
-          <div className="flex-1 bg-white rounded-2xl p-6 lg:p-8 shadow-sm border border-slate-100">
+          <div className="flex-1 min-w-0 bg-[#fffefa] rounded-md p-5 sm:p-6 lg:p-8 border border-[#dedfd4]">
             {/* Payment Header & Card Visual (Same as your original UI) */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+              <div className="p-2.5 bg-[#eef0e5] rounded-sm text-[#737f5f]">
                 <CreditCard size={24} />
               </div>
-              <h5 className="text-xl font-bold text-slate-800">
+              <h2 className="text-xl font-normal text-[#454d39]">
                 Payment Details
-              </h5>
+              </h2>
             </div>
 
             {/* Visual Card Display */}
-            <div className="mb-8 mx-auto w-full max-w-md aspect-[1.586/1] rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white shadow-2xl relative overflow-hidden transition-all duration-300 group hover:scale-[1.02]">
+            <div className="mb-8 mx-auto w-full max-w-md min-h-[210px] aspect-[1.586/1] rounded-lg bg-[#3c4833] text-[#fffdf2] border border-[#637252] relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
-              <div className="relative z-10 p-6 h-full flex flex-col justify-between">
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#bdc9a5]/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+              <div className="relative z-10 p-4 sm:p-6 h-full flex flex-col justify-between">
                 <div className="flex justify-between items-start">
                   <div className="w-12 h-8 bg-white/20 rounded-md backdrop-blur-sm border border-white/10"></div>
-                  <span className="font-mono text-white/50 text-sm tracking-wider">
+                  <span className="text-[#c4ceb5] text-[9px] tracking-[0.2em]">
                     DEBIT/CREDIT
                   </span>
                 </div>
-                <div className="space-y-6">
-                  <div className="font-mono text-2xl lg:text-3xl tracking-widest drop-shadow-md">
+                <div className="space-y-4">
+                  <div className="font-mono text-base sm:text-2xl lg:text-3xl tracking-wider">
                     {cardDetail.cardNumber || "**** **** **** ****"}
                   </div>
                   <div className="flex justify-between items-end text-sm">
                     <div className="space-y-1">
-                      <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                      <p className="text-[#bcc7ab] text-[10px] uppercase tracking-wider">
                         Card Holder
                       </p>
-                      <p className="font-semibold tracking-wide uppercase truncate max-w-[180px]">
+                      <p className="font-normal tracking-wide uppercase truncate max-w-[130px] sm:max-w-[180px]">
                         {cardDetail.cardHolder || "YOUR NAME"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                      <p className="text-[#bcc7ab] text-[10px] uppercase tracking-wider">
                         Expires
                       </p>
-                      <p className="font-semibold tracking-widest">
+                      <p className="font-normal tracking-widest">
                         {cardDetail.cardExpiry || "MM/YY"}
                       </p>
                     </div>
@@ -329,88 +333,99 @@ const PaymentPage = () => {
             >
               {/* Card Inputs (Same as your original UI) */}
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">
+                <label htmlFor="cardNumber" className="text-xs font-medium text-[#58634a]">
                   Card Number
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                  <div className="absolute left-3.5 top-3.5 text-[#858d79] group-focus-within:text-[#788461] transition-colors">
                     <CreditCard size={18} />
                   </div>
                   <input
                     type="text"
+                    id="cardNumber"
+                    autoComplete="cc-number"
+                    inputMode="numeric"
                     name="cardNumber"
                     value={cardDetail.cardNumber}
                     onChange={handleCardChange}
                     maxLength={19}
                     placeholder="0000 0000 0000 0000"
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono text-slate-800 placeholder:text-slate-400"
+                    className="w-full pl-10 pr-4 py-3 bg-[#fafbf6] border border-[#d5dcc7] rounded-sm focus:ring-2 focus:ring-[#788461]/15 focus:border-[#788461] outline-none transition-all font-mono text-[#454d39] placeholder:text-[#858d79]"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-700">
+                <label htmlFor="cardHolder" className="text-xs font-medium text-[#58634a]">
                   Cardholder Name
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+                  <div className="absolute left-3.5 top-3.5 text-[#858d79] group-focus-within:text-[#788461] transition-colors">
                     <User size={18} />
                   </div>
                   <input
                     type="text"
+                    id="cardHolder"
+                    autoComplete="cc-name"
                     name="cardHolder"
                     value={cardDetail.cardHolder}
                     onChange={handleCardChange}
                     placeholder="NAME ON CARD"
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all uppercase text-slate-800 placeholder:text-slate-400"
+                    className="w-full pl-10 pr-4 py-3 bg-[#fafbf6] border border-[#d5dcc7] rounded-sm focus:ring-2 focus:ring-[#788461]/15 focus:border-[#788461] outline-none transition-all uppercase text-[#454d39] placeholder:text-[#858d79]"
                   />
                 </div>
               </div>
 
               <div className="flex gap-4">
-                <div className="flex-1 space-y-1.5">
-                  <label className="text-sm font-semibold text-slate-700">
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <label htmlFor="cardExpiry" className="text-xs font-medium text-[#58634a]">
                     Expiry Date
                   </label>
                   <input
                     type="text"
+                    id="cardExpiry"
+                    autoComplete="cc-exp"
+                    inputMode="numeric"
                     name="cardExpiry"
                     value={cardDetail.cardExpiry}
                     onChange={handleCardChange}
                     maxLength={5}
                     placeholder="MM / YY"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-center"
+                    className="w-full px-4 py-3 bg-[#fafbf6] border border-[#d5dcc7] rounded-sm focus:ring-2 focus:ring-[#788461]/15 focus:border-[#788461] outline-none transition-all text-center"
                   />
                 </div>
-                <div className="flex-1 space-y-1.5">
-                  <label className="text-sm font-semibold text-slate-700">
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <label htmlFor="cardCvv" className="text-xs font-medium text-[#58634a]">
                     CVC / CVV
                   </label>
                   <input
                     type="password"
+                    id="cardCvv"
+                    autoComplete="cc-csc"
+                    inputMode="numeric"
                     name="cardCvv"
                     value={cardDetail.cardCvv}
                     onChange={handleCardChange}
                     maxLength={4}
                     placeholder="123"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-center"
+                    className="w-full px-4 py-3 bg-[#fafbf6] border border-[#d5dcc7] rounded-sm focus:ring-2 focus:ring-[#788461]/15 focus:border-[#788461] outline-none transition-all text-center"
                   />
                 </div>
               </div>
 
               {/* Consent & Notes (Same as your original UI) */}
               <div
-                className={`bg-slate-50 rounded-xl p-4 border transition-colors ${isConsentAccepted ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"}`}
+                className={`bg-[#f5f6ef] rounded-sm p-4 border transition-colors ${isConsentAccepted ? "border-[#a9b594] bg-[#eef1e5]" : "border-[#d5dcc7]"}`}
               >
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={isConsentAccepted}
                     onChange={(e) => setIsConsentAccepted(e.target.checked)}
-                    className="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                    className="mt-1 h-5 w-5 shrink-0 rounded border-[#cdd5bd] accent-[#626d4f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#788461]"
                   />
-                  <div className="flex-1 text-sm text-slate-600">
-                    <span className="font-semibold text-slate-800 block mb-1">
+                  <div className="flex-1 text-sm text-[#73766b]">
+                    <span className="font-medium text-[#454d39] block mb-1">
                       Data Privacy & Consent
                     </span>
                     <p className="leading-relaxed text-xs">
@@ -421,46 +436,47 @@ const PaymentPage = () => {
                 </label>
               </div>
 
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                <label className="flex items-center gap-2 mb-2 font-semibold text-slate-800 text-sm">
-                  <HeartPulse size={16} className="text-rose-500" />{" "}
+              <div className="bg-[#f5f6ef] rounded-sm p-4 border border-[#d5dcc7]">
+                <label htmlFor="booking-note" className="flex items-center gap-2 mb-2 font-medium text-[#454d39] text-sm">
+                  <HeartPulse size={16} className="text-[#7d8867]" />{" "}
                   ข้อมูลสุขภาพ & ความต้องการเพิ่มเติม
                 </label>
                 <Textarea
+                  id="booking-note"
                   placeholder="เช่น มีอาการปวดหลัง, ผ่าตัดเข่ามา หรืออยากเน้นส่วนไหนเป็นพิเศษ..."
-                  className="bg-white"
+                  className="min-h-28 rounded-sm bg-[#fffefa] border-[#d5dcc7] text-sm shadow-none focus-visible:border-[#788461] focus-visible:ring-[#788461]/20"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                 />
               </div>
 
               <div
-                className={`bg-slate-50 rounded-xl p-4 border transition-colors ${isPolicyAccepted ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"}`}
+                className={`bg-[#f5f6ef] rounded-sm p-4 border transition-colors ${isPolicyAccepted ? "border-[#a9b594] bg-[#eef1e5]" : "border-[#d5dcc7]"}`}
               >
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={isPolicyAccepted}
                     onChange={(e) => setIsPolicyAccepted(e.target.checked)}
-                    className="mt-1 h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                    className="mt-1 h-5 w-5 shrink-0 rounded border-[#cdd5bd] accent-[#626d4f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#788461]"
                   />
-                  <div className="flex-1 text-sm text-slate-600">
-                    <span className="font-semibold text-slate-800 block mb-1">
+                  <div className="flex-1 text-sm text-[#73766b]">
+                    <span className="font-medium text-[#454d39] block mb-1">
                       Privacy Policy & Refund Policy
                     </span>
                     <div className="flex flex-col md:flex-row md:gap-2">
                       <Link
                         href="/policy"
                         target="_blank"
-                        className="text-gray-400 hover:text-emerald-700"
+                        className="text-[#737b62] underline underline-offset-4 hover:text-[#454d39]"
                       >
                         อ่านนโยบายความเป็นส่วนตัว
                       </Link>
-                      <p className="text-gray-400 hidden md:flex">/</p>
+                      <p className="text-[#858d79] hidden md:flex">/</p>
                       <Link
                         href="/refund"
                         target="_blank"
-                        className="text-gray-400 hover:text-emerald-700"
+                        className="text-[#737b62] underline underline-offset-4 hover:text-[#454d39]"
                       >
                         อ่านนโยบายการคืนเงิน
                       </Link>
@@ -473,10 +489,10 @@ const PaymentPage = () => {
               <Button
                 type="submit"
                 disabled={isScriptLoading || isProcessing || isValidatingCoupon}
-                className="w-full h-14 text-lg font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                className="w-full h-13 text-base font-normal rounded-sm bg-[#48533b] hover:bg-[#303c26] text-[#fffef5] shadow-none"
               >
                 {isProcessing ? (
-                  <Loader2 className="animate-spin" />
+                  <><Loader2 className="animate-spin size-4" /> กำลังดำเนินการ…</>
                 ) : (
                   `ชำระเงิน ฿${Math.round(amountToPay).toLocaleString()}`
                 )}
@@ -486,46 +502,49 @@ const PaymentPage = () => {
 
           {/* --- Right Column: Booking Summary --- */}
           <div className="w-full lg:w-[420px]">
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden lg:sticky lg:top-8">
-              <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                <h5 className="font-bold text-slate-800">Booking Summary</h5>
+            <div className="bg-[#fffefa] rounded-md border border-[#dedfd4] overflow-hidden lg:sticky lg:top-28">
+              <div className="bg-[#f0f2e8] px-6 py-5 border-b border-[#dedfd4] flex justify-between items-center">
+                <h2 className="font-normal text-[#454d39]">Booking Summary</h2>
               </div>
 
               <div className="p-6">
                 {/* Product Detail */}
                 <div className="flex gap-4 mb-6">
                   <div
-                    className="w-20 h-20 bg-slate-100 rounded-xl shrink-0 bg-cover bg-center"
+                    className="w-20 h-24 bg-[#e9ecdf] rounded-sm shrink-0 bg-cover bg-center"
                     style={{
-                      backgroundImage: `url("${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${booking?.cover_image}")`,
+                      backgroundImage: `url("${imageUrl(booking?.cover_image)}")`,
                     }}
                   ></div>
-                  <div className="flex-1">
-                    <h6 className="font-bold text-slate-800 leading-tight truncate">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-[#454d39] leading-snug break-words">
                       {booking?.title}
-                    </h6>
-                    <div className="flex items-center gap-2 text-xs text-slate-600 mt-2 bg-slate-50 p-1.5 rounded">
-                      <Calendar size={12} /> {dateLabel} • {timeLabel}
+                    </h3>
+                    <div className="flex items-center gap-2 text-[11px] text-[#73766b] mt-2 leading-relaxed">
+                      <Calendar size={14} className="shrink-0" /> {dateLabel} • {timeLabel}
                     </div>
                   </div>
                 </div>
 
                 {/* Quantity */}
-                <div className="flex items-center justify-between mb-6 p-3 bg-slate-50 rounded-lg">
-                  <span className="text-sm font-medium text-slate-600">
+                <div className="flex items-center justify-between mb-6 p-3 bg-[#f0f2e8] rounded-sm">
+                  <span className="text-sm font-medium text-[#73766b]">
                     จำนวนผู้เข้าใช้งาน
                   </span>
-                  <div className="flex items-center gap-3 bg-white rounded-md border p-1">
+                  <div className="flex items-center gap-2 bg-[#fffefa] rounded-sm border border-[#d5dcc7] p-1">
                     <button
+                      aria-label="ลดจำนวนผู้เรียน"
+                      disabled={quantity <= 1}
                       onClick={() => decrementQuantity()}
-                      className="p-1 hover:bg-slate-100"
+                      className="p-2 rounded-sm hover:bg-[#eef0e5] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-[#788461]"
                     >
                       <Minus size={14} />
                     </button>
-                    <span className="font-bold px-2">{quantity}</span>
+                    <span className="font-medium text-sm px-2">{quantity}</span>
                     <button
+                      aria-label="เพิ่มจำนวนผู้เรียน"
                       onClick={() => incrementQuantity()}
-                      className="p-1 hover:bg-slate-100"
+                      className="p-2 rounded-sm hover:bg-[#eef0e5] disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-[#788461]"
                     >
                       <Plus size={14} />
                     </button>
@@ -534,18 +553,21 @@ const PaymentPage = () => {
 
                 {/* Coupon Input */}
                 <div className="mb-6">
+                  <label htmlFor="couponCode" className="mb-2 block text-xs text-[#737b62]">โค้ดส่วนลด</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
+                      id="couponCode"
                       value={couponCode}
                       onChange={(e) =>
                         setCouponCode(e.target.value.toUpperCase())
                       }
                       placeholder="โค้ดส่วนลด"
-                      className="flex-1 border rounded-lg px-3 py-2 uppercase font-mono text-sm"
+                      className="min-w-0 flex-1 border border-[#d5dcc7] bg-[#fafbf6] rounded-sm px-3 py-2 uppercase font-mono text-sm outline-none focus:border-[#788461] focus:ring-2 focus:ring-[#788461]/15"
                     />
                     <Button
                       variant="outline"
+                      className="h-10 rounded-sm border-[#d5dcc7] bg-transparent text-[#58634a] shadow-none hover:bg-[#eef0e5]"
                       onClick={handleApplyCoupon}
                       disabled={isValidatingCoupon}
                     >
@@ -557,9 +579,9 @@ const PaymentPage = () => {
                     </Button>
                   </div>
                   {couponUsed && (
-                    <div className="mt-2 text-xs text-emerald-600 flex justify-between items-center bg-emerald-50 p-2 rounded">
+                    <div className="mt-2 text-xs text-[#65734f] flex justify-between items-center bg-[#e8eddd] p-2 rounded">
                       <span>ใช้โค้ด {appliedCode} สำเร็จ</span>
-                      <button onClick={removeCoupon}>
+                      <button aria-label="นำโค้ดส่วนลดออก" className="p-1 rounded-sm focus-visible:outline-2 focus-visible:outline-[#788461]" onClick={removeCoupon}>
                         <X size={14} />
                       </button>
                     </div>
@@ -568,19 +590,19 @@ const PaymentPage = () => {
 
                 {/* Breakdown THB */}
                 <div className="space-y-3 text-sm border-t pt-4">
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-[#73766b]">
                     <span>ราคาปกติ (x{quantity})</span>
                     <span>฿{subtotal.toLocaleString()}</span>
                   </div>
 
                   {itemDiscountTotal > 0 && (
-                    <div className="flex justify-between text-rose-500">
+                    <div className="flex justify-between text-[#7d8867]">
                       <span>ส่วนลดพิเศษ</span>
                       <span>- ฿{itemDiscountTotal.toLocaleString()}</span>
                     </div>
                   )}
 
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-[#73766b]">
                     <span>ภาษี (7%)</span>
                     <span>
                       ฿
@@ -591,18 +613,18 @@ const PaymentPage = () => {
                   </div>
 
                   {couponUsed && (
-                    <div className="flex justify-between text-emerald-600 font-bold">
+                    <div className="flex justify-between text-[#737f5f] font-medium">
                       <span>ส่วนลดคูปอง</span>
                       <span>- ฿{couponDiscount.toLocaleString()}</span>
                     </div>
                   )}
 
-                  <div className="pt-4 mt-4 border-t border-slate-100 flex justify-between items-end">
+                  <div className="pt-4 mt-4 border-t border-[#dedfd4] flex justify-between items-end">
                     <div>
-                      <span className="text-slate-500 text-xs">
+                      <span className="text-[#737b62] text-xs">
                         ยอดรวมสุทธิ
                       </span>
-                      <div className="text-3xl font-black text-slate-900 mt-1">
+                      <div className="text-4xl font-serif font-normal text-[#454d39] mt-1">
                         ฿{Math.round(amountToPay).toLocaleString()}
                       </div>
                     </div>
@@ -613,7 +635,7 @@ const PaymentPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

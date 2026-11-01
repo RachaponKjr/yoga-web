@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import { imageUrl } from "@/lib/image-url";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   format,
   addMonths,
@@ -32,11 +33,11 @@ const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const router = useRouter();
 
-  const [roundCourse, setRoundCourse] = useState<RoundCourseType[]>([]);
   const [roundCourseMonth, setRoundCourseMonth] = useState<RoundCourseType[]>(
     [],
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   // --- 1. Logic สำหรับเช็คสถานะ (Helper Function) ---
   const getEventStatus = (event: RoundCourseType) => {
@@ -47,7 +48,7 @@ const Calendar = () => {
     if (now > eventStart) {
       return {
         label: "ปิดรับสมัคร",
-        color: "bg-gray-500",
+        color: "bg-[#e9ebe3] text-[#737b62]",
         disabled: true,
         btnText: "สิ้นสุดแล้ว",
       };
@@ -60,7 +61,7 @@ const Calendar = () => {
     if (isFullOnline && isFullWalkIn) {
       return {
         label: "คลาสเต็มแล้ว",
-        color: "bg-red-500",
+        color: "bg-[#f1e9df] text-[#8e7457]",
         disabled: true,
         btnText: "ที่ว่างเต็ม",
       };
@@ -68,51 +69,36 @@ const Calendar = () => {
 
     return {
       label: "เปิดรับจอง",
-      color: "bg-green-600",
+      color: "bg-[#e8eddd] text-[#65734f]",
       disabled: false,
       btnText: "จองเลย",
     };
   };
 
-  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
-  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-
-  const roundToDay = useCallback(
-    ({ today }: { today: string }) => {
-      const targetDate = new Date(today);
-      const coursesOnDay = roundCourseMonth.filter((course) => {
-        const courseDate = new Date(course.startDateTime);
-        return isSameDay(courseDate, targetDate);
-      });
-      setRoundCourse(coursesOnDay);
-    },
-    [roundCourseMonth],
-  );
-
-  const roundToMonth = useCallback(async ({ month }: { month: string }) => {
+  const changeMonth = (month: Date) => {
     setLoading(true);
-    try {
-      const response = await courseService.getRoundToDay({ month });
-      if (response && Array.isArray(response.data)) {
-        setRoundCourseMonth(response.data);
-      } else {
-        setRoundCourseMonth([]);
-      }
-    } catch (error) {
-      console.error(error);
-      setRoundCourseMonth([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    setError(false);
+    setRoundCourseMonth([]);
+    setCurrentMonth(month);
+    setSelectedDate(isSameMonth(month, new Date()) ? new Date() : startOfMonth(month));
+  };
+  const prevMonth = () => changeMonth(subMonths(currentMonth, 1));
+  const nextMonth = () => changeMonth(addMonths(currentMonth, 1));
+
+  const roundCourse = useMemo(() => roundCourseMonth.filter((course) =>
+    isSameDay(new Date(course.startDateTime), selectedDate),
+  ), [roundCourseMonth, selectedDate]);
 
   useEffect(() => {
-    roundToMonth({ month: format(currentMonth, "yyyy-MM") });
-  }, [currentMonth, roundToMonth]);
-
-  useEffect(() => {
-    roundToDay({ today: format(selectedDate, "yyyy-MM-dd") });
-  }, [roundCourseMonth, selectedDate, roundToDay]);
+    let active = true;
+    courseService.getRoundToDay({ month: format(currentMonth, "yyyy-MM") })
+      .then((response) => {
+        if (active) setRoundCourseMonth(Array.isArray(response?.data) ? response.data : []);
+      })
+      .catch(() => { if (active) setError(true); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [currentMonth]);
 
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
@@ -129,7 +115,7 @@ const Calendar = () => {
           {daysOfWeek.map((day) => (
             <div
               key={day}
-              className="text-center text-sm font-semibold text-gray-500 py-2"
+              className="text-center text-xs font-normal text-[#858d79] py-3"
             >
               {day}
             </div>
@@ -147,28 +133,33 @@ const Calendar = () => {
             const hasEvents = dailyCourses.length > 0;
 
             return (
-              <div
+              <button
+                type="button"
                 key={day.toString()}
+                aria-pressed={isSelected}
+                aria-current={isToday ? "date" : undefined}
+                aria-label={`${format(day, "d MMMM yyyy", { locale: th })}${hasEvents ? ` มี ${dailyCourses.length} คลาส` : ""}`}
+                disabled={!isCurrentMonth}
                 onClick={() => setSelectedDate(day)}
                 className={`
-                  relative h-14 md:h-24 border rounded-lg flex flex-col items-start justify-start p-2 cursor-pointer transition-all duration-200
-                  ${!isCurrentMonth ? "bg-gray-50 text-gray-400" : "bg-white text-gray-700"}
-                  ${isSelected ? "border-blue-500! bg-blue-50! ring-2 ring-blue-200" : "border-gray-100 hover:border-blue-300"}
+                  relative min-w-0 h-14 md:h-24 border rounded-sm flex flex-col items-start justify-start p-2 text-left cursor-pointer transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#788461] disabled:cursor-default
+                  ${!isCurrentMonth ? "bg-[#f1f2ec] text-[#a2a895]" : "bg-[#fffefa] text-[#58634a]"}
+                  ${isSelected ? "border-[#788461]! bg-[#e8eddd]! ring-1 ring-[#788461]" : "border-[#e4e7db] enabled:hover:border-[#a9b594] enabled:hover:bg-[#f0f2e9]"}
                 `}
               >
                 <span
-                  className={`text-sm font-medium ${isToday ? "bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center" : ""}`}
+                  className={`text-sm font-medium ${isToday ? "bg-[#626d4f] text-[#fffef5] w-6 h-6 rounded-full flex items-center justify-center" : ""}`}
                 >
                   {format(day, "d")}
                 </span>
 
                 {hasEvents && (
                   <div className="mt-1 w-full overflow-hidden">
-                    <div className="hidden md:block text-[10px] md:text-xs truncate text-blue-600 bg-blue-100 px-1 rounded mb-0.5">
+                    <div className="hidden md:block text-[10px] md:text-xs truncate text-[#65734f] bg-[#e8eddd] px-1 rounded mb-0.5">
                       {dailyCourses[0].course.title}
                     </div>
                     {dailyCourses.length > 1 && (
-                      <div className="hidden md:block text-[10px] text-gray-400 pl-1">
+                      <div className="hidden md:block text-[10px] text-[#858d79] pl-1">
                         + {dailyCourses.length - 1} คอร์ส
                       </div>
                     )}
@@ -176,13 +167,13 @@ const Calendar = () => {
                       {dailyCourses.slice(0, 3).map((_, i) => (
                         <div
                           key={i}
-                          className="w-1.5 h-1.5 bg-blue-500 rounded-full"
+                          className="w-1.5 h-1.5 bg-[#8c9778] rounded-full"
                         ></div>
                       ))}
                     </div>
                   </div>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
@@ -191,44 +182,53 @@ const Calendar = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-6 bg-white shadow-xl rounded-xl border border-gray-100">
+    <div className="max-w-7xl mx-auto p-4 md:p-8 bg-[#fffefa] rounded-md border border-[#dedfd4]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <CalendarIcon className="w-6 h-6 text-blue-600" />
+        <h2 className="text-lg md:text-2xl font-normal text-[#454d39] flex items-center gap-3">
+          <CalendarIcon className="w-6 h-6 text-[#737f5f]" />
           {format(currentMonth, "MMMM yyyy", { locale: th })}
         </h2>
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="เดือนก่อนหน้า"
             onClick={prevMonth}
-            className="p-2 rounded-full hover:bg-gray-100 border border-gray-200 transition-colors"
+            className="size-10 rounded-full bg-transparent hover:bg-[#eef0e5] border border-[#d5dcc7] shadow-none transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <button
+            <ChevronLeft className="w-5 h-5 text-[#737f5f]" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="เดือนถัดไป"
             onClick={nextMonth}
-            className="p-2 rounded-full hover:bg-gray-100 border border-gray-200 transition-colors"
+            className="size-10 rounded-full bg-transparent hover:bg-[#eef0e5] border border-[#d5dcc7] shadow-none transition-colors"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
-          </button>
+            <ChevronRight className="w-5 h-5 text-[#737f5f]" />
+          </Button>
         </div>
       </div>
 
       {renderCells()}
 
       {/* Details Section */}
-      <div className="mt-8 border-t pt-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <div className="mt-8 border-t border-[#dedfd4] pt-6">
+        <h3 className="text-base font-normal text-[#454d39] mb-5 flex flex-wrap items-center gap-2">
           รายละเอียดวันที่{" "}
-          <span className="text-blue-600">
+          <span className="text-[#737f5f]">
             {format(selectedDate, "d MMMM yyyy", { locale: th })}
           </span>
         </h3>
 
         {loading ? (
-          <div className="flex items-center justify-center py-10">
-            <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+          <div role="status" className="flex items-center justify-center gap-3 py-10 text-sm text-[#737f5f]">
+            <span>กำลังโหลดตารางเรียน…</span>
+            <Loader2 className="w-8 h-8 text-[#737f5f] animate-spin" />
           </div>
+        ) : error ? (
+          <p role="alert" className="rounded-sm border border-[#e2d7c9] bg-[#f5f0e8] px-5 py-10 text-center text-sm text-[#8e7457]">ไม่สามารถโหลดตารางเรียนได้ กรุณาลองใหม่ภายหลัง</p>
         ) : roundCourse.length > 0 ? (
           <div className="space-y-4">
             {roundCourse.map((event) => {
@@ -242,19 +242,20 @@ const Calendar = () => {
               return (
                 <div
                   key={event.id}
-                  className="relative flex flex-col sm:flex-row items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-md transition-all duration-200"
+                  className="relative flex flex-col sm:flex-row items-start gap-5 p-4 md:p-5 bg-[#fafbf5] rounded-md border border-[#e1e5d7] hover:border-[#bbc6aa] transition-colors duration-200"
                 >
                   {/* Status Badge */}
                   <div
-                    className={`absolute top-4 md:top-12 right-4 text-[10px] font-bold text-white px-2 py-0.5 rounded-full z-10 shadow-sm ${status.color}`}
+                    className={`absolute top-6 sm:top-20 right-6 text-[10px] font-normal px-2.5 py-1 rounded-sm z-10 ${status.color}`}
                   >
                     {status.label}
                   </div>
 
-                  <div className="relative shrink-0 w-full sm:w-[120px] aspect-video sm:aspect-square rounded-lg border border-gray-200 overflow-hidden bg-white">
+                  <div className="relative shrink-0 w-full sm:w-[120px] aspect-video sm:aspect-square rounded-sm border border-[#dedfd4] overflow-hidden bg-[#e9ecdf]">
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${event.course.cover_image}`}
-                      alt="course cover"
+                      src={imageUrl(event.course.cover_image)}
+                      alt={event.course.title}
+                      sizes="(min-width: 640px) 120px, 90vw"
                       fill
                       className="object-cover object-center"
                     />
@@ -262,34 +263,34 @@ const Calendar = () => {
 
                   <div className="flex-1 w-full min-w-0">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-4">
-                      <h4 className="text-base md:text-lg font-bold text-gray-800 line-clamp-1">
+                      <h4 className="text-base md:text-lg font-medium text-[#454d39] line-clamp-1">
                         {event.course.title}
                       </h4>
-                      <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md whitespace-nowrap">
+                      <span className="text-xs font-normal text-[#737f5f] bg-[#edf1e4] px-2 py-1 rounded-md whitespace-nowrap">
                         เริ่ม: {format(start, "HH:mm น.")}
                       </span>
                     </div>
 
-                    <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                    <p className="text-sm text-[#73766b] mt-2 sm:pr-24 line-clamp-2 leading-relaxed">
                       {event.course.description}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-gray-600">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-[#73766b]">
                       <div className="flex items-center gap-1">
-                        <span className="font-semibold">ผู้สอน:</span>{" "}
+                        <span className="font-medium">ผู้สอน:</span>{" "}
                         {event.course.teacher.userInfo.firstName}
                       </div>
                       <div className="flex items-center gap-1">
-                        <span className="font-semibold">เวลา:</span>{" "}
+                        <span className="font-medium">เวลา:</span>{" "}
                         {formattedDuration}
                       </div>
 
                       {/* Slots Online */}
                       <div
-                        className={`flex items-center gap-1 ${event.max_online - event.current_online <= 0 ? "text-red-400" : ""}`}
+                        className={`flex items-center gap-1 ${event.max_online - event.current_online <= 0 ? "text-[#9a8063]" : ""}`}
                       >
                         <span
-                          className={`w-2 h-2 rounded-full ${event.max_online - event.current_online <= 0 ? "bg-red-400" : "bg-green-500"}`}
+                          className={`w-2 h-2 rounded-full ${event.max_online - event.current_online <= 0 ? "bg-[#b09c82]" : "bg-[#8c9778]"}`}
                         ></span>
                         Online:{" "}
                         {event.max_online - event.current_online <= 0
@@ -299,10 +300,10 @@ const Calendar = () => {
 
                       {/* Slots Walk-in */}
                       <div
-                        className={`flex items-center gap-1 ${event.max_walk_in - event.current_walk_in <= 0 ? "text-red-400" : ""}`}
+                        className={`flex items-center gap-1 ${event.max_walk_in - event.current_walk_in <= 0 ? "text-[#9a8063]" : ""}`}
                       >
                         <span
-                          className={`w-2 h-2 rounded-full ${event.max_walk_in - event.current_walk_in <= 0 ? "bg-red-400" : "bg-orange-500"}`}
+                          className={`w-2 h-2 rounded-full ${event.max_walk_in - event.current_walk_in <= 0 ? "bg-[#b09c82]" : "bg-[#b9aa7e]"}`}
                         ></span>
                         Walk-in:{" "}
                         {event.max_walk_in - event.current_walk_in <= 0
@@ -311,23 +312,23 @@ const Calendar = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200/60">
+                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#dedfd4]">
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500 mb-0.5">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-[#858d79] mb-0.5">
                           ราคาต่อท่าน
                         </span>
                         <div className="flex items-baseline gap-2">
                           {event.course.discount_price ? (
                             <>
-                              <span className="text-2xl font-extrabold text-blue-600">
+                              <span className="text-2xl font-serif font-normal text-[#454d39]">
                                 ฿{event.course.discount_price.toLocaleString()}
                               </span>
-                              <span className="text-sm font-medium text-gray-400 line-through">
+                              <span className="text-xs font-normal text-[#858d79] line-through">
                                 ฿{event.course.price.toLocaleString()}
                               </span>
                             </>
                           ) : (
-                            <span className="text-2xl font-extrabold text-blue-600">
+                            <span className="text-2xl font-serif font-normal text-[#454d39]">
                               ฿{event.course.price.toLocaleString()}
                             </span>
                           )}
@@ -342,7 +343,7 @@ const Calendar = () => {
                           )
                         }
                         size="sm"
-                        className={`px-6 transition-all ${status.disabled ? "bg-gray-300" : "bg-primary text-white hover:bg-primary/90 shadow-sm"}`}
+                        className={`h-10 rounded-sm px-6 text-xs font-normal shadow-none transition-colors ${status.disabled ? "bg-[#e4e8db] text-[#858d79]" : "bg-[#48533b] text-[#fffef5] hover:bg-[#303c26]"}`}
                       >
                         {status.btnText}
                       </Button>
@@ -353,8 +354,8 @@ const Calendar = () => {
             })}
           </div>
         ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <p className="text-gray-400 font-medium">ไม่มีคอร์สเรียนในวันนี้</p>
+          <div className="text-center py-12 bg-[#f5f6ef] rounded-sm border border-[#dedfd4]">
+            <p className="text-[#858d79] text-sm font-normal">ไม่มีคอร์สเรียนในวันนี้</p>
           </div>
         )}
       </div>

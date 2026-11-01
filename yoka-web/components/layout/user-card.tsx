@@ -1,3 +1,4 @@
+import { imageUrl } from "@/lib/image-url";
 import {
   Instagram,
   Twitter,
@@ -21,8 +22,7 @@ const UserCardMinimal = ({
   instagram?: string;
   twitter?: string;
 }) => {
-  const imageSrc = `${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${avatar}`;
-  console.log(avatar);
+  const imageSrc = imageUrl(avatar);
   return (
     <div className="group relative w-full  mx-auto h-full">
       {/* Container: พื้นขาว Solid จัดระเบียบด้วย Grid/Flex */}

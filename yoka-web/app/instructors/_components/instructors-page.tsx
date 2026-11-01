@@ -1,203 +1,67 @@
-import LayoutSection from "@/components/layout/layout-section";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { imageUrl } from "@/lib/image-url";
+import StudioPageLayout from "@/components/layout/studio-page-layout";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import type { UserInfoType } from "@/types/auth.type";
 import instructorBanner from "@/assets/images/banner/lnstructors_banner.png";
 import Image from "next/image";
-import { Mail, Award, Facebook, Instagram, Twitter, X } from "lucide-react";
+import { Mail, Leaf, Facebook, Instagram, Twitter, ArrowUpRight } from "lucide-react";
 
-type Instructor = {
-  id: string;
-  role: string;
-  email: string;
-  userInfo: UserInfoType;
-};
+type Instructor = { id: string; role: string; email: string; userInfo: UserInfoType };
 
-const image_url = process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/";
-
-const InstructorsPage = ({ instructors }: { instructors: Instructor[] }) => {
+export default function InstructorsPage({ instructors }: { instructors: Instructor[] }) {
   return (
-    <LayoutSection
-      image={instructorBanner.src}
-      title="Meet Our Instructors"
-      description="Dedicated professionals ready to guide your practice with expertise and compassion."
-    >
-      <div className="grid grid-cols-2 px-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 w-full">
-        {instructors.map((instructor, index) => (
-          <Dialog key={index}>
-            <DialogTrigger asChild>
-              <div className="group cursor-pointer">
-                <div className="relative w-full aspect-3/4 bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 ease-out">
-                  <Image
-                    src={`${image_url}${instructor.userInfo.avatar}`}
-                    alt={`${instructor.userInfo.firstName} ${instructor.userInfo.lastName}`}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                    <h3 className="text-white font-semibold text-lg text-balance leading-tight">
-                      {instructor.userInfo.firstName}{" "}
-                      {instructor.userInfo.lastName}
-                    </h3>
-                    <p className="text-white/80 text-sm mt-1">View Profile</p>
-                  </div>
-                </div>
-                <div className="mt-4 text-center">
-                  <h4 className="font-semibold text-base text-foreground">
-                    {instructor.userInfo.firstName}{" "}
-                    {instructor.userInfo.lastName}
-                  </h4>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {instructor.role}
-                  </p>
-                </div>
-              </div>
-            </DialogTrigger>
-            <DialogContent
-              showCloseButton={false}
-              className="sm:max-w-5xl max-h-max p-0 z-1000 overflow-hidden border-0 shadow-2xl bg-white rounded-2xl md:rounded-3xl gap-0"
-            >
-              <DialogClose
-                asChild
-                className="absolute top-4 right-4 cursor-pointer z-20"
-              >
-                <X className="w-6 h-6" />
-              </DialogClose>
-              <div className="flex flex-col md:grid md:grid-cols-5 h-[90vh] md:h-auto md:max-h-[65vh]">
-                {/* --- ส่วนรูปภาพ (Left / Top) --- */}
-                <div className="relative w-full md:h-full md:col-span-2 bg-gray-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent z-10 md:hidden" />{" "}
-                  {/* Gradient สำหรับมือถือเพื่อให้ text อ่านง่าย */}
-                  {instructor.userInfo.avatar ? (
-                    <Image
-                      src={`${image_url}${instructor.userInfo.avatar}`}
-                      alt={`${instructor.userInfo.firstName} ${instructor.userInfo.lastName}`}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">
-                      <Award className="w-20 h-20 opacity-20" />
-                    </div>
-                  )}
-                  {/* Social Media Overlay (แสดงบนรูปสำหรับ Desktop หรือซ่อนก็ได้ตามดีไซน์) */}
-                  <div className="hidden md:flex absolute bottom-6 left-0 right-0 justify-center gap-4 z-20">
-                    {/* ถ้าอยากเอา social มาไว้ตรงนี้ก็ทำได้ */}
-                  </div>
-                </div>
-
-                {/* --- ส่วนเนื้อหา (Right / Bottom) --- */}
-                <div className="flex-1 md:col-span-3 flex flex-col bg-white overflow-hidden">
-                  {/* Header Section */}
-                  <DialogHeader className="p-4 md:p-8 shrink-0 text-lef border-b shadow-2xs">
-                    <div className="flex flex-row items-center justify-between gap-3">
-                      <div>
-                        <DialogTitle className="text-2xl md:text-3xl font-bold text-gray-900">
-                          {instructor.userInfo.firstName}{" "}
-                          {instructor.userInfo.lastName}
-                        </DialogTitle>
-                        {/* <p className="text-gray-500 font-medium mt-1">
-                          Yoga Instructor
-                        </p> */}
-                      </div>
-                      <div className="inline-flex self-start h-full items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wide uppercase">
-                        <Award className="w-4 h-4" />
-                        {instructor.role}
-                      </div>
-                    </div>
-                  </DialogHeader>
-
-                  {/* Scrollable Content Area */}
-                  <div className="flex-1 overflow-y-auto p-4 pt-2 md:p-8 md:pt-0 space-y-8 custom-scrollbar">
-                    {/* About / Experience Section */}
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                        <span className="w-8 h-[2px] bg-primary rounded-full"></span>
-                        About & Experience
-                      </h4>
-
-                      {/* *** จุดสำคัญ: whitespace-pre-line ทำให้เว้นบรรทัดตามที่พิมพ์มา *** */}
-                      <div className="text-gray-600 leading-loose whitespace-pre-line text-base/7 font-light">
-                        {instructor.userInfo.experience ? (
-                          instructor.userInfo.experience
-                        ) : (
-                          <span className="text-gray-400 italic">
-                            ไม่มีข้อมูลประสบการณ์
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Contact & Social Info */}
-                    <div className="border-t border-gray-100 pt-6 space-y-4">
-                      <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                        Contact
-                      </h4>
-
-                      <div className="flex flex-wrap gap-4">
-                        {/* Email */}
-                        <a
-                          href={`mailto:${instructor.email}`}
-                          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 hover:bg-primary/5 hover:text-primary border border-gray-100 transition-all group"
-                        >
-                          <div className="p-2 bg-white rounded-full shadow-sm group-hover:shadow-md transition-all">
-                            <Mail className="w-4 h-4 text-gray-400 group-hover:text-primary" />
-                          </div>
-                          <span className="text-sm font-medium">
-                            {instructor.email}
-                          </span>
-                        </a>
-
-                        {/* Social Links (ถ้ามี) */}
-                        {instructor.userInfo.facebook && (
-                          <a
-                            href={instructor.userInfo.facebook}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 rounded-xl bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border border-gray-100 transition-all"
-                          >
-                            <Facebook className="w-5 h-5" />
-                          </a>
-                        )}
-                        {instructor.userInfo.instagram && (
-                          <a
-                            href={instructor.userInfo.instagram}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 rounded-xl bg-gray-50 hover:bg-pink-50 hover:text-pink-600 border border-gray-100 transition-all"
-                          >
-                            <Instagram className="w-5 h-5" />
-                          </a>
-                        )}
-                        {instructor.userInfo.twitter && (
-                          <a
-                            href={instructor.userInfo.twitter}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 rounded-xl bg-gray-50 hover:bg-sky-50 hover:text-sky-500 border border-gray-100 transition-all"
-                          >
-                            <Twitter className="w-5 h-5" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        ))}
+    <StudioPageLayout image={instructorBanner.src} title="Meet our instructors." eyebrow="THE PEOPLE BEHIND YOUR PRACTICE" description="Dedicated professionals ready to guide your practice with expertise and compassion.">
+      <div className="mb-9 flex flex-wrap items-end justify-between gap-4 border-b border-[#dedfd4] pb-6">
+        <div><p className="mb-3 text-[9px] tracking-[0.22em] text-[#737b62]">YOUR GUIDES TO BALANCE</p><h2 className="text-xl font-normal text-[#454d39] sm:text-2xl">รู้จักผู้สอนของคุณ</h2></div>
+        <p className="text-xs text-[#737b62]">เลือกผู้สอนเพื่ออ่านเรื่องราวและประสบการณ์</p>
       </div>
-    </LayoutSection>
+      <div className="grid w-full grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4 xl:grid-cols-5">
+        {instructors.map((instructor) => {
+          const name = [instructor.userInfo?.firstName, instructor.userInfo?.lastName].filter(Boolean).join(" ") || "Yoga By Niti";
+          const avatar = instructor.userInfo?.avatar;
+          const socials = [
+            { href: instructor.userInfo?.facebook, label: "Facebook", Icon: Facebook },
+            { href: instructor.userInfo?.instagram, label: "Instagram", Icon: Instagram },
+            { href: instructor.userInfo?.twitter, label: "Twitter", Icon: Twitter },
+          ];
+          return (
+            <Dialog key={instructor.id}>
+              <DialogTrigger asChild>
+                <button type="button" aria-label={`ดูประวัติ ${name}`} className="group min-w-0 cursor-pointer rounded-sm text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#788461]">
+                  <span className="relative block aspect-3/4 w-full overflow-hidden rounded-md border border-[#dedfd4] bg-[#e9ecdf]">
+                    {avatar ? <Image src={imageUrl(avatar)} alt={name} fill sizes="(min-width: 1280px) 220px, (min-width: 768px) 30vw, 45vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.025] motion-reduce:transform-none" /> : <span className="flex h-full items-center justify-center"><Leaf className="size-12 text-[#9aa786]" strokeWidth={1} /></span>}
+                    <span className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full border border-[#f8f7f3]/70 bg-[#faf9f2]/95 text-[#58634a] transition-colors group-hover:bg-[#48533b] group-hover:text-[#fffef5]"><ArrowUpRight className="size-4" strokeWidth={1.5} /></span>
+                  </span>
+                  <span className="mt-4 block break-words font-serif text-lg font-normal leading-snug text-[#454d39]">{name}</span>
+                  <span className="mt-2 block text-[10px] tracking-[0.12em] text-[#737b62]">{instructor.role}</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent aria-describedby={undefined} className="max-h-[90dvh] gap-0 overflow-y-auto rounded-lg border-[#dedfd4] bg-[#fffefa] p-0 text-[#454d39] sm:max-w-4xl [&>button]:z-20 [&>button]:rounded-full [&>button]:bg-[#fffefa] [&>button]:p-2 [&>button]:opacity-100">
+                <div className="grid md:grid-cols-5">
+                  <div className="relative min-h-64 overflow-hidden bg-[#e9ecdf] md:col-span-2 md:min-h-[520px]">
+                    {avatar ? <Image src={imageUrl(avatar)} alt={name} fill sizes="(min-width: 768px) 360px, 90vw" className="object-cover object-top" /> : <div className="absolute inset-0 flex items-center justify-center"><Leaf className="size-16 text-[#9aa786]" strokeWidth={1} /></div>}
+                  </div>
+                  <div className="min-w-0 p-6 md:col-span-3 md:p-10">
+                    <p className="mb-4 text-[9px] tracking-[0.22em] text-[#737b62]">MEET YOUR INSTRUCTOR</p>
+                    <DialogTitle className="break-words pr-5 font-serif text-3xl font-normal leading-tight">{name}</DialogTitle>
+                    <p className="mt-3 text-xs text-[#7d8867]">{instructor.role}</p>
+                    <div className="my-7 h-px bg-[#dedfd4]" />
+                    <h3 className="mb-4 text-[10px] tracking-[0.16em] text-[#737b62]">ABOUT & EXPERIENCE</h3>
+                    <p className="whitespace-pre-line break-words text-sm leading-[1.9] text-[#73766b]">{instructor.userInfo?.experience || "ยังไม่มีข้อมูลประสบการณ์ของผู้สอน"}</p>
+                    <div className="mt-8 border-t border-[#dedfd4] pt-6">
+                      <h3 className="mb-4 text-[10px] tracking-[0.16em] text-[#737b62]">CONNECT</h3>
+                      {instructor.email && <a href={`mailto:${instructor.email}`} className="inline-flex max-w-full items-center gap-3 text-xs leading-relaxed text-[#58634a] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#788461]"><Mail className="size-4 shrink-0" strokeWidth={1.5} /><span className="break-all">{instructor.email}</span></a>}
+                      <div className="mt-5 flex flex-wrap gap-3">{socials.filter((social) => social.href).map(({ href, label, Icon }) => <Button key={label} asChild variant="outline" size="icon" className="rounded-full border-[#d5dcc7] bg-transparent text-[#737f5f] shadow-none hover:bg-[#eef0e5]"><a href={href!} target="_blank" rel="noopener noreferrer" aria-label={`${name} on ${label}`}><Icon className="size-4" strokeWidth={1.5} /></a></Button>)}</div>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          );
+        })}
+      </div>
+      {instructors.length === 0 && <p className="rounded-md border border-[#dedfd4] bg-[#fffefa] px-6 py-16 text-center text-sm text-[#73766b]">ยังไม่มีข้อมูลผู้สอนในขณะนี้</p>}
+    </StudioPageLayout>
   );
-};
-
-export default InstructorsPage;
+}

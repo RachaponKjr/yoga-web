@@ -17,7 +17,7 @@ interface VideoType {
 }
 
 const VideoSlide = ({ url }: { url: string }) => (
-  <div className="relative aspect-[9/16] w-full overflow-hidden rounded-3xl bg-black shadow-lg">
+  <div className="relative aspect-[9/16] w-full overflow-hidden rounded-md border border-[#dedfd4] bg-[#30372c]">
     {/* Instagram owns the iframe markup. Crop its header and footer outside
         the portrait viewport while keeping the video itself interactive. */}
     <iframe

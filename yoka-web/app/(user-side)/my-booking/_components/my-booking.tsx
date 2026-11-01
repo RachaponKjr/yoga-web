@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
+import { imageUrl } from "@/lib/image-url";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -161,7 +162,7 @@ const BookingCard = ({
       {/* Image Section */}
       <div className="relative w-full md:w-48 aspect-video md:h-auto rounded-xl overflow-hidden bg-zinc-100 shrink-0">
         <Image
-          src={`${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${booking?.round?.course?.cover_image}`}
+          src={imageUrl(booking?.round?.course?.cover_image)}
           alt={booking?.round?.course?.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"

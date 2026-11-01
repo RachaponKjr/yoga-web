@@ -1,87 +1,70 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+
+import { imageUrl } from "@/lib/image-url";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import Link, { LinkProps } from "next/link";
-import { useAuthStore } from "@/store/useAuthStore";
-import { Icon } from "@iconify/react";
-import { Button } from "../ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import styles from "./navbar.module.css";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(useGSAP);
-import Image from "next/image";
-interface UserProps {
-  user: {
-    role: string;
-    email: string;
-    userInfo: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      avatar: string;
-    };
-  };
-}
 
-const Navbar = () => {
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/instructors", label: "Instructors" },
+  { href: "/yoga-time", label: "Yoga Timetable" },
+  { href: "/blog", label: "Journal" },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Contact" },
+];
+
+export default function Navbar() {
   const pathname = usePathname();
   const { user, checkAuth } = useAuthStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  useGSAP(
-    () => {
-      const media = gsap.matchMedia();
-      media.add(
-        { reduce: "(prefers-reduced-motion: reduce)", all: "(min-width: 0px)" },
-        (context) => {
-          const reduced = context.conditions?.reduce;
-          let compact = false;
-          const update = (initial = false) => {
-            // Separate thresholds keep the island stable near the transition.
-            const next = window.scrollY > (compact ? 32 : 80);
-            if (!initial && next === compact) return;
-            compact = next;
-            setIsScrolled(next);
-            gsap.to(headerRef.current, {
-              "--island-inset": next ? "16px" : "0px",
-              "--island-width": next ? "1160px" : "100vw",
-              "--island-height": next ? "68px" : "100px",
-              "--island-radius": next ? "36px" : "0px",
-              "--island-logo": next ? "72px" : "100px",
-              y: next ? 12 : 0,
-              duration: reduced || initial ? 0 : 0.65,
-              ease: "power3.inOut",
-              overwrite: "auto",
-            });
-          };
-          const onScroll = () => update();
-          update(true);
-          window.addEventListener("scroll", onScroll, { passive: true });
-          return () => {
-            window.removeEventListener("scroll", onScroll);
-            gsap.killTweensOf(headerRef.current);
-          };
-        },
-      );
-      return () => media.revert();
-    },
-    { scope: headerRef },
-  );
+  useGSAP(() => {
+    const media = gsap.matchMedia();
+    media.add({ reduce: "(prefers-reduced-motion: reduce)", all: "(min-width: 0px)" }, (context) => {
+      let compact = false;
+      const update = (initial = false) => {
+        const next = window.scrollY > (compact ? 32 : 80);
+        if (!initial && next === compact) return;
+        compact = next;
+        setIsScrolled(next);
+        gsap.to(headerRef.current, {
+          "--nav-inset": next ? "16px" : "0px",
+          "--nav-width": next ? "1240px" : "100%",
+          "--nav-height": next ? "68px" : "88px",
+          "--nav-radius": next ? "12px" : "0px",
+          y: next ? 12 : 0,
+          duration: context.conditions?.reduce || initial ? 0 : 0.55,
+          ease: "power3.inOut",
+          overwrite: "auto",
+        });
+      };
+      const onScroll = () => update();
+      update(true);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        gsap.killTweensOf(headerRef.current);
+      };
+    });
+    return () => media.revert();
+  }, { scope: headerRef });
+
+  useEffect(() => { checkAuth(); }, [checkAuth]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -92,13 +75,10 @@ const Navbar = () => {
       }
     };
     const outside = (event: PointerEvent) => {
-      if (!headerRef.current?.contains(event.target as Node))
-        setIsMobileMenuOpen(false);
+      if (!headerRef.current?.contains(event.target as Node)) setIsMobileMenuOpen(false);
     };
     const desktop = window.matchMedia("(min-width: 1200px)");
-    const resize = () => {
-      if (desktop.matches) setIsMobileMenuOpen(false);
-    };
+    const resize = () => { if (desktop.matches) setIsMobileMenuOpen(false); };
     document.addEventListener("keydown", close);
     document.addEventListener("pointerdown", outside);
     desktop.addEventListener("change", resize);
@@ -109,295 +89,59 @@ const Navbar = () => {
     };
   }, [isMobileMenuOpen]);
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  const navLinks = [
-    { href: "/", label: "Home", icon: "mdi:home" },
-    {
-      href: "/instructors",
-      label: "Instructors",
-      icon: "mdi:account-multiple",
-    },
-    {
-      href: "/yoga-time",
-      label: "Yoga Timetable",
-      icon: "mdi:calendar-blank-outline",
-    },
-    {
-      href: "/blog",
-      label: "Blog",
-      icon: "mdi:book-open-page-variant-outline",
-    },
-    { href: "/about", label: "About Us", icon: "mdi:information-outline" },
-    { href: "/contact", label: "Contact Us", icon: "mdi:phone-outline" },
-  ];
-
-  // Component ย่อยสำหรับ Link
-  const NavItem = ({
-    link,
-    mobile = false,
-  }: {
-    link: LinkProps & { label: string; icon: string };
-    mobile?: boolean;
-  }) => {
-    const isActive =
-      pathname === link.href ||
-      (link.href === "/blog" && pathname.startsWith("/blog/"));
-    return (
-      <Link
-        href={link.href}
-        aria-current={isActive ? "page" : undefined}
-        onClick={() => mobile && setIsMobileMenuOpen(false)}
-        className={`relative transition-colors flex items-center gap-2 hover:text-primary font-medium
-          ${mobile ? "text-base block w-full" : "text-sm whitespace-nowrap"}
-          ${isActive ? "text-primary font-semibold" : "text-foreground/60"}
-        `}
-      >
-        <Icon icon={link.icon} width={20} height={20} />
-        {link.label}
-        {!mobile && (
-          <span
-            className={`absolute left-0 -bottom-2 h-[3px] bg-tertiary rounded-full transition-all duration-300 ease-out origin-left
-            ${isActive ? "w-[40%]" : "w-0 group-hover:w-[40%]"}
-            `}
-          />
-        )}
-      </Link>
-    );
-  };
+  const isActive = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
   return (
-    <div className={styles.placeholder}>
-      <header
-        ref={headerRef}
-        data-scrolled={isScrolled}
-        className={styles.header}
-      >
-        <div className={styles.bar}>
-          {/* Logo */}
-          <Link href="/" aria-label="Yoga By Niti home" className={styles.logo}>
-            <Image
-              src={"/tlogo.png"}
-              alt="Yoga By Niti"
-              width={100}
-              height={100}
-              className="h-full w-full object-contain"
-            />
+    <div className="h-[88px]">
+      <header ref={headerRef} className={cn(
+        "fixed inset-x-0 top-[env(safe-area-inset-top,0px)] z-40 mx-auto w-[calc(100%-var(--nav-inset)*2)] max-w-(--nav-width) rounded-(--nav-radius) border text-[#454d39] [--nav-inset:0px] [--nav-width:100%] [--nav-height:88px] [--nav-radius:0px] transition-[background-color,box-shadow,border-color] duration-300 motion-reduce:transition-none",
+        isScrolled ? "border-[#dedfd4] bg-[#faf9f5]/95 shadow-[0_8px_30px_-12px_#30372c26] backdrop-blur-xl" : "border-transparent border-b-[#e3e4d9] bg-[#f8f7f3]",
+      )}>
+        <div className="mx-auto flex h-(--nav-height) max-w-[1296px] items-center justify-between gap-5 px-5 sm:px-7">
+          <Link href="/" aria-label="Yoga By Niti home" onClick={() => setIsMobileMenuOpen(false)} className="flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#687552]">
+            <Image src="/tlogo.png" alt="Yoga By Niti" width={88} height={68} priority className="h-[64px] w-[84px] object-contain" />
+            <span aria-hidden="true" className="hidden border-l border-[#d8dccd] pl-4 text-[8px] leading-[1.8] tracking-[0.24em] text-[#7c846f] min-[1400px]:block">MOVEMENT<br />& MINDFULNESS</span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav
-            aria-label="Main navigation"
-            className="hidden min-[1200px]:flex items-center gap-4"
-          >
-            {navLinks.map((link) => (
-              <div key={link.href} className="group relative">
-                <NavItem link={link} />
-              </div>
-            ))}
+          <nav aria-label="Main navigation" className="hidden items-center gap-7 min-[1200px]:flex">
+            {navLinks.map((link) => <Link key={link.href} href={link.href} aria-current={isActive(link.href) ? "page" : undefined} className={cn("relative py-3 text-[12px] tracking-[0.025em] transition-colors after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-left after:bg-[#788361] after:transition-transform hover:text-[#38432e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#687552]", isActive(link.href) ? "text-[#38432e] after:scale-x-100" : "text-[#7b806f] after:scale-x-0 hover:after:scale-x-100")}>{link.label}</Link>)}
           </nav>
-
-          {/* Right Side: Auth & Mobile Toggle */}
-          <div className="flex items-center gap-4">
-            <div className="hidden min-[1200px]:block">
-              {!user ? (
-                <div className="flex items-center  gap-3">
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="rounded-full hover:bg-white/20 hover:text-primary"
-                  >
-                    <Link href="/signin">Sign In</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    className="rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
-                  >
-                    <Link href="/signup">Sign Up</Link>
-                  </Button>
-                </div>
-              ) : (
-                <UserDropdown user={user as any} />
-              )}
-            </div>
-            <div className="min-[1200px]:hidden flex items-center gap-3">
-              {user && <UserDropdown user={user as any} />}
-              <button
-                ref={toggleRef}
-                aria-label={
-                  isMobileMenuOpen ? "Close navigation" : "Open navigation"
-                }
-                aria-expanded={isMobileMenuOpen}
-                aria-controls="mobile-navigation"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-foreground/80 hover:text-primary transition-colors rounded-full focus-visible:outline-2 focus-visible:outline-primary"
-              >
-                <Icon
-                  icon={isMobileMenuOpen ? "mdi:close" : "mdi:menu"}
-                  width={28}
-                  height={28}
-                />
-              </button>
-            </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            {user ? <UserDropdown user={user} /> : <div className="hidden items-center gap-3 min-[1200px]:flex">
+              <Button asChild variant="ghost" className="text-xs font-normal text-[#626b56] hover:bg-[#eeefe6] hover:text-[#38432e]"><Link href="/signin">Sign In</Link></Button>
+              <Button asChild className="h-10 rounded-sm bg-[#48533b] px-5 text-xs font-normal text-[#fffef5] shadow-none hover:bg-[#303c26]"><Link href="/signup">Join the studio <ArrowUpRight className="ml-2 size-3.5" /></Link></Button>
+            </div>}
+            <Button ref={toggleRef} variant="ghost" size="icon" aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"} aria-expanded={isMobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="size-11 rounded-full text-[#48533b] hover:bg-[#e9ecdf] min-[1200px]:hidden">{isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</Button>
           </div>
         </div>
-
-        {/* Mobile Navigation Overlay */}
-        <nav
-          id="mobile-navigation"
-          aria-label="Mobile navigation"
-          inert={!isMobileMenuOpen}
-          aria-hidden={!isMobileMenuOpen}
-          data-open={isMobileMenuOpen}
-          className={styles.mobileMenu}
-        >
-          <div className="container mx-auto px-6 py-6 flex flex-col gap-10">
-            {navLinks.map((link) => (
-              <NavItem key={link.href} link={link} mobile />
-            ))}
-
-            {!user && (
-              <>
-                <div className="h-px bg-foreground/10" />
-                <div className="flex flex-row max-w-full gap-3">
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] border-primary/20"
-                  >
-                    <Link
-                      href="/signin"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Sign In
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-[50%] justify-center text-sm font-semibold rounded-full h-[44px] bg-[#3D552F] hover:bg-[#3D552F]/90 text-white"
-                  >
-                    <Link
-                      href="/signup"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
+        <nav id="mobile-navigation" aria-label="Mobile navigation" inert={!isMobileMenuOpen} aria-hidden={!isMobileMenuOpen} className={cn("absolute inset-x-0 top-[calc(100%+8px)] max-h-[calc(100dvh-120px)] overflow-y-auto rounded-xl border border-[#dedfd4] bg-[#faf9f5] p-6 shadow-[0_16px_40px_-16px_#30372c33] transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none min-[1200px]:hidden", isMobileMenuOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0")}>
+          <p className="mb-4 text-[9px] tracking-[0.24em] text-[#848c76]">EXPLORE THE STUDIO</p>
+          {navLinks.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)} aria-current={isActive(link.href) ? "page" : undefined} className={cn("flex items-center gap-4 border-b border-[#e5e7db] py-4 text-base focus-visible:outline-2 focus-visible:outline-[#687552]", isActive(link.href) ? "text-[#38432e]" : "text-[#7b806f]")}><span className="text-[9px] text-[#969d88]">0{index + 1}</span>{link.label}<ArrowUpRight className="ml-auto size-4" strokeWidth={1} /></Link>)}
+          {!user && <div className="mt-6 grid grid-cols-2 gap-3"><Button asChild variant="outline" className="h-11 rounded-sm border-[#d8dccd] bg-transparent font-normal hover:bg-[#eeefe6]"><Link href="/signin" onClick={() => setIsMobileMenuOpen(false)}>Sign In</Link></Button><Button asChild className="h-11 rounded-sm bg-[#48533b] font-normal text-[#fffef5] hover:bg-[#303c26]"><Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>Join the studio</Link></Button></div>}
         </nav>
       </header>
     </div>
   );
-};
+}
 
-// Component Dropdown (เหมือนเดิม)
-const UserDropdown = ({ user }: UserProps) => {
+function UserDropdown({ user }: { user: NonNullable<ReturnType<typeof useAuthStore.getState>["user"]> }) {
   const { logout } = useAuthStore();
-
-  const displayName =
-    user?.userInfo?.firstName && user?.userInfo?.lastName
-      ? `${user?.userInfo?.firstName} ${user?.userInfo?.lastName}`
-      : user?.email;
+  const displayName = [user.userInfo?.firstName, user.userInfo?.lastName].filter(Boolean).join(" ") || user.email;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Open account menu"
-          className="flex max-w-[190px] items-center gap-1 md:gap-3 pl-4 pr-1.5 py-1 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white transition-all cursor-pointer group shadow-sm"
-        >
-          <div className="flex-col items-end flex w-full">
-            <span className="text-[10px] md:text-sm font-semibold text-foreground/90 max-w-[110px] truncate">
-              {displayName || "ไม่พบข้อมูล"}
-            </span>
-            <span className="text-[8px] uppercase tracking-wide text-muted-foreground font-bold">
-              {user?.role || "ไม่พบข้อมูล"}
-            </span>
-          </div>
-          <Avatar className="size-8 md:size-9 ring-2 ring-white group-hover:ring-primary/20 transition-all">
-            <AvatarImage
-              src={
-                user?.userInfo?.avatar
-                  ? `${process.env.NEXT_PUBLIC_HOST_IMAGE || "https://api.yogabyniti.com/"}${user?.userInfo?.avatar}`
-                  : "https://github.com/shadcn.png"
-              }
-              className="object-cover"
-            />
-            <AvatarFallback className="bg-primary/10 text-primary">
-              {user.userInfo?.firstName?.charAt(0).toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-        </button>
+        <Button variant="ghost" className="h-11 max-w-[190px] gap-2 rounded-full px-1.5 text-[#48533b] hover:bg-[#eeefe6]">
+          <Avatar className="size-8"><AvatarImage src={user.userInfo?.avatar ? imageUrl(user.userInfo.avatar) : undefined} alt={displayName} className="object-cover" /><AvatarFallback className="bg-[#e5e8db] text-xs text-[#48533b]">{displayName.charAt(0).toUpperCase()}</AvatarFallback></Avatar>
+          <span className="hidden max-w-[105px] truncate text-xs font-normal sm:block">{displayName}</span><ChevronDown className="size-3" /><span className="sr-only">Open account menu</span>
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 p-2 z-999">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/profile" className="cursor-pointer">
-            Profile
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/my-booking" className="cursor-pointer">
-            My Booking
-          </Link>
-        </DropdownMenuItem>
-
-        {user.role !== "Student" && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-primary">
-              Instructor Panel
-            </DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href="/my-course" className="cursor-pointer">
-                Manage Courses
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/my-timetable" className="cursor-pointer">
-                Timetable
-              </Link>
-            </DropdownMenuItem>
-          </>
-        )}
-        {user.role === "Admin" && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-primary">
-              Admin Panel
-            </DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link
-                href="https://admin.yogabyniti.com"
-                className="cursor-pointer"
-              >
-                Admin Dashboard
-              </Link>
-            </DropdownMenuItem>
-          </>
-        )}
-
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Button
-            onClick={async () => {
-              await logout();
-            }}
-            variant={"outline"}
-            className="w-full cursor-pointer"
-          >
-            Log out
-          </Button>
-        </DropdownMenuItem>
+      <DropdownMenuContent align="end" sideOffset={12} className="z-50 rounded-lg border-[#dedfd4] bg-[#fffefa] p-2 text-[#48533b] shadow-lg [&_[data-slot=dropdown-menu-item]]:py-2.5 [&_[data-slot=dropdown-menu-item]]:text-xs [&_[data-slot=dropdown-menu-item]]:focus:bg-[#eef0e5] [&_[data-slot=dropdown-menu-separator]]:bg-[#e4e7da]">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel><DropdownMenuSeparator />
+        <DropdownMenuItem asChild><Link href="/profile">Profile</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild><Link href="/my-booking">My Booking</Link></DropdownMenuItem>
+        {user.role !== "Student" && <><DropdownMenuSeparator /><DropdownMenuLabel>Instructor Panel</DropdownMenuLabel><DropdownMenuItem asChild><Link href="/my-course">Manage Courses</Link></DropdownMenuItem><DropdownMenuItem asChild><Link href="/my-timetable">Timetable</Link></DropdownMenuItem></>}
+        {user.role === "Admin" && <><DropdownMenuSeparator /><DropdownMenuLabel>Admin Panel</DropdownMenuLabel><DropdownMenuItem asChild><Link href="https://admin.yogabyniti.com">Admin Dashboard</Link></DropdownMenuItem></>}
+        <DropdownMenuSeparator /><DropdownMenuItem onSelect={() => { void logout(); }}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
-
-export default Navbar;
+}

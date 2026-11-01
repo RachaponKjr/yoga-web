@@ -3,7 +3,7 @@
 import React from "react";
 import ProductItem from "@/components/layout/product-item";
 import { courseService } from "@/service/course.service";
-import { CourseType, PaginationType } from "@/types/course.type";
+import { CourseType } from "@/types/course.type";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
@@ -13,14 +13,6 @@ import { Autoplay } from "swiper/modules";
 
 // Import CSS
 import "swiper/css";
-
-// Type ของ Response
-interface CourseRes {
-  courses: CourseType[];
-  pagination: PaginationType;
-  // เช็คดูว่าโครงสร้างจริง data ซ้อน data หรือไม่ (API ปกติมักจะเป็น { data: { courses: ... } } หรือ { courses: ... } เลย)
-  // แต่จากโค้ดเดิมคุณใช้ courses?.data?.courses ผมจะยึดตามนั้น
-}
 
 const CourseBox = () => {
   // 1. ดึงข้อมูล
@@ -36,7 +28,7 @@ const CourseBox = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-40">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#788461]" />
       </div>
     );
   }
@@ -55,7 +47,7 @@ const CourseBox = () => {
   if (activeCourses.length === 0) {
     return (
       <div className="flex items-center justify-center w-full h-40">
-        <p className="text-gray-500">ไม่พบคอร์สที่เปิดใช้งาน</p>
+        <p className="text-[#73766b]">ไม่พบคอร์สที่เปิดใช้งาน</p>
       </div>
     );
   }
@@ -85,7 +77,7 @@ const CourseBox = () => {
             spaceBetween: 24,
           },
         }}
-        className="w-full pb-12 !px-2" // เพิ่ม padding แนวนอนนิดหน่อยเพื่อไม่ให้ shadow ขาด
+        className="w-full pb-12 !px-2 overflow-visible!" // เพิ่ม padding แนวนอนนิดหน่อยเพื่อไม่ให้ shadow ขาด
       >
         {/* ใช้ activeCourses ที่กรองแล้วมา map */}
         {activeCourses.map((course: CourseType, index: number) => (

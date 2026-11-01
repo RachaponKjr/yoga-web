@@ -1,8 +1,7 @@
 import React from "react";
-import LayoutSection from "@/components/layout/layout-section";
+import StudioPageLayout from "@/components/layout/studio-page-layout";
 import Image from "next/image";
 
-import restaurant1 from "@/assets/images/banner/calender_banner.png";
 import banner from "@/assets/images/banner/banner.png";
 
 import yoga1 from "@/assets/images/gallory/CC__2033.jpg";
@@ -10,34 +9,34 @@ import yoga2 from "@/assets/images/gallory/CC__2048.jpg";
 import yoga3 from "@/assets/images/gallory/CC__2231.jpg";
 import yoga4 from "@/assets/images/gallory/CC__2244.jpg";
 import yoga5 from "@/assets/images/gallory/CC__2427.jpg";
-import ReviewSection from "@/components/Review";
 
 const Page = () => {
   return (
-    <LayoutSection
+    <StudioPageLayout
+      eyebrow="ROOTED IN CARE, GUIDED BY NATURE"
       image={banner.src}
-      title="Our Story"
+      title="Our story."
       description="Discover the passion behind Yoga by Niti. Where mindful movement meets wholesome nutrition for a balanced life."
     >
       {/* เพิ่ม gap ให้ห่างขึ้นเพื่อให้ดูโปร่งแม้ภาพจะใหญ่ */}
-      <div className="flex flex-col gap-8 md:gap-24 px-4 md:px-6 my-4 md:my-24 overflow-hidden">
+      <div className="flex flex-col gap-12 md:gap-24 my-4 md:my-8 overflow-hidden">
         {/* --- Section 1: Our Story (Big Overlap) --- */}
         <div className="flex flex-col-reverse lg:flex-row items-center gap-4 lg:gap-20 relative">
           {/* Text Content (ย่อลงเหลือ 40% เพื่อให้ที่รูปภาพเยอะขึ้น) */}
           <div className="w-full lg:w-5/12 flex flex-col gap-8 z-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <span className="h-px w-12 bg-tertiary/60"></span>
-                <span className="text-tertiary font-bold tracking-[0.2em] uppercase text-xs md:text-sm">
+                <span className="h-px w-12 bg-[#9aa786]"></span>
+                <span className="text-[#737b62] font-normal tracking-[0.22em] uppercase text-[10px]">
                   Studio Yoga by Niti
                 </span>
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif font-medium text-[#2A2A2A] leading-[1.1]">
+              <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif font-normal tracking-[-0.025em] text-[#30372c] leading-[1.1]">
                 Welcome to <br />
-                <span className="text-tertiary">Yoga by Niti</span>
+                <span className="text-[#7d8867]">Yoga by Niti</span>
               </h2>
             </div>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed font-light">
+            <p className="text-sm md:text-base text-[#73766b] leading-[1.9] font-normal">
               Founded and owned by Nitikarn Thachina , Yoga by Neeti has been
               open for over 10 years in Rawai, Phuket.Niti is not only the
               owner, but also a yoga teacher who lives and breathes the
@@ -52,12 +51,12 @@ const Page = () => {
               life. Classes are open to all levels, guided with care,
               experience, and heart.
             </p>
-            <div className="flex flex-col gap-2 border-l-4 border-tertiary/30 pl-6 py-2">
-              <p className="text-xl text-gray-800 italic font-serif">
+            <div className="flex flex-col gap-2 border-l border-[#a4af90] pl-6 py-2">
+              <p className="text-xl text-[#58634a] italic font-serif">
                 &quot;Yoga by Niti is more than a yoga studio — it is a living
                 story of dedication, community, and heart.&quot;
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-[#7d8867]">
                 - Nitikarn Thachina, Owner
               </p>
             </div>
@@ -71,22 +70,22 @@ const Page = () => {
             {/* เพิ่มความสูง Container เพื่อรองรับรูปใหญ่ */}
             <div className="relative w-full h-[500px] md:h-[800px] flex items-center">
               {/* Main Image (ขยายเป็น 75% และชิดขวาสุด) */}
-              <div className="absolute right-0 top-0 w-[75%] aspect-3/4 shadow-2xl rounded-4xl overflow-hidden z-10">
+              <div className="absolute right-0 top-0 w-[75%] aspect-3/4 rounded-md border border-[#dedfd4] overflow-hidden z-10">
                 <Image
                   src={yoga2}
-                  alt="Restaurant atmosphere"
+                  alt="Yoga practice at Niti studio"
                   fill
-                  className="object-cover hover:scale-105 transition-transform duration-1000"
+                  className="object-cover hover:scale-[1.025] transition-transform duration-1000 motion-reduce:transform-none"
                 />
               </div>
 
               {/* Secondary Image (ขยายเป็น 65% และซ้อนทับให้เห็นชัดๆ) */}
-              <div className="absolute left-0 bottom-10 md:bottom-20 w-[65%] aspect-4/3 shadow-2xl rounded-4xl overflow-hidden border-4 border-white z-20">
+              <div className="absolute left-0 bottom-10 md:bottom-20 w-[65%] aspect-4/3 rounded-md border border-[#dedfd4] overflow-hidden border-4 border-[#f8f7f3] z-20">
                 <Image
                   src={yoga1}
-                  alt="Detail dish"
+                  alt="A class at Yoga By Niti"
                   fill
-                  className="object-cover hover:scale-105 transition-transform duration-1000"
+                  className="object-cover hover:scale-[1.025] transition-transform duration-1000 motion-reduce:transform-none"
                 />
               </div>
             </div>
@@ -100,32 +99,32 @@ const Page = () => {
             <div className="flex gap-2 md:gap-6 items-start">
               {/* Column 1 (Left - ใหญ่เต็มตา) */}
               <div className="w-1/2 flex flex-col gap-6 mt-16 md:mt-32">
-                <div className="w-full aspect-2/3 relative rounded-2xl md:rounded-4xl overflow-hidden shadow-xl">
+                <div className="w-full aspect-2/3 relative rounded-md overflow-hidden border border-[#dedfd4]">
                   <Image
                     src={yoga5}
                     alt="Interior detail"
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-700"
+                    className="object-cover hover:scale-[1.025] transition-transform duration-700 motion-reduce:transform-none"
                   />
                 </div>
               </div>
 
               {/* Column 2 (Right - ใหญ่เต็มตา) */}
               <div className="w-1/2 flex flex-col gap-2 md:gap-6">
-                <div className="w-full aspect-square relative rounded-2xl md:rounded-4xl overflow-hidden shadow-xl">
+                <div className="w-full aspect-square relative rounded-md overflow-hidden border border-[#dedfd4]">
                   <Image
                     src={yoga4}
-                    alt="Chef at work"
+                    alt="Life at Niti studio"
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-700"
+                    className="object-cover hover:scale-[1.025] transition-transform duration-700 motion-reduce:transform-none"
                   />
                 </div>
-                <div className="w-full aspect-3/4 relative rounded-2xl md:rounded-4xl overflow-hidden shadow-xl">
+                <div className="w-full aspect-3/4 relative rounded-md overflow-hidden border border-[#dedfd4]">
                   <Image
                     src={yoga3}
-                    alt="Private dining"
+                    alt="Yoga By Niti community"
                     fill
-                    className="object-cover hover:scale-105 transition-transform duration-700"
+                    className="object-cover hover:scale-[1.025] transition-transform duration-700 motion-reduce:transform-none"
                   />
                 </div>
               </div>
@@ -136,17 +135,17 @@ const Page = () => {
           <div className="w-full lg:w-6/12 flex flex-col gap-8 order-1 lg:order-2 lg:sticky lg:top-32">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <span className="h-px w-12 bg-tertiary/60"></span>
-                <span className="text-tertiary font-bold tracking-[0.2em] uppercase text-xs md:text-sm">
+                <span className="h-px w-12 bg-[#9aa786]"></span>
+                <span className="text-[#737b62] font-normal tracking-[0.22em] uppercase text-[10px]">
                   Restaurant
                 </span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-serif font-medium text-[#2A2A2A] leading-[1.1]">
+              <h2 className="text-4xl md:text-5xl font-serif font-normal tracking-[-0.025em] text-[#30372c] leading-[1.1]">
                 The Story of Go Vegan &
-                <span className="italic text-tertiary"> Yoga by Niti</span>
+                <span className="italic text-[#7d8867]"> Yoga by Niti</span>
               </h2>
             </div>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed font-light">
+            <p className="text-sm md:text-base text-[#73766b] leading-[1.9] font-normal">
               After more than 10 years of teaching yoga,Niti naturally expanded
               her vision into another form of healing — food.
               <br /> <br />
@@ -165,8 +164,9 @@ const Page = () => {
         {/* <div className="w-full">
           <BannerItem className="bg-[#8ba888]!" />
         </div> */}
-        <div className="w-full aspect-video md:aspect-16/6 overflow-hidden rounded-2xl bg-neutral-200">
+        <div className="w-full aspect-video md:aspect-16/6 overflow-hidden rounded-md border border-[#dedfd4] bg-[#e9ecdf]">
           <iframe
+            title="Yoga By Niti studio location in Rawai, Phuket"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.80375258081!2d98.32157788483991!3d7.791349598877547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30502f5295ff53db%3A0xda161d49bc788348!2sYoga%20by%20Niti!5e0!3m2!1sth!2sth!4v1769008361859!5m2!1sth!2sth"
             width="600"
             height="450"
@@ -176,7 +176,7 @@ const Page = () => {
           ></iframe>
         </div>
       </div>
-    </LayoutSection>
+    </StudioPageLayout>
   );
 };
 

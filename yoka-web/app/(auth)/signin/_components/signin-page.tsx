@@ -17,6 +17,7 @@ const SignInPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   // 2. เรียกใช้ hook ดึงค่า query param
   const searchParams = useSearchParams();
@@ -26,10 +27,12 @@ const SignInPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const payload = AuthSchema.safeParse({ email, password });
       if (!payload.success) {
-        console.log(payload.error);
+        toast.error(payload.error.issues[0]?.message || "Please check your details");
         return;
       }
       const response = await authService.login(payload.data);
@@ -63,17 +66,20 @@ const SignInPage = () => {
         className: "!text-red-500",
       });
       return;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="h-max md:h-[calc(100vh-6rem)] md:min-h-screen container mx-auto my-12 md:my-0 px-4 md:px-0 flex items-center">
-      <div className="bg-white w-full max-w-6xl items-center mx-auto p-6 rounded-2xl shadow-md md:shadow-2xl flex gap-4">
-        <div className="flex-1 py-8 flex flex-col items-center gap-8 justify-between">
+    <div className="min-h-[calc(100dvh-88px)] bg-[#f8f7f3] px-5 py-12 sm:px-7 md:py-20 flex items-center">
+      <div className="bg-[#fffefa] w-full max-w-5xl items-stretch mx-auto rounded-lg border border-[#dedfd4] overflow-hidden flex">
+        <div className="flex-1 min-w-0 px-6 py-10 md:px-12 md:py-14 flex flex-col items-center gap-8 justify-between">
           <div className="flex flex-col gap-8 items-center w-full">
             <div className="flex flex-col items-center gap-4">
-              <h5 className="text-4xl font-semibold">Welcome Back!</h5>
-              <p className="text-center text-sm text-[#666666] max-w-sm">
+              <p className="text-[9px] tracking-[0.24em] text-[#737b62]">YOUR PRACTICE CONTINUES</p>
+              <h1 className="font-serif text-4xl font-normal tracking-[-0.025em] text-[#30372c]">Welcome back.</h1>
+              <p className="text-center text-sm text-[#73766b] max-w-sm">
                 Login to continue to your course booking.
               </p>
             </div>
@@ -82,11 +88,15 @@ const SignInPage = () => {
               className="max-w-sm  flex flex-col gap-4 w-full"
             >
               <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-sm font-semibold">
+                <label htmlFor="email" className="text-xs font-medium text-[#58634a]">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <Input
+                  className="h-12 rounded-sm! border! border-[#d5dcc7] bg-[#fafbf6]! text-sm text-[#454d39] shadow-none focus:border-[#788461] focus:ring-2 focus:ring-[#788461]/15"
+                  required
                   type="email"
+                  id="email"
+                  autoComplete="email"
                   name="email"
                   placeholder="Please enter your email"
                   value={email}
@@ -94,11 +104,16 @@ const SignInPage = () => {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label htmlFor="password" className="text-sm font-semibold">
+                <label htmlFor="password" className="text-xs font-medium text-[#58634a]">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <Input
+                  className="h-12 rounded-sm! border! border-[#d5dcc7] bg-[#fafbf6]! text-sm text-[#454d39] shadow-none focus:border-[#788461] focus:ring-2 focus:ring-[#788461]/15"
+                  required
                   type="password"
+                  id="password"
+                  minLength={6}
+                  autoComplete="current-password"
                   name="password"
                   placeholder="Please enter your password"
                   value={password}
@@ -107,31 +122,32 @@ const SignInPage = () => {
               </div>
               <Link
                 href="/forgot-password"
-                className="text-sm text-primary text-end"
+                className="text-xs text-[#737f5f] text-end underline-offset-4 hover:underline"
               >
                 Forgot Password?
               </Link>
               <Button
                 type="submit"
-                className="w-full text-white cursor-pointer rounded-full"
+                disabled={isSubmitting}
+                className="h-12 w-full rounded-sm bg-[#48533b] text-[#fffef5] font-normal shadow-none hover:bg-[#303c26]"
                 size={"lg"}
                 variant="default"
               >
-                Sign In
+                {isSubmitting ? "Signing in…" : "Sign In"}
               </Button>
             </form>
             <div className="relative flex items-center w-full">
-              <div className="grow border-t border-gray-200"></div>
-              <span className="mx-4 text-gray-400 text-xs">OR</span>
-              <div className="grow border-t border-gray-200"></div>
+              <div className="grow border-t border-[#dedfd4]"></div>
+              <span className="mx-4 text-[#858d79] text-xs">OR</span>
+              <div className="grow border-t border-[#dedfd4]"></div>
             </div>
             <div className="w-full flex items-center justify-center">
-              <p className="text-sm text-[#666666]">
+              <p className="text-sm text-[#73766b]">
                 Don&apos;t have an account?{" "}
                 {/* ส่ง callbackUrl ไปที่หน้า signup ด้วย เผื่อเขาสมัครเสร็จจะได้เด้งกลับถูก */}
                 <Link
                   href={`/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="text-primary cursor-pointer font-semibold"
+                  className="text-[#48533b] font-medium underline underline-offset-4"
                 >
                   Sign Up
                 </Link>
@@ -139,8 +155,10 @@ const SignInPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex-1 aspect-14/16 bg-primary/80 rounded-2xl hidden md:block relative overflow-hidden">
-          <Image src={cc2063} alt="cc2063" fill className="object-cover" />
+        <div className="flex-1 min-h-[600px] bg-[#303a2b] hidden md:block relative overflow-hidden">
+          <Image src={cc2063} alt="A moment of yoga practice at Niti studio" fill sizes="50vw" className="object-cover" />
+          <div className="absolute inset-0 bg-linear-to-t from-[#273123]/85 via-transparent to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-10 text-[#fffdf2]"><p className="mb-4 text-[9px] tracking-[0.22em] text-[#d4dcc8]">YOGA BY NITI</p><p className="font-serif text-4xl leading-tight">Return to balance.<br /><span className="italic text-[#d4dcc8]">Return to yourself.</span></p></div>
         </div>
       </div>
     </div>

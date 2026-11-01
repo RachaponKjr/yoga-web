@@ -38,10 +38,10 @@ const About = () => {
       <div className="container mx-auto px-6 md:px-12 space-y-2">
         {/* หัวข้อหลัก (Optional) */}
         <div className="mb-6 text-center flex flex-col gap-4">
-          <h2 className="text-4xl md:text-6xl font-serif font-medium leading-none text-[#132B28]">
+          <h2 className="text-4xl md:text-6xl font-serif font-normal tracking-[-0.025em] leading-tight text-[#30372c]">
             About Niti Studio
           </h2>
-          <span className="text-xl text-primary/80">Yoga Wellness</span>
+          <span className="text-[10px] uppercase tracking-[0.22em] text-[#737b62]">Yoga Wellness</span>
         </div>
 
         {/* Grid 3 Columns */}
@@ -49,23 +49,23 @@ const About = () => {
           {items.map((item) => (
             <div key={item.id} className="group flex flex-col items-start">
               {/* Image Container with subtle hover effect */}
-              <div className="mb-6 w-full aspect-16/14 overflow-hidden rounded-lg relative">
+              <div className="mb-6 w-full aspect-16/14 overflow-hidden rounded-md relative">
                 <Image
                   src={item.image}
                   alt={item.title}
                   quality={100}
                   fill
-                  className="w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.025] motion-reduce:transform-none"
                   style={{ objectPosition: item.style }}
                 />
-                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[#30372c] opacity-0 group-hover:opacity-10 transition-opacity duration-300 motion-reduce:transition-none"></div>
               </div>
 
               {/* Text Content */}
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-serif font-normal text-[#454d39]">
                 {item.title}
               </h3>
-              <p className="mt-3 leading-relaxed text-gray-500">
+              <p className="mt-3 text-sm leading-[1.9] text-[#73766b]">
                 {item.description}
               </p>
             </div>

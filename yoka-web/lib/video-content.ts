@@ -1,3 +1,5 @@
+import { imageUrl } from "./image-url";
+
 export function instagramUrl(value: string): string {
   if (!value.trim()) return "";
   try {
@@ -8,11 +10,4 @@ export function instagramUrl(value: string): string {
   } catch { return ""; }
 }
 
-export function scheduleImageUrl(value: string | null | undefined): string {
-  if (!value) return "";
-  const base = process.env.NEXT_PUBLIC_HOST_IMAGE || new URL(process.env.NEXT_PUBLIC_API_URL || "https://api.yogabyniti.com/api/v1").origin;
-  try {
-    const url = new URL(value.replace(/\\/g, "/"), `${base.replace(/\/$/, "")}/`);
-    return ["https:", "http:"].includes(url.protocol) ? url.href : "";
-  } catch { return ""; }
-}
+export const scheduleImageUrl = imageUrl;
