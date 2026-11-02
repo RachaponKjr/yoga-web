@@ -1,244 +1,48 @@
-import { generateBookingPDF } from "../utils/pdfGenerator";
-
 export interface BookingEmailData {
   customerName: string;
   courseTitle: string;
-  roundDate: string; // เช่น "Monday, 20 Jan 2026"
-  roundTime: string; // เช่น "09:00 - 10:30 AM"
-  location?: string;
+  roundDate: string;
+  roundTime: string;
   bookingId: string;
-  qrCodeUrl?: string; // (Optional) เผื่ออนาคตอยากใส่รูป QR Code
+  quantity: number;
+  totalAmount: number;
+  contactEmail: string;
 }
 
-export const getBookingSuccessTemplate = async (data: BookingEmailData) => {
-  return `
-  <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body
-    style="
-      margin: 0;
-      padding: 0;
-      background-color: #f9f9f9;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      color: #333333;
-    "
-  >
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td align="center" style="padding: 40px 10px">
-          <table
-            width="100%"
-            style="
-              background-color: #ffffff;
-              border: 1px solid #eeeeee;
-              border-radius: 12px;
-              overflow: hidden;
-            "
-          >
-            <tr>
-              <td style="padding: 30px 40px 0 40px">
-                <h1
-                  style="
-                    margin: 0;
-                    font-size: 24px;
-                    font-weight: 700;
-                    color: #1a1a1a;
-                  "
-                >
-                  Thank you for your booking!
-                </h1>
-              </td>
-            </tr>
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (character) =>
+    ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]!,
+  );
 
-            <tr>
-              <td style="padding: 20px 40px 20px 40px; line-height: 1.6">
-                <p style="margin: 0 0 16px 0; font-size: 16px">
-                  Dear ${data.customerName},
-                </p>
-                <p style="margin: 0 0 24px 0; font-size: 16px">
-                  We're excited to confirm your booking. Below are your session
-                  details:
-                </p>
+export const getBookingSuccessTemplate = (data: BookingEmailData): string => {
+  const rows: Array<[string, string]> = [
+    ["Course", data.courseTitle],
+    ["Date", data.roundDate],
+    ["Time", data.roundTime],
+    ["Seats", String(data.quantity)],
+    ["Amount paid", `฿${data.totalAmount.toLocaleString("en-US")}`],
+    ["Booking ID", data.bookingId],
+  ];
 
-                <div
-                  style="
-                    background-color: #fcfcfc;
-                    border: 1px solid #f0f0f0;
-                    border-radius: 8px;
-                    padding: 20px;
-                  "
-                >
-                  <table
-                    width="100%"
-                    border="0"
-                    cellspacing="0"
-                    cellpadding="8"
-                  >
-                    <tr>
-                      <td
-                        width="35%"
-                        style="
-                          font-size: 14px;
-                          color: #666666;
-                          font-weight: 600;
-                        "
-                      >
-                        Course
-                      </td>
-                      <td style="font-size: 14px; color: #1a1a1a">
-                        ${data.courseTitle}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style="
-                          font-size: 14px;
-                          color: #666666;
-                          font-weight: 600;
-                        "
-                      >
-                        Date
-                      </td>
-                      <td style="font-size: 14px; color: #1a1a1a">
-                        ${data.roundDate}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style="
-                          font-size: 14px;
-                          color: #666666;
-                          font-weight: 600;
-                        "
-                      >
-                        Time
-                      </td>
-                      <td style="font-size: 14px; color: #1a1a1a">
-                        ${data.roundTime}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        style="
-                          font-size: 14px;
-                          color: #666666;
-                          font-weight: 600;
-                        "
-                      >
-                        Booking ID
-                      </td>
-                      <td style="font-size: 14px; color: #1a1a1a">
-                        #${data.bookingId}
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-
-                <div
-                  style="
-                    margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #f0f0f0;
-                  "
-                >
-                  <p
-                    style="
-                      margin: 0 0 12px 0;
-                      font-size: 14px;
-                      font-weight: 700;
-                      color: #1a1a1a;
-                    "
-                  >
-                    Need help or have questions?
-                  </p>
-                  <table
-                    width="100%"
-                    border="0"
-                    cellspacing="0"
-                    cellpadding="0"
-                  >
-                    <tr>
-                      <td style="padding-bottom: 8px">
-                        <span style="font-size: 14px; color: #666666"
-                          >📞 Phone:</span
-                        >
-                        <a
-                          href="tel:0812345678"
-                          style="
-                            font-size: 14px;
-                            color: #1a1a1a;
-                            text-decoration: none;
-                            margin-left: 5px;
-                          "
-                          >081-234-5678</a
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding-bottom: 8px">
-                        <span style="font-size: 14px; color: #666666"
-                          >💬 Line ID:</span
-                        >
-                        <span
-                          style="
-                            font-size: 14px;
-                            color: #1a1a1a;
-                            margin-left: 5px;
-                          "
-                          >@yokaniti</span
-                        >
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <span style="font-size: 14px; color: #666666"
-                          >✉️ Email:</span
-                        >
-                        <a
-                          href="mailto:support@yokaniti.com"
-                          style="
-                            font-size: 14px;
-                            color: #1a1a1a;
-                            text-decoration: none;
-                            margin-left: 5px;
-                          "
-                          >support@yokaniti.com</a
-                        >
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td style="padding: 0 40px 40px 40px">
-                <p style="margin: 0; font-size: 14px; color: #999999">
-                  Best Regards,<br /><strong>Yoka by Niti Team</strong>
-                </p>
-              </td>
-            </tr>
-          </table>
-
-          <table
-            width="100%"
-            max-width="600"
-            style="max-width: 600px; margin-top: 20px"
-          >
-            <tr>
-              <td align="center" style="font-size: 12px; color: #aaaaaa">
-                &copy; 2026 Yoka by Niti. All rights reserved.
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+  return `<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+  <body style="margin:0;background:#f8f7f3;color:#30372c;font-family:Arial,sans-serif;padding:24px">
+    <main style="max-width:600px;margin:auto;background:#fffefa;border:1px solid #dedfd4;padding:32px">
+      <p style="color:#737b62;font-size:12px;letter-spacing:2px">YOGA BY NITI</p>
+      <h1 style="font:normal 30px Georgia,serif">Your booking is confirmed</h1>
+      <p>Dear ${escapeHtml(data.customerName)},</p>
+      <p>Thank you for your purchase. Your payment was successful, and your yoga class is booked.</p>
+      <table style="width:100%;border-collapse:collapse">${rows.map(([label, value]) => `<tr><th style="padding:12px 0;border-bottom:1px solid #e4e7db;text-align:left;font-weight:normal;color:#737b62">${label}</th><td style="padding:12px 0;border-bottom:1px solid #e4e7db;text-align:right">${escapeHtml(value)}</td></tr>`).join("")}</table>
+      <p style="margin-top:28px">If you have any questions, reply to this email or contact <a href="mailto:${escapeHtml(data.contactEmail)}" style="color:#48533b">${escapeHtml(data.contactEmail)}</a>.</p>
+      <p>We look forward to seeing you,<br>Yoga By Niti</p>
+    </main>
   </body>
-</html>  
-  `;
+</html>`;
 };

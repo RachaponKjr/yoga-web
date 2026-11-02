@@ -123,21 +123,22 @@ export const omiseWebhookController = async (req: Request, res: Response) => {
           totalAmount: orderDetail.price,
         };
         const customerNotification = customerEmail
-          ? getBookingSuccessTemplate({
-              customerName,
-              courseTitle: notice.courseTitle,
-              roundDate: notice.sessionDate,
-              roundTime: notice.sessionTime,
-              bookingId: notice.bookingId,
-            }).then((html) =>
-              mailService.sendEmail(
-                customerEmail,
-                `Booking confirmed: ${notice.courseTitle} | Yoga By Niti`,
-                html,
-                pdfBuffer
-                  ? [{ filename: `Booking-${orderDetail.id}.pdf`, content: pdfBuffer, contentType: "application/pdf" }]
-                  : undefined,
-              ),
+          ? mailService.sendEmail(
+              customerEmail,
+              `Booking confirmed: ${notice.courseTitle} | Yoga By Niti`,
+              getBookingSuccessTemplate({
+                customerName,
+                courseTitle: notice.courseTitle,
+                roundDate: notice.sessionDate,
+                roundTime: notice.sessionTime,
+                bookingId: notice.bookingId,
+                quantity: notice.quantity,
+                totalAmount: notice.totalAmount,
+                contactEmail: ownerEmail,
+              }),
+              pdfBuffer
+                ? [{ filename: `Booking-${orderDetail.id}.pdf`, content: pdfBuffer, contentType: "application/pdf" }]
+                : undefined,
             )
           : Promise.resolve();
 

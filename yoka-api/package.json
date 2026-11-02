@@ -7,6 +7,7 @@
     "dev": "nodemon src/server.ts",
     "build": "rimraf dist && tsc",
     "start": "node dist/server.js",
+    "test:purchase-email": "node scripts/test-purchase-email.cjs",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [],

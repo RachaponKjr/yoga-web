@@ -1,10 +1,10 @@
 import puppeteer from "puppeteer";
 import handlebars from "handlebars";
 import { Buffer } from "buffer";
-import { BookingEmailData } from "../templates/booking-success";
+import type { BookingEmailData } from "../templates/booking-success";
 
 export const generateBookingPDF = async (
-  data: BookingEmailData,
+  data: Pick<BookingEmailData, "customerName" | "courseTitle" | "roundDate" | "roundTime" | "bookingId">,
 ): Promise<Buffer> => {
   const htmlTemplate = `
     <!DOCTYPE html>

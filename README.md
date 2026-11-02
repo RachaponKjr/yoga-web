@@ -56,3 +56,17 @@ The launcher overrides the API and database addresses without changing existing 
 Ctrl+C stops the application servers. `npm run local:db:stop` stops PostgreSQL while preserving its data. Ports 3100 and 3101 and the `.next-local` build directory keep this stack separate from existing servers on 3000/3001.
 
 Payment and email integrations still use the existing per-app `.env` credentials. Use test credentials when testing those features. This setup does not create accounts or sample courses.
+
+## Purchase confirmation emails
+
+After Omise confirms a successful payment through `POST /webhook/omise`, the API sends a booking confirmation to the customer's account email (or the booking email if no account email is available) and a purchase notification to the studio. It also sends the existing Telegram notification. Repeated payment webhooks do not send duplicate notifications for an already paid booking.
+
+Set `MAIL_USER` and `MAIL_PASS` in the API environment for the Gmail SMTP account. Set `BOOKING_NOTIFICATION_EMAIL` to the studio inbox that should receive purchase notifications; if omitted, it defaults to `Yogabyniti@gmail.com`. The customer email uses that inbox as its contact address. The webhook must be reachable from Omise for confirmations to be sent.
+
+To send sample versions of both emails to an inbox you control, run from `yoka-api`:
+
+```sh
+npm run test:purchase-email -- your-inbox@example.com
+```
+
+Both messages have `[TEST]` in the subject. This checks the SMTP credentials, delivery, and email templates without creating a booking or charging a card. It does not test the Omise webhook or PDF attachment.
