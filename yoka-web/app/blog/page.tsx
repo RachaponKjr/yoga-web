@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { blogService, blogDate, blogImageUrl } from "@/service/blog.service";
 import BlogCover from "@/components/blog/blog-cover";
+import BookingBanner from "../_components/booking-banner";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata({

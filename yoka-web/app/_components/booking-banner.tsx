@@ -7,19 +7,22 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
+const bannerImages = Array.from({ length: 12 }, (_, index) => `/banner/${index + 1}.webp`);
+
 // Two portraits on each outer column frame the four single portraits in the middle.
 const columns = [
-  { offset: 40, count: 2 },
-  { offset: 0, count: 2 },
-  { offset: 36, count: 1 },
-  { offset: 8, count: 1 },
-  { offset: 8, count: 1 },
-  { offset: 36, count: 1 },
-  { offset: 0, count: 2 },
-  { offset: 40, count: 2 },
+  { offset: 40, images: bannerImages.slice(0, 2) },
+  { offset: 0, images: bannerImages.slice(2, 4) },
+  { offset: 36, images: bannerImages.slice(4, 5) },
+  { offset: 8, images: bannerImages.slice(5, 6) },
+  { offset: 8, images: bannerImages.slice(6, 7) },
+  { offset: 36, images: bannerImages.slice(7, 8) },
+  { offset: 0, images: bannerImages.slice(8, 10) },
+  { offset: 40, images: bannerImages.slice(10, 12) },
 ];
 
 export default function BookingBanner() {
@@ -82,19 +85,37 @@ export default function BookingBanner() {
           aria-hidden="true"
           className="pointer-events-none relative w-full pb-12"
         >
-          <div className="hidden md:grid w-full grid-cols-4 items-start gap-x-3 gap-y-14 sm:gap-x-4 md:grid-cols-8 lg:gap-x-5">
-            {columns.map(({ offset, count }, index) => (
+          <div className="grid grid-cols-4 gap-2 md:hidden">
+            {bannerImages.map((src) => (
+              <div
+                key={src}
+                className="relative aspect-[9/12] overflow-hidden rounded-lg border border-[#e1e4dc] bg-[#e9ede4]"
+              >
+                <Image src={src} alt="" fill sizes="25vw" className="object-cover" />
+              </div>
+            ))}
+          </div>
+          <div className="hidden w-full grid-cols-8 items-start gap-x-3 gap-y-14 md:grid lg:gap-x-5">
+            {columns.map(({ offset, images }, index) => (
               <div
                 key={index}
                 data-banner-column
                 className="relative flex min-w-0 flex-col gap-3 sm:gap-4"
                 style={{ top: offset }}
               >
-                {Array.from({ length: count }, (_, cardIndex) => (
+                {images.map((src) => (
                   <div
-                    key={cardIndex}
-                    className={`aspect-[9/12] w-full rounded-lg border border-[#e1e4dc] bg-linear-to-br ${cardIndex === 0 ? "from-[#eceee8] to-[#dfe3d9]" : "from-[#e3e7df] to-[#edf0e9]"}`}
-                  />
+                    key={src}
+                    className="relative aspect-[9/12] w-full overflow-hidden rounded-lg border border-[#e1e4dc] bg-[#e9ede4]"
+                  >
+                    <Image
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1280px) 140px, 12vw"
+                      className="object-cover"
+                    />
+                  </div>
                 ))}
                 <div className="mx-auto h-8 w-px bg-linear-to-b from-[#cdd5c1]/60 to-transparent" />
               </div>
