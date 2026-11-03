@@ -23,8 +23,6 @@ import CourseCalendar from "@/components/CourseCalendar";
 import { useBooking } from "@/store/useBooking";
 import styles from "./course-detail.module.css";
 
-
-
 export default function CourseDetailPage({
   course,
   date,
@@ -245,7 +243,9 @@ export default function CourseDetailPage({
                   />
                 </div>
               ) : (
-                <p className={styles.empty}>No sessions are available at the moment</p>
+                <p className={styles.empty}>
+                  No sessions are available at the moment
+                </p>
               )}
               {sameDayRounds.length > 1 && (
                 <div className={styles.rounds} aria-label="Choose a session">
@@ -289,12 +289,15 @@ export default function CourseDetailPage({
                 </details>
               )}
               {canBook ? (
-                <Link
-                  href={`/course/booking?roundId=${selectRound.id}`}
-                  onClick={handleBooking}
-                  className={styles.bookButton}
-                >
-                  Book this class <ArrowRight size={19} />
+                // <Link
+                //   href={`/course/booking?roundId=${selectRound.id}`}
+                //   onClick={handleBooking}
+                //   className={styles.bookButton}
+                // >
+                //   Book this class <ArrowRight size={19} />
+                // </Link>
+                <Link href="/contact" className={styles.bookButton}>
+                  Contact Us to Book a Class <ArrowRight size={19} />
                 </Link>
               ) : (
                 <button className={styles.bookButton} disabled>
