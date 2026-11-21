@@ -41,7 +41,12 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
   icons: {
-    icon: "/logoyoga.png",
+    icon: [
+      {
+        url: "/favicon.ico",
+        sizes: "any",
+      },
+    ],
   },
   description:
     "Practice yoga at Yoga By Niti, with classes for beginners and experienced practitioners, plus wholesome food made with carefully selected ingredients.",
