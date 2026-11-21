@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, SITE_URL } from "@/lib/seo";
 import { cache } from "react";
 import axios from "axios";
 import Image from "next/image";
@@ -13,6 +13,7 @@ import {
   Leaf,
 } from "lucide-react";
 import { blogService, blogDate, blogImageUrl } from "@/service/blog.service";
+import BlogViews from "@/components/blog/blog-views";
 import BlogCover from "@/components/blog/blog-cover";
 import ArticleContent, {
   MARKDOWN_PREFIX,
@@ -35,12 +36,15 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const post = await getPost((await params).slug);
-  const metadata = pageMetadata({ title: post.title, description: post.excerpt, path: `/blog/${encodeURIComponent(post.slug)}`, image: post.coverImage ? blogImageUrl(post.coverImage) : undefined });
+  const metadata = pageMetadata({ title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, noIndex: post.noIndex, path: post.canonicalUrl || `/blog/${encodeURIComponent(post.slug)}`, image: post.coverImage ? blogImageUrl(post.coverImage) : undefined });
   return {
     ...metadata,
+    keywords: post.seoKeywords ? post.seoKeywords.split(",").map(word => word.trim()).filter(Boolean) : undefined,
+    authors: [{ name: post.author || "Yoga By Niti" }],
     openGraph: {
       ...metadata.openGraph,
       type: "article",
+      authors: [post.author || "Yoga By Niti"],
       ...(post.publishedAt ? { publishedTime: post.publishedAt } : {}),
       modifiedTime: post.updatedAt,
     },
@@ -65,10 +69,19 @@ export default async function BlogDetailPage({
 
   return (
     <main className="bg-[#fafaf6] px-5 pb-16 pt-8 text-[#233528] sm:px-8 md:pb-24 md:pt-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "BlogPosting",
+        headline: post.title, description: post.seoDescription || post.excerpt,
+        mainEntityOfPage: post.canonicalUrl || `${SITE_URL}/blog/${post.slug}`,
+        ...(post.coverImage ? { image: [blogImageUrl(post.coverImage)] } : {}),
+        datePublished: post.publishedAt, dateModified: post.updatedAt,
+        author: { "@type": "Person", name: post.author || "Yoga By Niti" },
+        publisher: { "@type": "Organization", name: "Yoga By Niti" },
+      }).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-6xl">
         <nav
           aria-label="Article navigation"
-          className="flex items-center justify-between"
+          className="flex flex-wrap items-center justify-between gap-4"
         >
           <Link
             href="/blog"
@@ -77,8 +90,8 @@ export default async function BlogDetailPage({
             <ArrowLeft size={16} />
             All articles
           </Link>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[#7c866f]">
-            <span className="font-medium text-[#48583e]">Yoga By Niti</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[#7c866f]">
+            <span className="font-medium text-[#48583e]">{post.author || "Yoga By Niti"}</span>
             <span aria-hidden="true">·</span>
             <time dateTime={post.publishedAt || undefined}>
               {blogDate(post.publishedAt)}
@@ -88,6 +101,7 @@ export default async function BlogDetailPage({
               <Clock3 size={13} />
               Read time: {readingMinutes} min
             </span>
+            <BlogViews slug={post.slug} initialViews={post.views} />
           </div>
         </nav>
         <article>
@@ -105,18 +119,18 @@ export default async function BlogDetailPage({
           <div className="w-full overflow-hidden rounded-2xl">
             <BlogCover
               src={post.coverImage ? blogImageUrl(post.coverImage) : undefined}
-              title={post.title}
+              title={post.coverAlt || post.title}
               priority
             />
           </div>
-          <div className="py-12 md:py-16">
+          <div className="mx-auto max-w-3xl py-12 md:py-16">
             <ArticleContent content={post.content} />
             <div className="mt-12 flex items-center gap-4 border-t border-[#dfe4d8] pt-7">
               <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#eaf0df]">
                 <Leaf size={20} strokeWidth={1.2} />
               </span>
               <div>
-                <p className="text-sm font-medium">Yoga By Niti</p>
+                <p className="text-sm font-medium">{post.author || "Yoga By Niti"}</p>
                 <p className="mt-1 text-xs leading-6 text-[#7b866e]">
                   A space for yoga, self-care, and a more balanced life
                 </p>

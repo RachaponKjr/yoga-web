@@ -226,6 +226,14 @@ model BlogPost {
   title       String
   excerpt     String    @db.Text
   content     String    @db.Text
+  seoTitle String @default("")
+  seoDescription String @default("")
+  seoKeywords String @default("")
+  canonicalUrl String @default("")
+  noIndex Boolean @default(false)
+  coverAlt String @default("")
+  author String @default("Yoga By Niti")
+  views Int @default(0)
   coverImage  String?
   published   Boolean   @default(false)
   publishedAt DateTime?

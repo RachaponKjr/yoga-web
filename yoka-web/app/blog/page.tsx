@@ -72,15 +72,18 @@ export default async function BlogPage({
     `/blog?${new URLSearchParams({ page: String(value), ...(search ? { search } : {}) })}`;
   return (
     <main className="min-h-[70vh] bg-[#fafaf6] pb-20 text-[#233528]">
+      <header className="relative overflow-hidden border-b border-[#dce3d3] bg-[#eaf0e3] px-6 py-16 md:py-24">
+        <div className="relative mx-auto max-w-6xl"><p className="text-sm font-medium tracking-[0.24em] text-[#586b49]">THE YOGA BY NITI JOURNAL</p><h1 className="mt-5 max-w-3xl text-4xl font-medium leading-tight tracking-tight md:text-6xl">A little inspiration.<br /><span className="text-[#65764f]">A more balanced life.</span></h1><p className="mt-6 max-w-xl text-base leading-8 text-[#526349]">Thoughtful stories on yoga, mindful living, and finding time for yourself. Take a breath, find a story, and grow with us.</p><span className="mt-8 inline-block rounded-full border border-[#b9c6aa] px-4 py-2 text-sm">YOGA · WELLBEING · EVERYDAY RITUALS</span></div>
+      </header>
       <section className="mx-auto max-w-6xl px-6 pt-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="mb-2 text-xs tracking-[0.2em] text-[#7b866e]">
               READ · BREATHE · GROW
             </p>
-            <h1 className="text-2xl font-medium">
+            <h2 className="text-2xl font-medium">
               {search ? `Search results for “${search}”` : "Latest articles"}
-            </h1>
+            </h2>
             <p className="mt-2 text-sm text-[#7b866e]">
               {result.pagination.total} Stories for a brighter day
             </p>
@@ -111,7 +114,7 @@ export default async function BlogPage({
         {result.data.length ? (
           <div className="grid gap-x-7 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
             {result.data.map((post, index) => (
-              <article key={post.id} className="group">
+              <article key={post.id} className="group overflow-hidden rounded-3xl border border-[#e0e5d8] bg-white p-3 transition-shadow hover:shadow-lg">
                 <Link
                   href={`/blog/${post.slug}`}
                   className="block rounded-3xl outline-offset-4"
@@ -123,17 +126,18 @@ export default async function BlogPage({
                           ? blogImageUrl(post.coverImage)
                           : undefined
                       }
-                      title={post.title}
+                      title={post.coverAlt || post.title}
                       priority={index === 0}
                     />
                   </div>
-                  <div className="pt-5">
+                  <div className="px-3 pb-4 pt-5">
                     <p className="mb-3 text-xs tracking-wide text-[#839175]">
                       WELLNESS JOURNAL <span className="mx-2">·</span>
                       <time dateTime={post.publishedAt || undefined}>
                         {blogDate(post.publishedAt)}
                       </time>
                     </p>
+                    <p className="mb-2 text-sm text-[#526349]">{post.views.toLocaleString()} views</p>
                     <h3 className="break-words text-xl font-medium leading-relaxed transition-colors group-hover:text-[#718452]">
                       {post.title}
                     </h3>

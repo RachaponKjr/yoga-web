@@ -30,7 +30,7 @@ async function main() {
     const response = await fetch(`${base}/blog${url}`, { method, headers: { ...(body ? { 'Content-Type': 'application/json' } : {}), ...(role ? { Authorization: `Bearer ${token(role)}` } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) });
     return { status: response.status, body: response.status === 204 ? null : await response.json() };
   }
-  const payload = { title: 'Blog integration test', slug: `integration-${Date.now()}`, excerpt: 'Test excerpt', content: 'First paragraph\n\nSecond paragraph', coverImage: '', published: false };
+  const payload = { title: 'Blog integration test', slug: `integration-${Date.now()}`, excerpt: 'Test excerpt', content: 'First paragraph\n\nSecond paragraph', seoTitle: 'Custom SEO title', seoDescription: 'Custom search description', seoKeywords: 'yoga, wellness', noIndex: true, coverImage: '', published: false };
   try {
     assert.equal((await request('GET', '/admin')).status, 401);
     assert.equal((await request('GET', '/admin', undefined, 'Student')).status, 403);
@@ -47,6 +47,7 @@ async function main() {
     assert.equal(created.status, 201); const id = created.body.data.id; ids.push(id);
     assert.equal(created.body.data.publishedAt, null);
     assert.equal((await request('GET', `/${payload.slug}`)).status, 404);
+    assert.equal((await request('POST', `/${payload.slug}/view`)).status, 404);
     assert.equal((await request('GET', '/?search=Blog%20integration%20test')).body.data.some(item => item.id === id), false);
     assert.equal((await request('GET', '/admin?search=Blog%20integration%20test', undefined, 'Admin')).body.data.some(item => item.id === id), true);
     assert.equal((await request('GET', `/admin/${id}`, undefined, 'Admin')).body.data.content, payload.content);
@@ -54,8 +55,20 @@ async function main() {
     const published = await request('PUT', `/${id}`, { ...payload, published: true }, 'Admin');
     assert.equal(published.status, 200); assert.ok(published.body.data.publishedAt);
     assert.equal((await request('GET', `/${payload.slug}`)).status, 200);
+    const before = await request('GET', `/${payload.slug}`);
+    assert.equal(before.body.data.seoTitle, payload.seoTitle);
+    assert.equal(before.body.data.views, 0);
+    assert.equal((await request('GET', `/${payload.slug}`)).body.data.views, 0);
+    const view = await fetch(`${base}/blog/${payload.slug}/view`, { method: 'POST' });
+    assert.equal(view.status, 204);
+    const cookie = view.headers.get('set-cookie').split(';')[0];
+    await fetch(`${base}/blog/${payload.slug}/view`, { method: 'POST', headers: { Cookie: cookie } });
+    assert.equal((await request('GET', `/${payload.slug}`)).body.data.views, 1);
+    assert.equal((await request('GET', `/${payload.slug}`)).body.data.updatedAt, before.body.data.updatedAt);
+    assert.equal((await request('GET', '/admin?status=draft', undefined, 'Admin')).body.data.some(item => item.id === id), false);
+    assert.equal((await request('POST', '/', { ...payload, canonicalUrl: 'javascript:alert(1)' }, 'Admin')).status, 400);
     const listing = await request('GET', '/?search=Blog%20integration%20test&limit=1');
-    assert.equal(listing.body.data[0].id, id); assert.equal(listing.body.data[0].content, undefined);
+    assert.equal(listing.body.data[0].views, 1); assert.equal(listing.body.data[0].noIndex, true); assert.equal(listing.body.data[0].id, id); assert.equal(listing.body.data[0].content, undefined);
     const renamed = { ...payload, slug: `${payload.slug}-edited`, title: 'Edited title', published: true };
     assert.equal((await request('PUT', `/${id}`, renamed, 'Admin')).body.data.publishedAt, published.body.data.publishedAt);
     assert.equal((await request('GET', `/${payload.slug}`)).status, 404);

@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 
 type PublicPost = {
+  noIndex?: boolean;
+  canonicalUrl?: string;
   slug: string;
   published?: boolean;
   publishedAt?: string | null;
@@ -52,9 +54,10 @@ export async function contentSitemap(
         throw new Error("Invalid blog sitemap response");
       pages = response.pagination.pages;
       for (const post of response.data as PublicPost[]) {
-        if (!post.slug || post.published === false) continue;
+        if (!post.slug || post.published === false || post.noIndex) continue;
         const url = new URL(`/blog/${encodeURIComponent(post.slug)}`, siteUrl)
           .href;
+        if (post.canonicalUrl && post.canonicalUrl !== url) continue;
         entries.set(url, {
           url,
           lastModified: validDate(post.updatedAt || post.publishedAt),

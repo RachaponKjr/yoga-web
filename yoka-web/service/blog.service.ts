@@ -2,6 +2,14 @@ import { imageUrl } from "@/lib/image-url";
 import http from "@/lib/http";
 
 export interface BlogPost {
+  seoTitle: string;
+  seoDescription: string;
+  seoKeywords: string;
+  canonicalUrl: string;
+  noIndex: boolean;
+  coverAlt: string;
+  author: string;
+  views: number;
   id: string;
   title: string;
   slug: string;

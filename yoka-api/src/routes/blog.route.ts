@@ -22,15 +22,15 @@ function databaseError(error: unknown): never {
 }
 
 async function list(query: unknown, includeDrafts: boolean) {
-  const { page, limit, search } = blogQuerySchema.parse(query);
+  const { page, limit, search, status, sort } = blogQuerySchema.parse(query);
   const where: Prisma.BlogPostWhereInput = {
-    ...(includeDrafts ? {} : { published: true }),
+    ...(includeDrafts ? status === "all" ? {} : { published: status === "published" } : { published: true }),
     ...(search ? { OR: [{ title: { contains: search, mode: "insensitive" } }, { excerpt: { contains: search, mode: "insensitive" } }] } : {}),
   };
   const [data, total] = await prisma.$transaction([
     prisma.blogPost.findMany({ where, skip: (page - 1) * limit, take: limit,
-      orderBy: includeDrafts ? [{ updatedAt: "desc" }, { id: "desc" }] : [{ publishedAt: "desc" }, { id: "desc" }],
-      select: { id: true, slug: true, title: true, excerpt: true, coverImage: true, published: true, publishedAt: true, createdAt: true, updatedAt: true },
+      orderBy: sort === "popular" ? [{ views: "desc" }, { id: "desc" }] : includeDrafts ? [{ updatedAt: "desc" }, { id: "desc" }] : [{ publishedAt: "desc" }, { id: "desc" }],
+      select: { canonicalUrl: true, views: true, noIndex: true, coverAlt: true, author: true, id: true, slug: true, title: true, excerpt: true, coverImage: true, published: true, publishedAt: true, createdAt: true, updatedAt: true },
     }),
     prisma.blogPost.count({ where }),
   ]);
@@ -84,6 +84,19 @@ router.put("/:id", ...admin, async (req, res) => {
 router.delete("/:id", ...admin, async (req, res) => {
   try { await prisma.blogPost.delete({ where: { id: String(req.params.id) } }); res.status(204).send(); }
   catch (error) { databaseError(error); }
+});
+// Explicit client event: metadata, prefetch and sitemap reads never increment views.
+router.post("/:slug/view", async (req, res) => {
+  const slug = String(req.params.slug);
+  const post = await prisma.blogPost.findFirst({ where: { slug, published: true }, select: { id: true } });
+  if (!post) throw new AppError("ไม่พบบทความ", 404);
+  const cookie = `blog_view_${post.id}`;
+  if (!req.cookies?.[cookie]) {
+    await prisma.$executeRaw`UPDATE "BlogPost" SET "views" = "views" + 1 WHERE "id" = ${post.id} AND "published" = true`;
+    res.cookie(cookie, "1", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 30 * 60 * 1000 });
+  }
+  res.setHeader("Cache-Control", "no-store");
+  res.status(204).send();
 });
 router.get("/:slug", async (req, res) => {
   const data = await prisma.blogPost.findFirst({ where: { slug: String(req.params.slug), published: true } });

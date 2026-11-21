@@ -34,3 +34,15 @@ Slugs use lowercase Latin letters, numbers and hyphens; `admin` and `upload` are
 ## Verification
 
 From `yoka-api`, run `node scripts/test-blog.cjs` with the local database running. The test explicitly targets the dedicated local database, creates temporary posts, tests CRUD, publication visibility, permissions, validation and image uploads, then cleans up its own data. It does not require an existing admin account.
+
+## SEO, editor and analytics
+
+Apply the additive `20261121000000_blog_seo_views` migration and regenerate Prisma Client before deploying this update. Existing posts keep their content and use title/excerpt fallbacks. As above, baseline legacy migration history first; never reset production.
+
+The admin uses `@uiw/react-md-editor` with formatting tools and the same safe Markdown preview as the public site. Existing plain text remains plain until edited; Markdown retains the version marker. Raw HTML is never rendered.
+
+Editable SEO fields: `seoTitle`, `seoDescription`, `seoKeywords` (comma separated), `canonicalUrl`, `noIndex`, `coverAlt`, `author`. Cover image supplies Open Graph/Twitter imagery. Public pages emit article metadata and escaped BlogPosting JSON-LD. Sitemap excludes noindex and externally canonicalized articles (up to one hour cache).
+
+Admin listing supports `status=all|published|draft` and `sort=recent|popular`. Public listing never exposes drafts regardless of status query.
+
+`POST /:slug/view` counts published article visits, using an HttpOnly cookie to suppress repeats for 30 minutes. The reader sends the event after 1.5 seconds on a visible page. GET, metadata and prefetch requests never count. Increment is atomic and does not alter article modification dates. This is an approximate visit counter, not unique people or bot-proof analytics; cleared/blocked cookies, parallel initial requests and automated calls may inflate counts.

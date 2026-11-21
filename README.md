@@ -70,3 +70,9 @@ npm run test:purchase-email -- your-inbox@example.com
 ```
 
 Both messages have `[TEST]` in the subject. This checks the SMTP credentials, delivery, and email templates without creating a booking or charging a card. It does not test the Omise webhook or PDF attachment.
+
+### Contact form email
+
+The website `/contact` form opens the visitor's configured email app using a `mailto:` link addressed to `Yogabyniti@gmail.com`. It fills the subject and message, including the visitor's name and email. The visitor must press Send in their email app; the website does not send or confirm delivery. Form values remain available if no email app opens.
+
+No Resend account, API key, or email server configuration is required for this form. Visitors need an email app or browser mail handler configured. Booking emails still use the API's Gmail SMTP configuration described above.

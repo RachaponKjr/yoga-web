@@ -13,6 +13,8 @@ test("sitemap includes all blog and course pages, excluding drafts and hidden co
       data: page === 1 ? [
         { slug: "first-post", published: true, updatedAt: "2026-10-01T00:00:00Z" },
         { slug: "draft", published: false },
+        { slug: "no-index", published: true, noIndex: true },
+        { slug: "syndicated", published: true, canonicalUrl: "https://other.example.com/original" },
       ] : [{ slug: "second post", published: true }, { slug: "first-post", published: true, updatedAt: "2026-10-01T00:00:00Z" }],
       pagination: { pages: 2 },
     } : {

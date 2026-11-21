@@ -9,7 +9,7 @@ import { blogService, blogImageUrl } from "@/service/blog.service";
 import type { BlogInput, BlogList } from "@/service/blog.service";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-const empty: BlogInput = { title: "", slug: "", excerpt: "", content: "", coverImage: "", published: false };
+const empty: BlogInput = { title: "", slug: "", excerpt: "", content: "", coverImage: "", published: false, seoTitle: "", seoDescription: "", seoKeywords: "", canonicalUrl: "", noIndex: false, coverAlt: "", author: "Yoga By Niti" };
 const field = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60";
 function message(error: unknown) { return axios.isAxiosError(error) ? error.response?.data?.message || "เชื่อมต่อไม่สำเร็จ กรุณาลองใหม่" : "เกิดข้อผิดพลาด กรุณาลองใหม่"; }
 
@@ -17,6 +17,8 @@ export default function BlogPage() {
   const [result, setResult] = useState<BlogList | null>(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const [sort, setSort] = useState("recent");
   const [query, setQuery] = useState("");
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -29,11 +31,11 @@ export default function BlogPage() {
 
   useEffect(() => {
     const controller = new AbortController();
-    blogService.list(page, query, controller.signal).then(data => {
+    blogService.list(page, query, controller.signal, status, sort).then(data => {
       setResult(data); setError(""); setLoading(false);
     }).catch(error => { if (!controller.signal.aborted) { setError(message(error)); setLoading(false); } });
     return () => controller.abort();
-  }, [page, query, revision]);
+  }, [page, query, revision, status, sort]);
 
   function refresh() { setLoading(true); setRevision(value => value + 1); }
   function change<K extends keyof BlogInput>(key: K, value: BlogInput[K]) {
@@ -41,7 +43,7 @@ export default function BlogPage() {
   }
   async function edit(id: string) {
     setOpening(id);
-    try { const post = await blogService.get(id); setEditor({ id, input: { title: post.title, slug: post.slug, excerpt: post.excerpt, content: post.content, coverImage: post.coverImage || "", published: post.published } }); }
+    try { const post = await blogService.get(id); setEditor({ id, input: { ...empty, ...post, coverImage: post.coverImage || "" } }); }
     catch (error) { toast.error(message(error)); }
     finally { setOpening(null); }
   }
@@ -80,10 +82,15 @@ export default function BlogPage() {
     <form onSubmit={event => { event.preventDefault(); setLoading(true); setPage(1); setQuery(search); setRevision(value => value + 1); }} className="flex max-w-lg gap-2">
       <label className="sr-only" htmlFor="blog-search">ค้นหาบทความ</label><input id="blog-search" className={field} value={search} onChange={event => setSearch(event.target.value)} placeholder="ค้นหาชื่อบทความหรือคำโปรย…" maxLength={100} /><button aria-label="ค้นหา" className="rounded-xl border bg-white px-4"><Search size={20} /></button>
     </form>
+    <div className="flex flex-wrap gap-3">
+      <select aria-label="สถานะบทความ" className="rounded-xl border bg-white p-3" value={status} onChange={e => { setLoading(true); setPage(1); setStatus(e.target.value); }}><option value="all">ทุกสถานะ</option><option value="published">เผยแพร่แล้ว</option><option value="draft">ฉบับร่าง</option></select>
+      <select aria-label="เรียงบทความ" className="rounded-xl border bg-white p-3" value={sort} onChange={e => { setLoading(true); setPage(1); setSort(e.target.value); }}><option value="recent">แก้ไขล่าสุด</option><option value="popular">ยอดเข้าชมสูงสุด</option></select>
+      <p className="self-center text-sm text-gray-500">ยอดเข้าชม = การเปิดอ่าน โดยเว้นการนับซ้ำในเบราว์เซอร์เดิม 30 นาที</p>
+    </div>
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
       {loading ? <p role="status" className="p-12 text-center text-gray-500">กำลังโหลดบทความ…</p> : error ? <div role="alert" className="p-10 text-center"><p>{error}</p><button className="mt-4 text-indigo-600 underline" onClick={refresh}>ลองใหม่</button></div> : !result?.data.length ? <div className="p-16 text-center"><BookOpen className="mx-auto mb-4 text-indigo-300" size={40} /><h2 className="text-lg font-semibold">{query ? "ไม่พบบทความที่ค้นหา" : "เริ่มต้นเรื่องราวแรกของคุณ"}</h2><p className="mt-2 text-gray-500">สร้างบทความและบันทึกเป็นฉบับร่างก่อนเผยแพร่ได้</p></div> : <div className="divide-y divide-gray-100">{result.data.map(post => <div key={post.id} className="flex flex-wrap items-center gap-4 p-5">
         <div className="flex h-20 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-indigo-50">{post.coverImage ? <img src={blogImageUrl(post.coverImage)} alt="" className="h-full w-full object-cover" /> : <BookOpen className="text-indigo-300" />}</div>
-        <div className="min-w-0 flex-1"><span className={`rounded-full px-2.5 py-1 text-xs font-medium ${post.published ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{post.published ? "เผยแพร่แล้ว" : "ฉบับร่าง"}</span><h2 className="mt-2 break-words font-semibold text-gray-900">{post.title}</h2><p className="mt-1 text-xs text-gray-500">แก้ไขล่าสุด {new Date(post.updatedAt).toLocaleDateString("th-TH")} · /blog/{post.slug}</p></div>
+        <div className="min-w-0 flex-1"><span className={`rounded-full px-2.5 py-1 text-xs font-medium ${post.published ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{post.published ? "เผยแพร่แล้ว" : "ฉบับร่าง"}</span><h2 className="mt-2 break-words font-semibold text-gray-900">{post.title}</h2><p className="mt-1 text-xs text-gray-500">แก้ไขล่าสุด {new Date(post.updatedAt).toLocaleDateString("th-TH")} · {post.views.toLocaleString()} ครั้งที่เข้าชม · /blog/{post.slug}</p></div>
         <div className="flex gap-2"><button disabled={!!opening} onClick={() => edit(post.id)} className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50">{opening === post.id ? <Loader2 size={16} className="animate-spin" /> : <Pencil size={16} />}แก้ไข</button><button onClick={() => setDeleting(post)} aria-label={`ลบ ${post.title}`} className="rounded-lg p-2 text-red-500 hover:bg-red-50"><Trash2 size={18} /></button></div>
       </div>)}</div>}
     </div>
@@ -96,7 +103,20 @@ export default function BlogPage() {
           <label className="block space-y-2"><span className="text-sm font-medium">URL บทความ (slug) *</span><input required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={180} placeholder="yoga-for-beginners" className={field} value={editor.input.slug} onChange={event => change("slug", event.target.value)} /><span className="block text-xs text-gray-500">ใช้ภาษาอังกฤษตัวเล็ก ตัวเลข และขีดกลาง เช่น yoga-for-beginners</span></label>
           <label className="block space-y-2"><span className="text-sm font-medium">คำโปรย *</span><textarea required maxLength={500} rows={3} className={field} value={editor.input.excerpt} onChange={event => change("excerpt", event.target.value)} /></label>
           <div className="space-y-3"><label className="block space-y-2"><span className="text-sm font-medium">รูปปก</span><input className={field} placeholder="https://… หรืออัปโหลดรูปภาพด้านล่าง" value={editor.input.coverImage} onChange={event => change("coverImage", event.target.value)} /></label><label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-sm"><ImagePlus size={18} />{uploading ? "กำลังอัปโหลด…" : "อัปโหลด JPG, PNG, WebP (ไม่เกิน 5 MB)"}<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={event => { void upload(event.target.files?.[0]); event.target.value = ""; }} /></label>{editor.input.coverImage && <div className="relative"><img src={blogImageUrl(editor.input.coverImage)} alt="ตัวอย่างรูปปก" className="max-h-52 w-full rounded-xl object-cover" /><button type="button" onClick={() => change("coverImage", "")} className="mt-2 text-sm text-red-600">นำรูปปกออก</button></div>}</div>
+          <label className="block space-y-2"><span className="text-sm font-medium">คำอธิบายรูปปก (Alt text)</span><input maxLength={300} className={field} value={editor.input.coverAlt} onChange={e => change("coverAlt", e.target.value)} /></label>
+          <label className="block space-y-2"><span className="text-sm font-medium">ผู้เขียน</span><input maxLength={120} className={field} value={editor.input.author} onChange={e => change("author", e.target.value)} /></label>
           </div><div className="min-w-0"><ArticleEditor value={editor.input.content} onChange={value => change("content", value)} disabled={busy || uploading} onUploading={setUploading} /></div>
+          <section className="space-y-4 rounded-2xl border bg-gray-50 p-5 lg:col-span-2">
+            <h3 className="text-lg font-semibold">SEO & การแชร์บทความ</h3><p className="text-sm text-gray-500">เว้นว่างเพื่อใช้ชื่อบทความและคำโปรยโดยอัตโนมัติ</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="space-y-2"><span className="text-sm font-medium">SEO Title · {editor.input.seoTitle.length}/180</span><input className={field} maxLength={180} value={editor.input.seoTitle} onChange={e => change("seoTitle", e.target.value)} placeholder={editor.input.title} /><span className="text-xs text-gray-500">แนะนำประมาณ 50–60 ตัวอักษร</span></label>
+              <label className="space-y-2"><span className="text-sm font-medium">Keywords (คั่นด้วยจุลภาค)</span><input className={field} maxLength={500} value={editor.input.seoKeywords} onChange={e => change("seoKeywords", e.target.value)} placeholder="yoga, wellness, โยคะ" /></label>
+              <label className="space-y-2 md:col-span-2"><span className="text-sm font-medium">Meta Description · {editor.input.seoDescription.length}/500</span><textarea className={field} maxLength={500} rows={3} value={editor.input.seoDescription} onChange={e => change("seoDescription", e.target.value)} placeholder={editor.input.excerpt} /><span className="text-xs text-gray-500">แนะนำประมาณ 150–160 ตัวอักษร</span></label>
+              <label className="space-y-2 md:col-span-2"><span className="text-sm font-medium">Canonical URL (ถ้ามีต้นฉบับที่ URL อื่น)</span><input type="url" className={field} maxLength={2000} value={editor.input.canonicalUrl} onChange={e => change("canonicalUrl", e.target.value)} placeholder="เว้นว่างเพื่อใช้ URL บทความนี้" /></label>
+            </div>
+            <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={editor.input.noIndex} onChange={e => change("noIndex", e.target.checked)} />ไม่ให้ Search Engine จัดทำดัชนี (noindex)</label>
+            <div className="rounded-xl border bg-white p-5"><p className="mb-3 text-xs text-gray-500">ตัวอย่างผลค้นหาโดยประมาณ · รูปปกจะใช้เป็นรูปแชร์ด้วย</p><p className="break-all text-sm text-green-800">{editor.input.canonicalUrl || `/blog/${editor.input.slug}`}</p><p className="mt-1 break-words text-xl text-blue-800">{editor.input.seoTitle || editor.input.title || "ชื่อบทความ"} | Yoga By Niti</p><p className="mt-2 break-words text-sm leading-6 text-gray-600">{editor.input.seoDescription || editor.input.excerpt || "คำอธิบายบทความ"}</p></div>
+          </section>
           <label className="flex items-center gap-3 rounded-xl bg-indigo-50 p-4 lg:col-span-2"><input type="checkbox" checked={editor.input.published} onChange={event => change("published", event.target.checked)} className="size-4 accent-indigo-600" /><span className="text-sm font-medium">เผยแพร่บทความบนเว็บไซต์ (ปิดเพื่อเก็บเป็นฉบับร่าง)</span></label>
         </fieldset><div className="flex justify-end gap-3 border-t pt-4"><button type="button" disabled={busy || uploading} onClick={() => setEditor(null)} className="rounded-xl border px-5 py-2.5 disabled:opacity-50">ยกเลิก</button><button disabled={busy || uploading} className="rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white disabled:opacity-50">{busy ? "กำลังบันทึก…" : editor.input.published ? "บันทึกและเผยแพร่" : "บันทึกฉบับร่าง"}</button></div></form>}
       </DialogContent>
